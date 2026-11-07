@@ -1,0 +1,21 @@
+[
+  {
+    "id": "demo",
+    "demo": true,
+    "code": "DEMO",
+    "salt": "demo-salt-change-me",
+    "name": "Nümunə Fit Kafe",
+    "city": "Bakı",
+    "address": "nümunə ünvan",
+    "lat": 40.3777,
+    "lon": 49.8920,
+    "discount": "10%",
+    "terms": "Sağlam menyudan sifarişə 10% endirim. Digər endirimlərlə birləşmir.",
+    "menu": [
+      { "name": "Toyuq döşü, qril + salat", "kcal": 420, "note": "zülal 38 q" },
+      { "name": "Qarabaşaq + buxarda tərəvəz", "kcal": 360, "note": "lif zəngin" },
+      { "name": "Mərci şorbası", "kcal": 270, "note": "300 ml" },
+      { "name": "Qatıq + meyvə", "kcal": 190, "note": "şəkərsiz" }
+    ]
+  }
+]

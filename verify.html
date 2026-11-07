@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kupon yoxlama · Vital Rhythm</title>
+<meta name="theme-color" content="#0B5D4B">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Manrope:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#EFF4F1;--surface:#fff;--surface2:#E4ECE8;--ink:#13201B;--muted:#5A6B64;--line:#D5E0DA;--brand:#0B5D4B;--accent:#0F7A62;--ok:#15803D;--ok-bg:#E3F5EA;--bad:#C0262D;--bad-bg:#FDECEA;color-scheme:light}
+@media (prefers-color-scheme: dark){:root{--bg:#0C1311;--surface:#141E1B;--surface2:#1C2925;--ink:#E4EEE9;--muted:#91A39C;--line:#26342F;--brand:#0D4A3D;--accent:#3CC7A4;--ok:#4ADE80;--ok-bg:#12301F;--bad:#F26B5E;--bad-bg:#3A1A17;color-scheme:dark}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+header{background:var(--brand);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px))}
+header b{font:800 18px Unbounded,sans-serif}header small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;font-weight:800}
+main{max-width:520px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+input{font:800 18px Manrope,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px;width:100%}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.res{border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:6px}
+.res b{font:800 26px Unbounded,sans-serif}
+.ok{background:var(--ok-bg);color:var(--ok)}.bad{background:var(--bad-bg);color:var(--bad)}
+.log{font-size:13px;display:flex;flex-direction:column;gap:4px;max-height:260px;overflow:auto}
+.log div{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:4px}
+.muted{color:var(--muted)}h2{margin:0;font:700 16px Unbounded,sans-serif}
+</style>
+</head>
+<body>
+<header><small>Restoran üçün</small><b>Kupon yoxlama</b></header>
+<main>
+  <section class="card">
+    <p class="muted" style="margin:0">Müştərinin göstərdiyi QR-ı telefon kamerası ilə skan edin və ya kodu yazın.</p>
+    <input id="code" placeholder="məs. DEMO-ABC123-K9Z-1F4" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <button id="chk">Yoxla</button>
+    <div id="out" hidden></div>
+  </section>
+  <section class="card">
+    <h2>Bu telefonda qəbul edilən kuponlar</h2>
+    <div class="log" id="log"></div>
+    <button class="ghost" id="copy">Siyahını kopyala (hesabat üçün)</button>
+  </section>
+</main>
+<script>
+"use strict";
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dayNo=()=>Math.floor((Date.now()+4*3600e3)/864e5);
+function fnv(str){let h=2166136261;for(const ch of str){h^=ch.codePointAt(0);h=Math.imul(h,16777619)>>>0}return h}
+let PARTNERS=[];
+const LOGKEY="vr-verify-log";
+const getLog=()=>{try{return JSON.parse(localStorage.getItem(LOGKEY)||"[]")}catch(e){return[]}};
+const setLog=l=>{try{localStorage.setItem(LOGKEY,JSON.stringify(l))}catch(e){}};
+function drawLog(){const l=getLog();$("#log").innerHTML=l.length?l.slice().reverse().map(x=>`<div><span>${esc(x.code)}</span><span class="muted">${new Date(x.t).toLocaleString()}</span></div>`).join(""):`<span class="muted">Hələ kupon qəbul edilməyib.</span>`}
+function check(raw){
+  const code=String(raw||"").trim().toUpperCase().replace(/\s+/g,""),out=$("#out");out.hidden=false;
+  const m=code.match(/^([A-Z0-9]+)-([A-Z0-9]{6})-([A-Z0-9]+)-([A-Z0-9]{3})$/);
+  const bad=t=>{out.className="res bad";out.innerHTML=`<b>Etibarsız</b><span>${t}</span>`};
+  if(!m)return bad("Kodun formatı düz deyil.");
+  const p=PARTNERS.find(x=>String(x.code||x.id).toUpperCase()===m[1]);if(!p)return bad("Bu kod heç bir tərəfdaşa aid deyil.");
+  const base=`${m[1]}-${m[2]}-${m[3]}`,want=(fnv(base+"|"+(p.salt||"VR"))%46656).toString(36).toUpperCase().padStart(3,"0");
+  if(want!==m[4])return bad("Kod saxtadır və ya səhv yazılıb.");
+  const d=parseInt(m[3],36),today=dayNo();if(d<today-1||d>today)return bad("Kuponun vaxtı keçib. Yalnız verildiyi gün etibarlıdır.");
+  const log=getLog(),used=log.some(x=>x.code===code);
+  out.className="res ok";out.innerHTML=`<b>Etibarlı ✓</b><span>${esc(p.name)} · endirim −${esc(p.discount||"")}</span>${used?`<span><b style="font-size:14px">Diqqət:</b> bu kod artıq bu telefonda qəbul edilib.</span>`:""}<button id="accept" style="margin-top:6px">Endirimi tətbiq etdim, qeyd et</button>`;
+  $("#accept").onclick=()=>{if(!used){log.push({code,t:Date.now(),p:p.id});setLog(log)}drawLog();$("#accept").disabled=true;$("#accept").textContent="Qeyd edildi"};
+}
+$("#chk").onclick=()=>check($("#code").value);
+$("#copy").onclick=async()=>{const txt=getLog().map(x=>`${x.code}\t${new Date(x.t).toISOString()}`).join("\n")||"boş";try{await navigator.clipboard.writeText(txt);$("#copy").textContent="Kopyalandı"}catch(e){prompt("Kopyalayın:",txt)}};
+fetch("partners.json",{cache:"no-store"}).then(r=>r.json()).then(j=>{PARTNERS=j;const h=decodeURIComponent(location.hash.slice(1));if(h){$("#code").value=h;check(h)}}).catch(()=>{$("#out").hidden=false;$("#out").className="res bad";$("#out").innerHTML="<b>Bağlantı yoxdur</b><span>İnterneti yoxlayın.</span>"});
+drawLog();
+</script>
+</body>
+</html>

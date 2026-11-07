@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vital Rhythm</title>
+<meta name="description" content="Kalori, su, şəkil analizi, GPS hərəkət və sağlam menyu — by VUİM">
+<meta name="theme-color" content="#0B5D4B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vital Rhythm">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* Layout: phone app — top bar with back arrow, routed views, bottom tab bar with a raised camera button. */
+:root{
+  --bg:#EFF4F1; --surface:#FFFFFF; --surface2:#E4ECE8; --ink:#13201B; --muted:#5A6B64; --line:#D5E0DA;
+  --brand:#0B5D4B; --brand2:#12866B; --on-brand:#FFFFFF; --accent:#0F7A62; --accent-ink:#FFFFFF;
+  --sun:#E0A21C; --water:#2484C4; --coral:#E26B4E; --violet:#6E5BD0;
+  --ok:#15803D; --warn:#B45309; --danger:#C0262D; --danger-bg:#FDECEA; --warn-bg:#FFF3DE;
+  --display:"Unbounded","Manrope",system-ui,sans-serif; --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0C1311; --surface:#141E1B; --surface2:#1C2925; --ink:#E4EEE9; --muted:#91A39C; --line:#26342F;
+  --brand:#0D4A3D; --brand2:#15705A; --on-brand:#EAFBF4; --accent:#3CC7A4; --accent-ink:#04241B;
+  --sun:#F2BC45; --water:#5DB6EA; --coral:#F08A70; --violet:#9C8CF0;
+  --ok:#4ADE80; --warn:#F5A65B; --danger:#F26B5E; --danger-bg:#3A1A17; --warn-bg:#36280F; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* top bar */
+.top{position:sticky;top:0;z-index:1000;background:var(--brand);color:var(--on-brand);padding-top:env(safe-area-inset-top,0px)}
+.top .in{max-width:560px;margin:0 auto;height:56px;display:flex;align-items:center;gap:8px}
+.top .ttl{flex:1;min-width:0;display:flex;flex-direction:column}
+.top .ttl b{font-family:var(--display);font-weight:700;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .ttl small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;opacity:.75}
+.ib{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.12);color:inherit;padding:0;flex:none}
+.ib svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.top .pill{font-size:12px;font-weight:800;padding:8px 12px;border-radius:99px;background:var(--sun);color:#1b1300}
+main{max-width:560px;margin:0 auto;padding-block:16px calc(110px + var(--bb,0px) + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+h2{font-family:var(--display);font-weight:500;font-size:17px;margin:0;text-wrap:balance}
+h3{font-size:12px;margin:0;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:800}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:var(--muted)} .small{font-size:13px}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 16px;font-weight:700;background:var(--surface2);color:var(--ink)}
+button.primary{background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;border:1px solid var(--line)}
+button.big{padding:17px;font-size:17px;border-radius:18px;width:100%}
+button.red{background:var(--danger);color:#fff}
+button:active{transform:scale(.98)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-width:0}
+textarea{min-height:72px;resize:vertical}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:var(--muted);min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:370px){.grid3{grid-template-columns:1fr 1fr}}
+/* hero */
+.hero{background:linear-gradient(155deg,var(--brand) 0%,var(--brand2) 100%);color:var(--on-brand);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;border:28px solid rgba(255,255,255,.07)}
+.hero .hi{font-size:13px;font-weight:700;opacity:.8}
+.hero .msg{font-family:var(--display);font-size:20px;font-weight:700;line-height:1.2;margin:2px 0 0;text-wrap:balance}
+.hrow{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:center;position:relative;z-index:1}
+.ring{position:relative;width:140px;height:140px}
+.ring svg{width:140px;height:140px;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring .c b{font-family:var(--display);font-size:27px;font-weight:800;line-height:1}
+.ring .c span{font-size:11px;font-weight:700;opacity:.8}
+.hk{display:flex;flex-direction:column;gap:8px}
+.hk div{display:flex;justify-content:space-between;gap:8px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:6px}
+.hk div:last-child{border:0}
+.hk b{font-weight:800}
+.mac{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;z-index:1}
+.mac div{background:rgba(255,255,255,.1);border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.mac small{font-size:11px;font-weight:800;opacity:.85}
+.mac b{font-size:14px}
+.mbar{height:5px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
+.mbar i{display:block;height:100%;border-radius:9px}
+/* quick tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:800;color:var(--ink)}
+.tile i{width:46px;height:46px;border-radius:15px;display:grid;place-items:center}
+.tile svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.alert{border-radius:16px;padding:12px 14px;font-weight:600;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.alert.danger{background:var(--danger-bg);color:var(--danger)}
+.alert.warn{background:var(--warn-bg);color:var(--warn)}
+.alert.info{background:var(--surface2);color:var(--ink)}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:currentColor;margin-top:5px}
+.water{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.glass{width:58px;height:78px;border:3px solid var(--water);border-top:0;border-radius:4px 4px 16px 16px;position:relative;overflow:hidden}
+.glass i{position:absolute;left:0;right:0;bottom:0;background:var(--water);opacity:.85}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line);align-items:center;width:100%;text-align:left;background:transparent;border-radius:0;color:var(--ink);font-weight:500}
+.item:first-child{border-top:0}
+.item .n{min-width:0;display:flex;gap:10px;align-items:center}
+.item .n > div{min-width:0}
+.item .n b{display:block;font-weight:700;overflow-wrap:anywhere}
+.item .n span{font-size:12px;color:var(--muted)}
+.item .k{font-weight:800;white-space:nowrap}
+.av{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff}
+.x{background:transparent;color:var(--muted);padding:6px 8px;font-size:20px;line-height:1}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{flex:none;padding:8px 13px;border-radius:99px;font-size:13px;background:var(--surface2);font-weight:800}
+.chip.on{background:var(--accent);color:var(--accent-ink)}
+.tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2.2}
+.search input{padding-left:38px}
+/* nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:var(--bb,0px);z-index:1000;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:end}
+nav.tabs button{background:transparent;border-radius:0;padding:9px 2px 11px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800}
+nav.tabs button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button.on{color:var(--accent)}
+nav.tabs .cam .bub{width:60px;height:60px;margin-top:-28px;border-radius:22px;background:linear-gradient(150deg,var(--coral),var(--sun));display:grid;place-items:center;box-shadow:0 10px 22px -8px var(--coral);border:4px solid var(--surface)}
+nav.tabs .cam .bub svg{width:28px;height:28px;stroke:#fff}
+nav.tabs .live{position:relative}
+nav.tabs .live::after{content:"";position:absolute;top:6px;right:calc(50% - 16px);width:9px;height:9px;border-radius:50%;background:var(--danger)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + var(--bb,0px) + env(safe-area-inset-bottom,0px));z-index:1002;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;font-weight:700;font-size:14px;max-width:calc(100% - 32px);text-align:center}
+.chart{width:100%;height:auto;display:block}
+.meal{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--line)}
+.meal:first-of-type{border-top:0}
+.day{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.day:first-child{border-top:0}
+.day b{color:var(--accent)}
+ul.tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.tipcard{background:linear-gradient(150deg,color-mix(in srgb,var(--sun) 22%,var(--surface)),var(--surface) 70%)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;font-weight:800}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--surface2);padding:5px;border-radius:16px}
+.seg button{padding:10px 4px;background:transparent;border-radius:12px}
+.seg button.on{background:var(--surface);color:var(--accent);box-shadow:0 2px 6px -3px rgba(0,0,0,.3)}
+/* home quadrants: soft tinted fields, deep ink for icons */
+:root{--q1:#FFE6DA;--q1i:#D2553A;--q2:#DDF2E8;--q2i:#0F7A62;--q3:#E9E4FB;--q3i:#5B47C2;--q4:#DCEDFA;--q4i:#1F6FAE}
+@media (prefers-color-scheme: dark){:root{--q1:#3A2620;--q1i:#F2A48E;--q2:#173329;--q2i:#6FE0BE;--q3:#272240;--q3i:#B8ABFA;--q4:#18293A;--q4i:#86C3F2}}
+.status{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:12px 14px}
+.status .ring{width:76px;height:76px}.status .ring svg{width:76px;height:76px}
+.status .ring .c b{font-size:16px}.status .ring .c span{font-size:9.5px}
+.status .ss{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.status .hi{font-size:12px;font-weight:700;color:var(--muted)}
+.status .msg{font-family:var(--display);font-size:16px;font-weight:700;line-height:1.2;text-wrap:balance}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pills span{font-size:12px;font-weight:800;padding:4px 9px;border-radius:99px;background:var(--surface2)}
+.quads{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quad{min-height:168px;border-radius:26px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;gap:10px;position:relative;overflow:hidden;border:0}
+.quad::after{content:"";position:absolute;right:-34px;bottom:-34px;width:110px;height:110px;border-radius:50%;background:currentColor;opacity:.07}
+.quad .qi{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:var(--surface);box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
+.quad .qi svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.quad b{display:block;font-family:var(--display);font-size:17px;font-weight:700;line-height:1.15;color:var(--ink)}
+.quad small{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-top:3px}
+.q1{background:var(--q1);color:var(--q1i)}.q2{background:var(--q2);color:var(--q2i)}.q3{background:var(--q3);color:var(--q3i)}.q4{background:var(--q4);color:var(--q4i)}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.strip button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:800}
+.strip button b{font-family:var(--display);font-size:16px}
+/* restaurants */
+#rmap{height:230px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--surface2);z-index:0}
+.pcard{border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(150deg,var(--q1),var(--surface) 75%);border:1px solid var(--line)}
+.disc{font-family:var(--display);font-weight:800;font-size:15px;padding:6px 11px;border-radius:12px;background:var(--coral);color:#fff;white-space:nowrap}
+.hl{font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--q2);color:var(--q2i)}
+.coupon{border-radius:24px;padding:20px;background:var(--surface);border:2px dashed var(--coral);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.coupon .code{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:.06em;word-break:break-all}
+#qr{background:#fff;padding:12px;border-radius:16px}
+#qr img,#qr canvas{display:block}
+/* scan */
+.drop{border:2px dashed var(--line);border-radius:20px;min-height:200px;display:grid;place-items:center;text-align:center;padding:14px;background:var(--bg);overflow:hidden}
+.drop img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;display:block}
+.drop .ph{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)}
+.drop .ph svg{width:46px;height:46px;stroke:var(--coral);fill:none;stroke-width:1.7}
+.filebtn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:15px;font-weight:800;font-size:15px;background:var(--surface2);color:var(--ink);cursor:pointer}
+.filebtn.main{background:linear-gradient(150deg,var(--coral),var(--sun));color:#fff}
+.filebtn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.verdict{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px}
+.verdict .v{font-family:var(--display);font-size:24px;font-weight:800;white-space:nowrap}
+.verdict.hi{background:var(--danger-bg);color:var(--danger)}
+.verdict.ok{background:color-mix(in srgb,var(--ok) 14%,var(--surface));color:var(--ok)}
+.verdict.lo{background:var(--warn-bg);color:var(--warn)}
+.ritem{display:grid;grid-template-columns:1fr 80px 52px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.ritem:first-child{border-top:0}
+.ritem input{padding:8px;text-align:right}
+.ritem .k{text-align:right;font-weight:800}
+.spin{width:20px;height:20px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.qs{margin:4px 0 0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:13px;overflow-wrap:anywhere}
+/* GPS */
+#map{height:290px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--surface2);z-index:0}
+.bigstat{display:flex;align-items:baseline;justify-content:center;gap:6px}
+.bigstat b{font-family:var(--display);font-size:56px;font-weight:800;line-height:1}
+.bigstat span{color:var(--muted);font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st{background:var(--surface2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.st small{font-size:10.5px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.st b{font-size:17px;font-weight:800;overflow-wrap:anywhere}
+.ctrl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gpsq{font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px}
+.gpsq i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.leaflet-container{font-family:var(--body)}
+.sheet{position:fixed;inset:0;z-index:1003;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet .box{background:var(--surface);color:var(--ink);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:20px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.foot{font-size:12px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:no-preference){.ring circle.p{transition:stroke-dasharray .6s ease}.mbar i,.glass i{transition:all .5s ease}main>*{animation:up .25s ease both}@keyframes up{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in gut">
+  <button class="ib" id="backBtn" aria-label="Geri" hidden><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="ttl"><b id="ttl">Vital Rhythm</b><small id="sub">by VUİM</small></div>
+  <button class="pill" id="installBtn" hidden>Quraşdır</button>
+  <button class="ib" id="profBtn" aria-label="Profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
+</div></div>
+
+<main id="view" class="gut"></main>
+
+<nav class="tabs"><div class="in">
+  <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Ana</button>
+  <button data-tab="diary"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Gündəlik</button>
+  <button data-tab="scan" class="cam" aria-label="Şəkil ilə hesabla"><span class="bub"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>Şəkil</button>
+  <button data-tab="rest"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restoran</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="3"/><path d="M8 2v4M16 2v4M8 11h8M8 15h5"/></svg>Plan</button>
+</div></nav>
+<div class="toast" id="toast" hidden></div>
+<div class="sheet" id="sheet" hidden><div class="box" id="sheetBox"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+"use strict";
+// Free hosting adds its own banner at the bottom; lift the tab bar above it.
+if(/tiiny\.(site|host|co)$/i.test(location.hostname))document.documentElement.style.setProperty("--bb","72px");
+// ================= DATA
+// name, kcal, protein, fat, carbs (per 100 g/ml), portion, category, isWater
+const FOODS=[
+["Su",0,0,0,0,250,"İçki",1],["Mineral su",0,0,0,0,250,"İçki",1],["Çay (şəkərsiz)",1,0,0,0.2,250,"İçki"],["Çay + 1 qənd",17,0,0,4.2,250,"İçki"],
+["Qara qəhvə",2,0.1,0,0.3,200,"İçki"],["Kapuçino",45,2.4,2.2,4,250,"İçki"],["Kola",42,0,0,10.6,330,"İçki"],["Meyvə şirəsi",45,0.5,0.1,10.4,250,"İçki"],
+["Kompot",50,0.1,0,12,250,"İçki"],["Ayran",35,1.7,1.5,2.5,250,"İçki"],["Süd 3.2%",60,3,3.2,4.7,250,"Süd"],
+["Qatıq",60,3.2,3.2,4.1,200,"Süd"],["Kəsmik 5%",121,17,5,1.8,150,"Süd"],["Ağ pendir",260,17,21,1,40,"Süd"],["Kərə yağı",717,0.9,81,0.1,10,"Yağ"],
+["Yumurta (1 ədəd ≈ 50 q)",155,13,11,1.1,50,"Zülal"],["Toyuq döşü",165,31,3.6,0,150,"Zülal"],["Mal əti",250,26,15,0,150,"Zülal"],
+["Quzu əti",294,25,21,0,150,"Zülal"],["Qızılbalıq",208,20,13,0,150,"Zülal"],["Kütüm (qızardılmış)",230,19,16,2,150,"Zülal"],
+["Plov (toyuqlu)",180,7,6,25,300,"Milli"],["Plov (quzu ətli)",230,7,10,28,300,"Milli"],["Dolma (yarpaq)",165,8,10,11,250,"Milli"],
+["Qutab (göyərti)",220,6,9,29,100,"Milli"],["Qutab (ətli)",260,11,12,27,100,"Milli"],["Düşbərə",110,6,4,12,350,"Milli"],
+["Piti",130,8,8,7,400,"Milli"],["Lülə kabab",280,17,23,1,150,"Milli"],["Toyuq kababı",170,25,7,1,150,"Milli"],
+["Qovurma",250,18,19,2,200,"Milli"],["Dovğa",50,2.5,1.8,6,300,"Milli"],["Mərci şorbası",90,5,2,13,300,"Milli"],
+["Paxlava",430,6,22,52,60,"Şirniyyat"],["Şəkərbura",450,6,24,52,60,"Şirniyyat"],["Şokolad",546,5,31,61,25,"Şirniyyat"],
+["Bal",304,0.3,0,82,20,"Şirniyyat"],["Şəkər",400,0,0,100,5,"Şirniyyat"],["Mürəbbə",250,0.4,0.1,64,20,"Şirniyyat"],
+["Ağ çörək",265,9,3.2,49,50,"Taxıl"],["Təndir çörəyi",250,8,1.5,50,60,"Taxıl"],["Lavaş",275,9,1.2,56,50,"Taxıl"],
+["Qara çörək",250,9,3.3,48,50,"Taxıl"],["Düyü (bişmiş)",130,2.7,0.3,28,150,"Taxıl"],["Qarabaşaq (bişmiş)",110,4,1,21,150,"Taxıl"],
+["Makaron (bişmiş)",158,6,0.9,31,200,"Taxıl"],["Yulaf (quru)",380,13,7,66,50,"Taxıl"],["Lobya (bişmiş)",127,8.7,0.5,22.8,150,"Taxıl"],
+["Noxud (bişmiş)",164,8.9,2.6,27,150,"Taxıl"],["Kartof (qaynadılmış)",87,1.9,0.1,20,200,"Tərəvəz"],["Kartof fri",312,3.4,15,41,150,"Tərəvəz"],
+["Çoban salatı",45,1,2.5,4,200,"Tərəvəz"],["Pomidor",18,0.9,0.2,3.9,120,"Tərəvəz"],["Xiyar",15,0.7,0.1,3.6,120,"Tərəvəz"],
+["Göyərti",30,2.5,0.5,5,50,"Tərəvəz"],["Badımcan (qızardılmış)",170,1.5,14,9,150,"Tərəvəz"],
+["Alma",52,0.3,0.2,14,150,"Meyvə"],["Banan",89,1.1,0.3,23,120,"Meyvə"],["Portağal",47,0.9,0.1,12,150,"Meyvə"],
+["Nar",83,1.7,1.2,19,150,"Meyvə"],["Üzüm",69,0.7,0.2,18,150,"Meyvə"],["Xurma",282,2.5,0.4,75,30,"Meyvə"],
+["Ərik qurusu",241,3.4,0.5,63,30,"Meyvə"],["Qoz",654,15,65,14,20,"Qoz-fındıq"],["Fındıq",628,15,61,17,20,"Qoz-fındıq"],
+["Badam",579,21,50,22,20,"Qoz-fındıq"],["Zeytun yağı",884,0,100,0,10,"Yağ"],["Pizza",266,11,10,33,200,"Fast food"],
+["Burger",254,13,12,24,200,"Fast food"],["Şaurma",215,11,10,20,300,"Fast food"]
+];
+const FMAP=Object.fromEntries(FOODS.map(f=>[f[0],f]));
+const CATS=["Hamısı","Milli","İçki","Zülal","Süd","Taxıl","Tərəvəz","Meyvə","Qoz-fındıq","Şirniyyat","Fast food","Yağ"];
+const CATCOL={"Milli":"var(--coral)","İçki":"var(--water)","Zülal":"var(--violet)","Süd":"#7A8AA0","Taxıl":"var(--sun)","Tərəvəz":"var(--ok)","Meyvə":"#D04B78","Qoz-fındıq":"#9A6B3E","Şirniyyat":"#C2557E","Fast food":"#D2582B","Yağ":"#B8902A","AI":"var(--coral)","Öz":"var(--muted)"};
+const EX=[["Yeriş (adi)",3.5],["Sürətli yeriş",4.3],["Qaçış",8],["Velosiped",6],["Üzgüçülük",6],["Güc məşqi",5],["Yoqa / dartınma",2.5],["Futbol",7],["Rəqs",5],["Pilləkən",8]];
+const MEALS=["Səhər","Nahar","Şam","Ara qəlyanaltı"];
+const ACT=[["Hərəkətsiz (oturaq iş)",1.2],["Az aktiv (həftədə 1–3 məşq)",1.375],["Orta (həftədə 3–5 məşq)",1.55],["Yüksək (həftədə 6–7 məşq)",1.725],["Çox yüksək (fiziki iş)",1.9]];
+const GOALS={lose:"Arıqlamaq",keep:"Çəkini saxlamaq",gain:"Əzələ / çəki artımı"};
+const SPORTS={walk:["Yeriş",3.8],run:["Qaçış",8.5],bike:["Velosiped",6.5]};
+const TIPS=["Yeməkdən 20 dəqiqə əvvəl bir stəkan su için: daha az yeyirsiniz.","Boşqabın yarısını tərəvəzlə doldurun.","Şirin içkini su və ya şəkərsiz çayla əvəz edin.","Hər saat 3–5 dəqiqə ayağa qalxıb gəzin.","Yavaş yeyin. Doyma hissi 15–20 dəqiqəyə gəlir.","Duzu azaldın: gündə 5 q-dan az (bir çay qaşığı).","Gündə 7–9 saat yuxu iştahı tənzimləyir.","Çörəyi qara çörək və ya təndir çörəyi ilə əvəz edin.","Gündə 400 q meyvə və tərəvəz yeyin.","Həftədə 150 dəqiqə sürətli yeriş ürək üçün ən sadə dərmandır."];
+
+// ================= STATE
+const KEY="vital-rhythm-app-v1";
+function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("Yaddaş doludur: köhnə hərəkətləri silin")}}
+const pad=n=>String(n).padStart(2,"0");
+const dk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const TODAY=dk(new Date());
+const AZM=["yanvar","fevral","mart","aprel","may","iyun","iyul","avqust","sentyabr","oktyabr","noyabr","dekabr"],AZW=["bazar","bazar ertəsi","çərşənbə axşamı","çərşənbə","cümə axşamı","cümə","şənbə"],AZWS=["B.","B.e.","Ç.a.","Ç.","C.a.","C.","Ş."];
+const dDay=d=>(d=new Date(d),d.getDate()+" "+AZM[d.getMonth()]),dTime=d=>(d=new Date(d),pad(d.getHours())+":"+pad(d.getMinutes()));
+let S=load()||{profile:{sex:"m",age:35,h:175,w:80,act:1,goal:"keep"},days:{},acts:[],first:true};
+S.acts=S.acts||[];S.ai=S.ai||{key:""};S.coupons=S.coupons||[];
+if(!S.uid){S.uid=Array.from({length:6},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*32)]).join("");}
+// App owner settings. geminiKey: the shared key every user's photo analysis runs on (restrict it to this site's address in Google Cloud).
+const CONFIG={geminiKey:"",contact:"",partnersUrl:"partners.json"};
+const aiKey=()=>S.ai.key||CONFIG.geminiKey;
+function day(k=TODAY){if(!S.days[k])S.days[k]={foods:[],water:0,ex:[]};return S.days[k]}
+
+// ================= CALC
+function calc(){
+  const p=S.profile,w=+p.w||70,h=+p.h||170,a=+p.age||30;
+  const bmr=10*w+6.25*h-5*a+(p.sex==="m"?5:-161),tdee=bmr*ACT[p.act][1];
+  let target=tdee+(p.goal==="lose"?-500:p.goal==="gain"?300:0);const floor=p.sex==="m"?1500:1200;if(target<floor)target=floor;target=Math.round(target/10)*10;
+  const prot=Math.round(w*(p.goal==="lose"?1.6:p.goal==="gain"?1.8:1.2)),fat=Math.round(target*0.3/9),carb=Math.max(0,Math.round((target-prot*4-fat*9)/4));
+  return{bmr:Math.round(bmr),tdee:Math.round(tdee),target,prot,fat,carb,water:Math.round(w*35/50)*50,bmi:w/((h/100)**2)};
+}
+function entry(f){const r=FMAP[f.n]||[f.n,f.k100||0,f.p100||0,f.f100||0,f.c100||0];const x=f.g/100;return{k:r[1]*x,p:r[2]*x,fa:r[3]*x,c:r[4]*x}}
+function exK(e){if(e.kcal!=null)return e.kcal;const m=(EX.find(x=>x[0]===e.n)||[0,4])[1];return m*3.5*(+S.profile.w||70)/200*e.min}
+function totals(k=TODAY){const d=S.days[k]||{foods:[],ex:[],water:0};const t={k:0,p:0,fa:0,c:0};d.foods.forEach(f=>{const e=entry(f);t.k+=e.k;t.p+=e.p;t.fa+=e.fa;t.c+=e.c});t.burn=(d.ex||[]).reduce((s,e)=>s+exK(e),0);t.water=d.water||0;return t}
+const r0=n=>Math.round(n);
+function streak(){const c=calc();let n=0;for(let i=1;i<60;i++){const d=new Date();d.setDate(d.getDate()-i);const t=totals(dk(d));if(t.k>0&&t.k<=c.target+t.burn)n++;else break}const t=totals();if(t.k>0&&t.k<=c.target+t.burn)n++;return n}
+
+// ================= HELPERS
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800)}
+const fmtT=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?h+":"+pad(m):m)+":"+pad(x)};
+const fmtPace=v=>!isFinite(v)||v<=0||v>3600?"—":Math.floor(v/60)+":"+pad(Math.round(v%60));
+const mealNow=()=>{const h=new Date().getHours();return h<11?"Səhər":h<16?"Nahar":h<19?"Ara qəlyanaltı":"Şam"};
+const avatar=(name,cat)=>`<span class="av" style="background:${CATCOL[cat]||"var(--accent)"}">${esc(String(name).trim().charAt(0).toUpperCase())}</span>`;
+const ICON={cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',plus:'<path d="M12 5v14M5 12h14"/>',run:'<circle cx="14" cy="4.5" r="2"/><path d="M8 21l3-6 3 2v4M7 12l3-4 4 2 3 3"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24">${ICON[k]}</svg>`;
+
+// ================= ROUTER (works with the phone's back button)
+const TABS=["home","diary","scan","rest","plan"];
+const TITLES={home:["Vital Rhythm","by VUİM"],diary:["Gündəlik","Bu günün balansı"],rest:["Restoranlar","Sağlam yemək yaxınlıqda"],food:["Yemək əlavə et","Axtar və seç"],scan:["Şəkil ilə hesabla","AI analiz"],move:["Hərəkət","GPS izləmə"],plan:["Plan","Menyu və məşq"],profile:["Profil","Normalarınız"],ai:["AI açarı","Şəkil analizi üçün"]};
+const curHash=()=>(location.hash||"#home").slice(1);
+// Every history entry carries its depth above "home", so Back always ends on Home and Home is one tap away.
+const depth=()=>(history.state&&history.state.d)||0;
+function go(h){if(curHash()===h)return;history.pushState({d:depth()+1},"","#"+h);route()}
+function goTab(t){const c=curHash(),d=depth();if(c===t)return route();
+  if(t==="home"){if(d>0)history.go(-d);else{history.replaceState({d:0},"","#home");route()}return}
+  if(d===0)history.pushState({d:1},"","#"+t);else history.replaceState({d},"","#"+t);route()}
+function back(){if(depth()>0)history.back();else goTab("home")}
+window.addEventListener("popstate",()=>{if(!history.state){history.replaceState({d:0},"","#home")}route()});
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
+$("#backBtn").onclick=back;$("#profBtn").onclick=()=>go("profile");
+(function initHistory(){const h=curHash();history.replaceState({d:0},"","#home");if(h!=="home")history.pushState({d:1},"","#"+h)})();
+
+// ================= ALERTS
+function alerts(t,c){
+  const out=[],limit=c.target+t.burn,over=t.k-limit;
+  if(over>0)out.push(["danger",`Gündəlik normanı ${r0(over)} kkal aşdınız. Təxminən ${r0(over/4.3)} dəqiqə sürətli yeriş bunu balanslaşdırar.`]);
+  else if(t.k>limit*0.9)out.push(["warn",`Normanın ${r0(t.k/limit*100)}%-i doldu. Qalan: ${r0(limit-t.k)} kkal.`]);
+  if(t.fa>c.fat*1.15)out.push(["warn",`Yağ normadan çoxdur: ${r0(t.fa)} q / ${c.fat} q.`]);
+  if(t.c>c.carb*1.2)out.push(["warn",`Karbohidrat normadan çoxdur: ${r0(t.c)} q / ${c.carb} q.`]);
+  if(new Date().getHours()>=14&&t.water<c.water*0.5)out.push(["info",`Su azdır: ${t.water} ml / ${c.water} ml. Bir stəkan su için.`]);
+  return out;
+}
+
+// ================= HOME
+function vDiary(){
+  const c=calc(),t=totals(),d=day(),limit=c.target+t.burn,pct=Math.min(1,t.k/limit),over=t.k>limit,R=58,C=2*Math.PI*R;
+  const hr=new Date().getHours(),hi=hr<12?"Sabahınız xeyir":hr<18?"Günortanız xeyir":"Axşamınız xeyir";
+  const msg=over?"Limitdən çıxdınız. Hərəkət vaxtıdır.":t.k===0?"Bu gün nə yediniz? Şəklini çəkin.":t.k<limit*.5?"Gününüz yüngül gedir.":"Ritm qaydasındadır.";
+  const mb=(n,v,g,clr)=>`<div><small>${n}</small><b>${r0(v)}<span style="opacity:.7;font-weight:600"> / ${g} q</span></b><div class="mbar"><i style="width:${Math.min(100,v/g*100)}%;background:${v>g*1.15?"#FF8A80":clr}"></i></div></div>`;
+  const st=streak(),tip=TIPS[new Date().getDate()%TIPS.length],wp=Math.min(100,t.water/c.water*100);
+  let h="";
+  if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Əvvəlcə boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
+  h+=`<section class="hero"><div style="position:relative;z-index:1"><div class="hi">${hi} · ${AZW[new Date().getDay()]}, ${dDay(new Date())}</div><p class="msg">${msg}</p></div>
+    <div class="hrow"><div class="ring"><svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="${R}" stroke="rgba(255,255,255,.16)" stroke-width="13" fill="none"/><circle class="p" cx="70" cy="70" r="${R}" stroke="${over?"#FF8A80":t.k>limit*.9?"#FFD27A":"#9FF2D6"}" stroke-width="13" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg>
+      <div class="c"><b>${r0(Math.abs(limit-t.k))}</b><span>${over?"kkal artıq":"kkal qalıb"}</span></div></div>
+      <div class="hk"><div><span>Hədəf</span><b>${c.target}</b></div><div><span>Yeyilən</span><b>${r0(t.k)}</b></div><div><span>Hərəkət</span><b>+${r0(t.burn)}</b></div><div><span>Seriya</span><b>${st} gün</b></div></div></div>
+    <div class="mac">${mb("Zülal",t.p,c.prot,"#9FF2D6")}${mb("Yağ",t.fa,c.fat,"#FFD27A")}${mb("Karb.",t.c,c.carb,"#9CD4FF")}</div></section>`;
+  h+=`<div class="tiles" hidden><button class="tile" data-go="scan"><i style="background:linear-gradient(150deg,var(--coral),var(--sun))">${svg("cam")}</i>Şəkil</button>
+    <button class="tile" data-w="250"><i style="background:var(--water)">${svg("drop")}</i>+ Su</button>
+    <button class="tile" data-go="food"><i style="background:var(--accent)">${svg("plus")}</i>Yemək</button>
+    <button class="tile" data-go="move"><i style="background:var(--violet)">${svg("run")}</i>Start</button></div>`;
+  alerts(t,c).forEach(a=>h+=`<div class="alert ${a[0]}"><span class="dot"></span><div>${a[1]}</div></div>`);
+  h+=`<section class="card"><div class="water"><div class="glass"><i style="height:${wp}%"></i></div><div style="display:flex;flex-direction:column;gap:8px">
+    <div class="row between"><h2>Su</h2><span><b>${t.water}</b> / ${c.water} ml</span></div>
+    <div class="row"><button class="primary" data-w="250">+ 1 stəkan</button><button data-w="500">+ 0.5 L</button><button class="ghost" data-w="-250">−</button></div></div></div></section>`;
+  h+=`<section class="card"><div class="row between"><h2>Bu gün yediklərim</h2><button class="ghost small" data-go="food" style="padding:8px 12px">+ Əlavə et</button></div>`;
+  let any=false;
+  MEALS.forEach(m=>{const fs=d.foods.map((f,i)=>[f,i]).filter(x=>x[0].m===m);if(!fs.length)return;any=true;const sum=fs.reduce((s,x)=>s+entry(x[0]).k,0);
+    h+=`<div><div class="row between"><h3>${m}</h3><span class="small muted">${r0(sum)} kkal</span></div><div class="list">${fs.map(([f,i])=>`<div class="item"><div class="n">${avatar(f.n,FMAP[f.n]?FMAP[f.n][6]:(f.ai?"AI":"Öz"))}<div><b>${esc(f.n)}</b><span>${f.g} q/ml</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">${r0(entry(f).k)}</span><button class="x" data-del="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></div>`});
+  if(!any)h+=`<p class="muted small" style="margin:0">Hələ heç nə yoxdur. Yeməyin şəklini çəkin və ya siyahıdan seçin.</p>`;
+  h+=`</section>`;
+  if((d.ex||[]).length)h+=`<section class="card"><h2>Bu günün hərəkəti</h2><div class="list">${d.ex.map((e,i)=>`<div class="item"><div class="n">${avatar(e.n,"Zülal")}<div><b>${esc(e.n)}</b><span>${e.min} dəq${e.km?` · ${e.km.toFixed(2)} km`:""}</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">−${r0(exK(e))}</span><button class="x" data-dex="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></section>`;
+  h+=weekChart(c);
+  h+=`<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${tip}</p></section>`;
+  return h;
+}
+function vHome(){
+  const c=calc(),t=totals(),limit=c.target+t.burn,left=limit-t.k,over=left<0,pct=Math.min(1,t.k/limit),R=30,C=2*Math.PI*R;
+  const hr=new Date().getHours(),hi=hr<12?"Sabahınız xeyir":hr<18?"Günortanız xeyir":"Axşamınız xeyir";
+  const msg=over?"Bu gün limitdən çıxdınız":t.k===0?"Bu gün nə yeyəcəksiniz?":left<limit*.15?"Limitə az qalıb":"Ritm qaydasındadır";
+  const near=REST.partners.length?`${REST.partners.length} tərəfdaş · endirimlər`:"Yaxınlıqda sağlam yemək";
+  let h="";
+  if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
+  h+=`<section class="status"><div class="ring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="var(--surface2)" stroke-width="8" fill="none"/><circle class="p" cx="38" cy="38" r="${R}" stroke="${over?"var(--danger)":"var(--accent)"}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg><div class="c"><b>${r0(Math.abs(left))}</b><span>${over?"artıq":"qalıb"}</span></div></div>
+    <div class="ss"><span class="hi">${hi} · ${dDay(new Date())}</span><span class="msg">${msg}</span><div class="pills"><span>${r0(t.k)} / ${c.target} kkal</span><span>${(t.water/1000).toFixed(1)} L su</span></div></div></section>`;
+  h+=`<div class="quads">
+    <button class="quad q1" data-go="scan"><span class="qi"><svg viewBox="0 0 24 24">${ICON.cam}</svg></span><span><b>Şəkil çək</b><small>Kalorini AI hesablasın</small></span></button>
+    <button class="quad q2" data-go="diary"><span class="qi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>Gündəlik</b><small>${over?r0(-left)+" kkal artıq":r0(left)+" kkal qalıb"}</small></span></button>
+    <button class="quad q3" data-go="move"><span class="qi"><svg viewBox="0 0 24 24">${ICON.run}</svg></span><span><b>Hərəkət</b><small>${TR.state!=="idle"?"Davam edir · "+(TR.dist/1000).toFixed(2)+" km":"Start · GPS xəritə"}</small></span></button>
+    <button class="quad q4" data-go="rest"><span class="qi"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Restoranlar</b><small>${near}</small></span></button>
+  </div>`;
+  h+=`<div class="strip"><button data-w="250"><b style="color:var(--water)">+250</b>ml su</button><button data-go="food"><b style="color:var(--accent)">+</b>Yemək seç</button><button data-go="plan"><b style="color:var(--sun)">Menyu</b>bu günə</button></div>`;
+  const a=alerts(t,c).filter(x=>x[0]==="danger");a.forEach(x=>h+=`<div class="alert danger"><span class="dot"></span><div>${x[1]}</div></div>`);
+  h+=`<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${TIPS[new Date().getDate()%TIPS.length]}</p></section>`;
+  return h;
+}
+function weekChart(c){
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push([d,totals(dk(d)).k])}
+  if(!days.some(x=>x[1]>0))return "";
+  const W=340,H=170,L=34,B=24,T=12,max=Math.max(c.target*1.3,...days.map(x=>x[1])),y=v=>T+(H-T-B)*(1-v/max),bw=(W-L-8)/7;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Son 7 gün">`;
+  [0,Math.round(max/2/100)*100].forEach(v=>s+=`<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${y(v)+4}" font-size="10" text-anchor="end" fill="var(--muted)">${v}</text>`);
+  days.forEach(([d,k],i)=>{const x=L+4+i*bw;s+=`<rect x="${x+bw*.18}" y="${y(k)}" width="${bw*.64}" height="${H-B-y(k)}" rx="5" fill="${k>c.target?"var(--danger)":"var(--accent)"}" opacity="${i===6?1:.7}"/><text x="${x+bw/2}" y="${H-8}" font-size="10" text-anchor="middle" fill="var(--muted)">${AZWS[d.getDay()]}</text>`});
+  s+=`<line x1="${L}" x2="${W}" y1="${y(c.target)}" y2="${y(c.target)}" stroke="var(--sun)" stroke-width="2" stroke-dasharray="5 4"/><text x="${W-2}" y="${y(c.target)-5}" font-size="10" text-anchor="end" fill="var(--sun)" font-weight="700">hədəf ${c.target}</text></svg>`;
+  return `<section class="card"><h2>Son 7 gün</h2>${s}</section>`;
+}
+
+// ================= FOOD
+let CAT="Hamısı",Q="";
+function vFood(){
+  const list=FOODS.filter(f=>(CAT==="Hamısı"||f[6]===CAT)&&f[0].toLowerCase().includes(Q.toLowerCase()));
+  return `<section class="card"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Axtar: plov, ayran, alma…" value="${esc(Q)}"></div>
+    <div class="chips">${CATS.map(c=>`<button class="chip ${c===CAT?"on":""}" data-cat="${c}">${c}</button>`).join("")}</div>
+    <div class="list">${list.map(f=>`<button class="item" data-f="${esc(f[0])}"><span class="n">${avatar(f[0],f[6])}<div><b>${esc(f[0])}</b><span>porsiya ${f[5]} q · Z ${f[2]} / Y ${f[3]} / K ${f[4]}</span></div></span><span class="k">${f[1]}<span class="small muted"> /100</span></span></button>`).join("")||`<p class="muted small">Tapılmadı. Şəklini çəkin və ya aşağıda öz məhsulunuzu yazın.</p>`}</div></section>
+  <section class="card"><h2>Öz məhsulum</h2><p class="small muted" style="margin:0">Qablaşdırmadakı "100 q-da enerji" rəqəmini yazın.</p><label class="f">Ad<input id="cn" placeholder="məs. Protein batonu"></label>
+    <div class="grid3"><label class="f">kkal/100 q<input id="ck" type="number" inputmode="decimal"></label><label class="f">Miqdar (q)<input id="cg" type="number" inputmode="numeric" value="100"></label><label class="f">Vaxt<select id="cm">${MEALS.map(m=>`<option ${m===mealNow()?"selected":""}>${m}</option>`).join("")}</select></label></div>
+    <button class="primary" id="addC">Əlavə et</button></section>`;
+}
+function vFoodItem(name){
+  const f=FMAP[name];if(!f)return vFood();
+  return `<section class="card"><div class="row" style="flex-wrap:nowrap">${avatar(f[0],f[6])}<div style="min-width:0"><h2>${esc(f[0])}</h2><span class="small muted">${f[6]} · ${f[1]} kkal / 100 q</span></div></div>
+    <div class="grid2"><label class="f">Miqdar (q/ml)<input id="g" type="number" inputmode="numeric" value="${f[5]}" min="1"></label><label class="f">Vaxt<select id="m">${MEALS.map(m=>`<option ${m===mealNow()?"selected":""}>${m}</option>`).join("")}</select></label></div>
+    <div class="chips">${[0.5,1,1.5,2].map(x=>`<button class="chip" data-por="${r0(f[5]*x)}">${x===1?"1 porsiya":x+" porsiya"}</button>`).join("")}</div>
+    <div class="verdict ok" id="prev"></div>
+    <button class="primary big" id="addF">Əlavə et</button></section>`;
+}
+function prevFood(){const f=FMAP[decodeURIComponent(curHash().slice(3))],g=+$("#g").value||0,x=g/100,k=f[1]*x,c=calc(),t=totals(),left=c.target+t.burn-t.k,el=$("#prev");
+  el.className="verdict "+(k>left?"hi":"ok");el.innerHTML=`<span class="v">${r0(k)}</span><div class="small"><b>${k>left?"Limitdən çoxdur":"Limitə sığır"}</b><br>Z ${r0(f[2]*x)} q · Y ${r0(f[3]*x)} q · K ${r0(f[4]*x)} q</div>`}
+
+// ================= SCAN (AI)
+const SC={file:null,url:"",note:"",busy:false,res:null,err:"",ctl:null};
+function vScan(){
+  const key=aiKey();
+  let h=`<section class="card">
+   <div class="drop">${SC.url?`<img src="${SC.url}" alt="Seçilmiş şəkil">`:`<div class="ph"><svg viewBox="0 0 24 24">${ICON.cam}</svg><b>Yeməyin, içkinin və ya etiketin şəklini çəkin</b><span class="small">Boşqabı yuxarıdan, yaxşı işıqda çəkin</span></div>`}</div>
+   <div class="grid2"><label class="filebtn main">Kamera<input id="camIn" type="file" accept="image/*" capture="environment"></label><label class="filebtn">Qalereya<input id="galIn" type="file" accept="image/*"></label></div>
+   <label class="f">Əlavə qeyd (istəyə bağlı)<textarea id="note" placeholder="məs: yarım porsiya, çayda 2 qaşıq şəkər, yağda qızardılıb">${esc(SC.note)}</textarea></label>
+   ${SC.busy?`<div class="row"><span class="spin"></span><span style="flex:1">Analiz edilir…</span><button class="ghost" id="stopA">Dayandır</button></div>`:`<button class="primary big" id="anal">${SC.res?"Qeydə görə yenidən hesabla":"Kalorini hesabla"}</button>`}
+   ${SC.err?`<div class="alert warn"><span class="dot"></span><div>${SC.err}</div></div>`:""}
+   ${!key?`<div class="alert info"><span class="dot"></span><div>Şəkil analizi üçün bir dəfəlik pulsuz AI açarı lazımdır (2 dəqiqə).<div class="row" style="margin-top:8px"><button class="primary" data-go="ai">Açarı qoş</button></div></div></div>`:""}
+  </section>`;
+  if(SC.res)h+=scanResult();
+  return h;
+}
+function scTotals(){return(SC.res.items||[]).reduce((t,i)=>{const x=(+i.grams||0)/100;t.k+=(+i.kcal_per100||0)*x;t.p+=(+i.p100||0)*x;t.f+=(+i.f100||0)*x;t.c+=(+i.c100||0)*x;return t},{k:0,p:0,f:0,c:0})}
+function scanResult(){
+  const r=SC.res,c=calc(),t=totals(),left=c.target+t.burn-t.k;
+  if(r.recognized===false||!(r.items||[]).length)return `<section class="card"><div class="alert warn"><span class="dot"></span><div>${esc(r.advice||"Şəkildə qida tanınmadı. Başqa şəkil çəkin və ya qeyddə yazın.")}</div></div></section>`;
+  const s=scTotals(),share=s.k/c.target,v=s.k>Math.max(left,0)?["hi","Çoxdur",`Qalan limitinizdən ${r0(s.k-Math.max(left,0))} kkal artıqdır.`]:share<0.1?["lo","Azdır",`Gündəlik normanın cəmi ${r0(share*100)}%-i.`]:["ok","Uyğundur",`Gündəlik normanın ${r0(share*100)}%-i, limitə sığır.`];
+  return `<section class="card"><div class="verdict ${v[0]}"><span class="v">${r0(s.k)}<span style="font-size:13px"> kkal</span></span><div><b>${v[1]}</b><div class="small">${v[2]}</div></div></div>
+    <div class="grid3"><div class="st"><small>Zülal</small><b>${r0(s.p)} q</b></div><div class="st"><small>Yağ</small><b>${r0(s.f)} q</b></div><div class="st"><small>Karb.</small><b>${r0(s.c)} q</b></div></div>
+    <h3>Tərkib · qramı düzəldə bilərsiniz</h3>
+    <div>${r.items.map((i,k)=>`<div class="ritem"><div style="min-width:0"><b style="overflow-wrap:anywhere">${esc(i.name)}</b><div class="small muted">${r0(+i.kcal_per100||0)} kkal/100${i.confidence==="aşağı"?` · <span style="color:var(--warn);font-weight:800">əmin deyil</span>`:""}</div></div><input type="number" inputmode="numeric" value="${r0(+i.grams||0)}" data-gi="${k}" aria-label="Qram"><span class="k">${r0((+i.kcal_per100||0)*(+i.grams||0)/100)}</span></div>`).join("")}</div>
+    ${(r.questions||[]).length?`<div class="alert info"><span class="dot"></span><div><b>Dəqiqləşdirin:</b><ul class="qs">${r.questions.map(q=>`<li>${esc(q)}</li>`).join("")}</ul><span class="small muted">Cavabı yuxarıdakı qeyd sahəsinə yazıb yenidən hesablayın.</span></div></div>`:""}
+    ${r.advice?`<div><h3>Məsləhət</h3><p style="margin:6px 0 0">${esc(r.advice)}</p></div>`:""}
+    <div class="grid2"><label class="f">Vaxt<select id="scMeal">${MEALS.map(m=>`<option ${m===mealNow()?"selected":""}>${m}</option>`).join("")}</select></label><button class="primary" id="scAdd" style="align-self:end">Bugünə əlavə et</button></div>
+    <p class="small muted" style="margin:0">Şəkildən hesablama təxminidir, ±20% fərq ola bilər.</p></section>`;
+}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1280,sc=Math.min(1,m/Math.max(img.width,img.height)),cv=document.createElement("canvas");cv.width=r0(img.width*sc);cv.height=r0(img.height*sc);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",0.82).split(",")[1])};img.onerror=()=>rej(new Error("img"));img.src=URL.createObjectURL(file)})}
+const MODELS=["gemini-2.5-flash","gemini-flash-latest","gemini-3-flash-preview","gemini-2.5-flash-lite"];
+async function askAI(parts,signal){
+  let last;for(const m of (S.ai.model?[S.ai.model,...MODELS.filter(x=>x!==S.ai.model)]:MODELS)){
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:"POST",signal,headers:{"Content-Type":"application/json","x-goog-api-key":aiKey()},
+      body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}})});
+    if(r.status===404){last={status:404};continue}
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw{status:r.status,msg:j?.error?.message||""};
+    S.ai.model=m;save();
+    const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("");
+    const a=txt.indexOf("{"),b=txt.lastIndexOf("}");if(a<0)throw{status:"json"};
+    return JSON.parse(txt.slice(a,b+1));
+  }
+  throw last||{status:404};
+}
+async function analyze(){
+  SC.note=($("#note")?.value||"").trim();
+  if(!aiKey()){go("ai");return}
+  if(!SC.file&&!SC.note){SC.err="Şəkil çəkin və ya nə yediyinizi qeyddə yazın.";return render()}
+  const c=calc(),t=totals(),p=S.profile;
+  const prompt=`Sən qidalanma üzrə köməkçisən. ${SC.file?"Şəkildə yemək, içki və ya qida məhsulu (etiket ola bilər) var.":"Şəkil yoxdur, yalnız istifadəçinin təsviri var."}
+Tərkibdəki hər komponenti müəyyən et, təxmini çəkisini (qram və ya ml) və 100 q-a düşən kalori, zülal, yağ, karbohidratı ver. Azərbaycan mətbəxini yaxşı tanı (plov, dolma, qutab, piti, düşbərə, kabab, dovğa və s.). Etiket görünürsə, etiketdəki rəqəmləri istifadə et.
+İstifadəçinin dəqiqləşdirməsi (varsa, ona üstünlük ver): "${SC.note||"yoxdur"}"
+İstifadəçi: ${p.sex==="m"?"kişi":"qadın"}, ${p.age} yaş, ${p.w} kq, məqsəd: ${GOALS[p.goal]}. Gündəlik hədəf ${c.target} kkal, bu gün artıq ${r0(t.k)} kkal yeyib, hərəkətlə ${r0(t.burn)} kkal yandırıb.
+Əmin olmadığın vacib məqamlar üçün (porsiya, bişirmə üsulu, yağ, şəkər) 1–3 qısa sual yaz. Qidaya aid olmayan şəkildə recognized=false qoy.
+"advice": 2–3 cümləlik praktik məsləhət: bu gün üçün çoxdur, yoxsa uyğundur, necə yüngülləşdirmək və ya nə ilə tamamlamaq olar. Tibbi diaqnoz və dərman tövsiyəsi vermə.
+Yalnız bu JSON-u qaytar, mətnlər Azərbaycan dilində:
+{"recognized":true,"items":[{"name":"Plov","grams":300,"kcal_per100":180,"p100":7,"f100":6,"c100":25,"confidence":"yüksək|orta|aşağı"}],"questions":["..."],"advice":"..."}`;
+  SC.busy=true;SC.err="";SC.ctl=new AbortController();render();
+  try{
+    const parts=[{text:prompt}];if(SC.file)parts.push({inline_data:{mime_type:"image/jpeg",data:await shrink(SC.file)}});
+    const res=await askAI(parts,SC.ctl.signal);if(!res||!Array.isArray(res.items))throw{status:"json"};SC.res=res;
+  }catch(e){
+    if(e?.name==="AbortError")SC.err="";
+    else if(e?.status===400&&/API key/i.test(e.msg))SC.err=`AI açarı yanlışdır. <a href="#ai">Açarı yoxlayın</a>.`;
+    else if(e?.status===403)SC.err="AI açarı bu xidmətə icazəli deyil. Açarı yenidən yaradın.";
+    else if(e?.status===429)SC.err="Pulsuz limit bir müddət doldu. Bir dəqiqə sonra yenidən cəhd edin.";
+    else if(e?.status==="json")SC.err="Cavab oxunmadı. Yenidən cəhd edin.";
+    else if(e?.status===404)SC.err="AI modeli tapılmadı. Bir az sonra yenidən cəhd edin.";
+    else if(!navigator.onLine)SC.err="İnternet yoxdur. Bağlantını yoxlayın.";
+    else SC.err="Bağlantı xətası. Yenidən cəhd edin."+(e?.msg?` (${esc(e.msg.slice(0,120))})`:"");
+  }finally{SC.busy=false;if(curHash()==="scan")render()}
+}
+function vAI(){
+  return `<section class="card"><h2>Pulsuz AI açarı qoşun</h2><p class="small muted" style="margin:0">Şəkil analizi Google Gemini ilə işləyir. Açar pulsuzdur, yalnız bu telefonda saxlanılır.</p>
+    <ol class="steps"><li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener"><b>aistudio.google.com/apikey</b></a> açın və Google hesabınızla daxil olun.</li>
+    <li><b>"Create API key"</b> düyməsini basın.</li><li>Açarın yanındakı <b>kopyala</b> ikonuna basın.</li><li>Aşağıya yapışdırıb <b>Yadda saxla</b> basın.</li></ol>
+    <label class="f">AI açarı<input id="aiKey" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Açarı bura yapışdırın" value="${esc(S.ai.key)}"></label>
+    <div id="aiMsg" class="small" hidden></div>
+    <div class="grid2"><button class="primary" id="aiSave">Yadda saxla</button><button class="ghost" id="aiDel">Sil</button></div>
+    <p class="small muted" style="margin:0">Pulsuz planda gündəlik limit var, ailə istifadəsi üçün kifayətdir. Göndərilən şəkillər Google tərəfindən emal olunur.</p></section>`;
+}
+
+// ================= PLAN
+const PLANS={
+ lose:[["Səhər",[["Yulaf (quru)",50],["Süd 3.2%",200],["Alma",150],["Çay (şəkərsiz)",250]]],["Nahar",[["Toyuq döşü",150],["Qarabaşaq (bişmiş)",150],["Çoban salatı",200]]],["Ara qəlyanaltı",[["Qatıq",200],["Qoz",15]]],["Şam",[["Qızılbalıq",130],["Lobya (bişmiş)",100],["Çoban salatı",150]]]],
+ keep:[["Səhər",[["Yumurta (1 ədəd ≈ 50 q)",100],["Ağ pendir",40],["Təndir çörəyi",60],["Pomidor",120],["Çay (şəkərsiz)",250]]],["Nahar",[["Mərci şorbası",300],["Toyuq kababı",150],["Düyü (bişmiş)",150]]],["Ara qəlyanaltı",[["Banan",120],["Badam",20]]],["Şam",[["Dolma (yarpaq)",250],["Qatıq",150]]]],
+ gain:[["Səhər",[["Yulaf (quru)",80],["Süd 3.2%",300],["Banan",120],["Bal",20],["Yumurta (1 ədəd ≈ 50 q)",100]]],["Nahar",[["Plov (toyuqlu)",350],["Toyuq döşü",120],["Çoban salatı",150]]],["Ara qəlyanaltı",[["Kəsmik 5%",200],["Qoz",30],["Xurma",40]]],["Şam",[["Qızılbalıq",200],["Kartof (qaynadılmış)",250],["Qara çörək",60]]]]
+};
+const FIT={
+ lose:[["B.e.","35–45 dəq sürətli yeriş"],["Ç.a.","Güc məşqi: squat, öndən dayaq, oturub-durma — 3×12"],["Ç.","Velosiped və ya üzgüçülük 30 dəq"],["C.a.","Güc məşqi + 10 dəq pilləkən"],["C.","45 dəq yeriş"],["Ş.","Yoqa / dartınma 30 dəq"],["B.","İstirahət, 8–10 min addım"]],
+ keep:[["B.e.","Güc məşqi (bütün bədən) 40 dəq"],["Ç.a.","30 dəq yeriş"],["Ç.","Qaçış və ya velosiped 30 dəq"],["C.a.","İstirahət / dartınma"],["C.","Güc məşqi 40 dəq"],["Ş.","İdman oyunu (futbol, üzgüçülük)"],["B.","İstirahət"]],
+ gain:[["B.e.","Güc: sinə + çiyin, 4×8–10"],["Ç.a.","Güc: ayaq, 4×8–10"],["Ç.","Yüngül kardio 20 dəq + dartınma"],["C.a.","Güc: kürək + bazu, 4×8–10"],["C.","Güc: bütün bədən, 3×10"],["Ş.","Yeriş 30 dəq"],["B.","İstirahət, yaxşı yuxu"]]
+};
+function scaledPlan(){const c=calc(),plan=PLANS[S.profile.goal];const base=plan.reduce((s,[,it])=>s+it.reduce((a,[n,g])=>a+FMAP[n][1]*g/100,0),0);const f=Math.min(1.5,Math.max(.7,c.target/base));return plan.map(([m,it])=>[m,it.map(([n,g])=>[n,Math.max(5,Math.round(g*f/5)*5)])])}
+let PLANTAB="menu";
+function vPlan(){
+  const c=calc(),g=S.profile.goal,sp=scaledPlan(),kc=it=>it.reduce((a,[n,gr])=>a+FMAP[n][1]*gr/100,0),tot=sp.reduce((s,[,it])=>s+kc(it),0);
+  let h=`<div class="seg"><button data-pt="menu" class="${PLANTAB==="menu"?"on":""}">Menyu</button><button data-pt="fit" class="${PLANTAB==="fit"?"on":""}">Məşq</button><button data-pt="tips" class="${PLANTAB==="tips"?"on":""}">Qaydalar</button></div>`;
+  if(PLANTAB==="menu"){h+=`<section class="card"><div class="row between"><h2>Günlük menyu</h2><span class="tag">${GOALS[g]}</span></div><p class="small muted" style="margin:0">Hədəfiniz ${c.target} kkal. Menyu ${r0(tot)} kkal-a uyğunlaşdırılıb.</p>`;
+    sp.forEach(([m,it])=>h+=`<div class="meal"><div class="row between"><b>${m}</b><span class="small muted">${r0(kc(it))} kkal</span></div><span class="small">${it.map(([n,gr])=>`${esc(n)} — ${gr} q`).join(" · ")}</span></div>`);
+    h+=`<button class="primary big" id="usePlan">Bu menyunu bugünə əlavə et</button></section>`}
+  if(PLANTAB==="fit")h+=`<section class="card"><div class="row between"><h2>Həftəlik məşq</h2><span class="tag">${GOALS[g]}</span></div><div>${FIT[g].map(([d,t])=>`<div class="day"><b>${d}</b><span>${t}</span></div>`).join("")}</div><p class="small muted" style="margin:0">Hər məşqdən əvvəl 5–10 dəq isinmə. Ağrı, baş gicəllənmə və ya təngnəfəslik olarsa dayanın.</p></section>`;
+  if(PLANTAB==="tips")h+=`<section class="card"><h2>Gündəlik qaydalar</h2><ul class="tips"><li>Gündə ən azı 400 q meyvə və tərəvəz (ÜST).</li><li>Əlavə şəkər ümumi kalorinin 10%-dən az olsun.</li><li>Duz gündə 5 q-dan az (bir çay qaşığı).</li><li>Həftədə ən azı 150–300 dəq orta aktivlik və 2 gün güc məşqi.</li><li>Şirin içkiləri su, şəkərsiz çay və ya ayranla əvəz edin.</li><li>Yuxu 7–9 saat.</li><li>Şam yeməyini yatmazdan 2–3 saat əvvəl bitirin.</li></ul></section>
+    <section class="card"><h2>Təbii vasitələr haqqında</h2><p class="small" style="margin:0">Bitki çayları (çobanyastığı, nanə, kəklikotu) içki kimi menyuya daxil edilə bilər. Bitki preparatlarını müalicə məqsədilə istifadə etməzdən əvvəl həkimlə məsləhətləşin: bəzi otlar dərmanlarla qarşılıqlı təsirə girir.</p></section>`;
+  return h;
+}
+
+// ================= PROFILE
+function vProfile(){
+  const p=S.profile,c=calc(),bmiC=c.bmi<18.5?["Çəki azlığı","var(--warn)"]:c.bmi<25?["Normal","var(--ok)"]:c.bmi<30?["Artıq çəki","var(--warn)"]:["Piylənmə","var(--danger)"];
+  return `<section class="card"><h2>Məlumatlarım</h2>
+    <div class="grid2"><label class="f">Cins<select id="p_sex"><option value="m" ${p.sex==="m"?"selected":""}>Kişi</option><option value="f" ${p.sex==="f"?"selected":""}>Qadın</option></select></label><label class="f">Yaş<input id="p_age" type="number" inputmode="numeric" value="${p.age}"></label>
+    <label class="f">Boy (sm)<input id="p_h" type="number" inputmode="numeric" value="${p.h}"></label><label class="f">Çəki (kq)<input id="p_w" type="number" inputmode="decimal" value="${p.w}"></label></div>
+    <label class="f">Aktivlik<select id="p_act">${ACT.map((a,i)=>`<option value="${i}" ${+p.act===i?"selected":""}>${a[0]}</option>`).join("")}</select></label>
+    <label class="f">Məqsəd<select id="p_goal">${Object.entries(GOALS).map(([k,v])=>`<option value="${k}" ${p.goal===k?"selected":""}>${v}</option>`).join("")}</select></label>
+    <button class="primary big" id="saveP">Yadda saxla</button></section>
+  <section class="card"><h2>Normalarım</h2><dl class="kv"><dt>Bədən kütlə indeksi</dt><dd style="color:${bmiC[1]}">${c.bmi.toFixed(1)} · ${bmiC[0]}</dd><dt>Sağlam çəki</dt><dd>${r0(18.5*(p.h/100)**2)}–${r0(24.9*(p.h/100)**2)} kq</dd>
+    <dt>Bazal metabolizm</dt><dd>${c.bmr} kkal</dd><dt>Gündəlik sərfiyyat</dt><dd>${c.tdee} kkal</dd><dt>Hədəf kalori</dt><dd>${c.target} kkal</dd><dt>Zülal / Yağ / Karb.</dt><dd>${c.prot} / ${c.fat} / ${c.carb} q</dd><dt>Su</dt><dd>${c.water} ml</dd></dl>
+    <p class="small muted" style="margin:0">Mifflin–St Jeor düsturu. Xroniki xəstəlik, hamiləlik və ya dərman qəbulu varsa normaları həkimlə dəqiqləşdirin.</p></section>
+  <section class="card"><h2>Tənzimləmələr</h2>
+    <button class="item" data-go="ai"><span class="n"><span class="av" style="background:linear-gradient(150deg,var(--coral),var(--sun))">AI</span><div><b>Şəkil analizi açarı</b><span>${S.ai.key?"Öz açarınız":CONFIG.geminiKey?"Ümumi açar işləyir":"Qoşulmayıb"}</span></div></span><span class="k">›</span></button>
+    <button class="item" id="howInstall"><span class="n"><span class="av" style="background:var(--accent)">↓</span><div><b>Telefona quraşdırmaq</b><span>Ana ekrana ikon əlavə et</span></div></span><span class="k">›</span></button>
+    <button class="item" id="wipe"><span class="n"><span class="av" style="background:var(--danger)">×</span><div><b>Bütün qeydləri sil</b><span>Profil qalır</span></div></span><span class="k">›</span></button>
+    <div id="wipeC" hidden class="row"><span class="small">Əminsiniz?</span><button class="red" id="wipeY">Bəli, sil</button><button class="ghost" id="wipeN">Xeyr</button></div></section>
+  <p class="foot">Vital Rhythm · by VUİM · Məlumatlar yalnız bu telefonda saxlanılır. Proqram tibbi diaqnoz vermir.</p>`;
+}
+
+// ================= GPS
+const TR={state:"idle",sport:"walk",pts:[],dist:0,startTs:0,lastTick:0,elapsed:0,maxSp:0,gain:0,loss:0,minAlt:null,maxAlt:null,lastAlt:null,splits:[],lastSplitT:0,lastSplitD:0,watch:null,timer:null,acc:null,curSp:0,wake:null};
+let MAP=null,LINE=null,ME=null;
+const hav=(a,b)=>{const R=6371000,t=x=>x*Math.PI/180,dl=t(b[0]-a[0]),dn=t(b[1]-a[1]),s=Math.sin(dl/2)**2+Math.cos(t(a[0]))*Math.cos(t(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(s))};
+const steps=(dist,sport)=>sport==="bike"?0:r0(dist/(((+S.profile.h||170)/100)*(sport==="run"?0.65:0.415)));
+const kcalFor=(sport,sec)=>SPORTS[sport][1]*3.5*(+S.profile.w||70)/200*(sec/60);
+function curStats(){const t=TR.elapsed,km=TR.dist/1000;let fast=null,slow=null;TR.splits.forEach((s,i)=>{if(!fast||s<fast.t)fast={i,t:s};if(!slow||s>slow.t)slow={i,t:s}});
+  return{t,km,avg:t>0?km/(t/3600):0,max:TR.maxSp*3.6,cur:TR.curSp*3.6,gain:TR.gain,loss:TR.loss,minA:TR.minAlt,maxA:TR.maxAlt,pace:km>0?t/km:0,fast,slow,steps:steps(TR.dist,TR.sport),kcal:kcalFor(TR.sport,t)}}
+function statGrid(s,sport){const bike=sport==="bike";
+  return `<div class="stats"><div class="st"><small>Vaxt</small><b>${fmtT(s.t)}</b></div><div class="st"><small>${bike?"Sürət":"Temp /km"}</small><b>${bike?s.cur.toFixed(1):fmtPace(s.pace)}</b></div><div class="st"><small>Orta sürət</small><b>${s.avg.toFixed(1)}</b></div>
+  <div class="st"><small>Maks. sürət</small><b>${s.max.toFixed(1)}</b></div><div class="st"><small>Qalxma ↑</small><b>${r0(s.gain)} m</b></div><div class="st"><small>Enmə ↓</small><b>${r0(s.loss)} m</b></div>
+  <div class="st"><small>Hündürlük</small><b>${s.minA==null?"—":r0(s.minA)+"–"+r0(s.maxA)}</b></div><div class="st"><small>Addım</small><b>${bike?"—":s.steps.toLocaleString()}</b></div><div class="st"><small>Kalori</small><b>${r0(s.kcal)}</b></div></div>
+  <p class="small muted" style="margin:0;text-align:center">Sürət km/saat ilə</p>
+  ${s.fast?`<dl class="kv"><dt>Ən sürətli km</dt><dd>${s.fast.i+1}-ci · ${fmtT(s.fast.t)}</dd><dt>Ən yavaş km</dt><dd>${s.slow.i+1}-ci · ${fmtT(s.slow.t)}</dd></dl>`:""}`}
+function gpsQ(){return TR.acc==null?["GPS gözlənilir","var(--muted)"]:TR.acc<=15?["GPS əla · ±"+r0(TR.acc)+" m","var(--ok)"]:TR.acc<=35?["GPS orta · ±"+r0(TR.acc)+" m","var(--warn)"]:["GPS zəif · ±"+r0(TR.acc)+" m","var(--danger)"]}
+function vMove(){
+  const s=curStats(),live=TR.state!=="idle",q=gpsQ();
+  let h=`<section class="card">${live?"":`<div class="seg">${Object.entries(SPORTS).map(([k,v])=>`<button data-sport="${k}" class="${TR.sport===k?"on":""}">${v[0]}</button>`).join("")}</div>`}
+    <div id="map"></div>
+    <div class="row between"><span class="gpsq" id="gq" style="color:${q[1]}"><i></i>${q[0]}</span>${live?`<span class="tag">${SPORTS[TR.sport][0]}${TR.state==="paused"?" · fasilə":""}</span>`:""}</div>
+    <div class="bigstat"><b id="bigKm">${s.km.toFixed(2)}</b><span>km</span></div><div id="liveStats">${statGrid(s,TR.sport)}</div>
+    ${TR.state==="idle"?`<button class="primary big" id="trStart">Start</button><p class="small muted" style="margin:0">Hərəkət zamanı proqram açıq qalsın. Telefon kilidlənəndə GPS dayana bilər.</p>`:`<div class="ctrl">${TR.state==="running"?`<button class="big" id="trPause">Fasilə</button>`:`<button class="primary big" id="trResume">Davam</button>`}<button class="red big" id="trStop">Bitir</button></div>`}</section>`;
+  if(S.acts.length)h+=`<section class="card"><h2>Tarixçə</h2><div class="list">${S.acts.map((a,i)=>`<button class="item" data-act="${i}"><span class="n">${avatar(SPORTS[a.sport][0],"Zülal")}<div><b>${SPORTS[a.sport][0]} · ${(a.dist/1000).toFixed(2)} km</b><span>${dDay(a.start)}, ${dTime(a.start)} · ${fmtT(a.t)}</span></div></span><span class="k">${r0(a.kcal)} kkal ›</span></button>`).join("")}</div></section>`;
+  return h;
+}
+function vActivity(i){const a=S.acts[i];if(!a)return vMove();
+  return `<section class="card"><div class="row between"><h2>${AZW[new Date(a.start).getDay()]}, ${dDay(a.start)} · ${dTime(a.start)}</h2><span class="tag">${SPORTS[a.sport][0]}</span></div>
+    <div id="map"></div><div class="bigstat"><b>${(a.dist/1000).toFixed(2)}</b><span>km</span></div>${statGrid(a.stats,a.sport)}
+    <div class="grid2"><button class="primary" id="shareImg">Şəkil kimi paylaş</button><button id="shareGpx">GPX (Strava)</button></div>
+    <button class="ghost" id="actDel">Bu hərəkəti sil</button></section>`}
+function initMap(pts,live){
+  const el=$("#map");if(!el)return;
+  if(typeof L==="undefined"){el.innerHTML=`<div class="small muted" style="padding:16px">Xəritə yüklənmədi. İnterneti yoxlayın. Məsafə yenə də ölçülür.</div>`;return}
+  MAP=L.map(el,{zoomControl:false}).setView(pts.length?pts[pts.length-1]:[40.4093,49.8671],pts.length?16:12);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(MAP);
+  LINE=L.polyline(pts.map(p=>[p[0],p[1]]),{color:"#E26B4E",weight:5,opacity:.95}).addTo(MAP);
+  if(pts.length){L.circleMarker(pts[0],{radius:7,color:"#fff",weight:2,fillColor:"#15803D",fillOpacity:1}).addTo(MAP);
+    if(!live){L.circleMarker(pts[pts.length-1],{radius:7,color:"#fff",weight:2,fillColor:"#C0262D",fillOpacity:1}).addTo(MAP);if(pts.length>1)MAP.fitBounds(LINE.getBounds(),{padding:[24,24]})}
+    else ME=L.circleMarker(pts[pts.length-1],{radius:8,color:"#fff",weight:3,fillColor:"#2484C4",fillOpacity:1}).addTo(MAP)}
+}
+function onPos(pos){
+  const c=pos.coords;TR.acc=c.accuracy;if(TR.state!=="running"||c.accuracy>40){updLive();return}
+  const p=[c.latitude,c.longitude,c.altitude,pos.timestamp],last=TR.pts[TR.pts.length-1];
+  if(last){const d=hav(last,p),dt=(p[3]-last[3])/1000;if(dt<=0)return;const sp=c.speed!=null&&c.speed>=0?c.speed:d/dt;
+    if(sp>(TR.sport==="bike"?25:12))return;
+    if(d<Math.max(3,c.accuracy*0.4)){TR.curSp=sp<0.5?0:sp;updLive();return}
+    TR.dist+=d;TR.curSp=sp;if(sp>TR.maxSp&&dt>=0.5)TR.maxSp=sp;
+    while(TR.dist-TR.lastSplitD>=1000){TR.splits.push(TR.elapsed-TR.lastSplitT);TR.lastSplitT=TR.elapsed;TR.lastSplitD+=1000}}
+  if(c.altitude!=null){const a=c.altitude;TR.minAlt=TR.minAlt==null?a:Math.min(TR.minAlt,a);TR.maxAlt=TR.maxAlt==null?a:Math.max(TR.maxAlt,a);
+    if(TR.lastAlt==null)TR.lastAlt=a;else{const df=a-TR.lastAlt;if(Math.abs(df)>=3){if(df>0)TR.gain+=df;else TR.loss-=df;TR.lastAlt=a}}}
+  TR.pts.push(p);
+  if(LINE&&MAP){LINE.addLatLng([p[0],p[1]]);if(ME)ME.setLatLng([p[0],p[1]]);else ME=L.circleMarker([p[0],p[1]],{radius:8,color:"#fff",weight:3,fillColor:"#2484C4",fillOpacity:1}).addTo(MAP);MAP.panTo([p[0],p[1]],{animate:false})}
+  updLive();
+}
+function onErr(e){toast({1:"GPS icazəsi verilmədi. Telefonun parametrlərində yer icazəsi verin.",2:"Yer müəyyən edilmir. Açıq havaya çıxın.",3:"GPS cavab vermir, gözləyin."}[e.code]||"GPS xətası")}
+function updLive(){if(curHash()!=="move")return;const s=curStats(),k=$("#bigKm"),g=$("#liveStats"),q=$("#gq");if(k)k.textContent=s.km.toFixed(2);if(g)g.innerHTML=statGrid(s,TR.sport);if(q){const v=gpsQ();q.style.color=v[1];q.innerHTML=`<i></i>${v[0]}`}}
+function tick(){const now=Date.now();if(TR.state==="running")TR.elapsed+=(now-TR.lastTick)/1000;TR.lastTick=now;updLive()}
+async function wakeOn(){try{TR.wake=await navigator.wakeLock?.request("screen")}catch(e){}}
+function liveDot(){document.querySelector('nav.tabs [data-tab="move"]').classList.toggle("live",TR.state!=="idle")}
+function startTrack(){
+  if(!("geolocation" in navigator))return toast("Bu brauzer GPS-i dəstəkləmir");
+  Object.assign(TR,{state:"running",pts:[],dist:0,elapsed:0,maxSp:0,gain:0,loss:0,minAlt:null,maxAlt:null,lastAlt:null,splits:[],lastSplitT:0,lastSplitD:0,curSp:0,startTs:Date.now(),lastTick:Date.now()});
+  TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});TR.timer=setInterval(tick,1000);wakeOn();liveDot();render();
+}
+function stopTrack(){
+  if(TR.watch!=null)navigator.geolocation.clearWatch(TR.watch);clearInterval(TR.timer);try{TR.wake?.release()}catch(e){}
+  const s=curStats();TR.state="idle";liveDot();
+  if(TR.dist<20){toast("Məsafə çox qısadır, yadda saxlanılmadı");render();return}
+  let pts=TR.pts;if(pts.length>1500){const st=Math.ceil(pts.length/1500);pts=pts.filter((_,i)=>i%st===0||i===TR.pts.length-1)}
+  S.acts.unshift({sport:TR.sport,start:TR.startTs,t:s.t,dist:TR.dist,kcal:s.kcal,pts:pts.map(p=>[+p[0].toFixed(6),+p[1].toFixed(6),p[2]==null?null:+p[2].toFixed(1),p[3]]),stats:s});
+  day().ex.push({n:SPORTS[TR.sport][0]+" (GPS)",min:r0(s.t/60),kcal:s.kcal,km:s.km});save();
+  toast(`Əla! ${s.km.toFixed(2)} km, ${r0(s.kcal)} kkal`);go("act-0");
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&TR.state!=="idle")wakeOn()});
+function routeImage(a){
+  const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#0B5D4B");g.addColorStop(1,"#0C1311");x.fillStyle=g;x.fillRect(0,0,W,H);
+  const pts=a.pts;if(pts.length>1){let a1=Infinity,a2=-Infinity,o1=Infinity,o2=-Infinity;pts.forEach(p=>{a1=Math.min(a1,p[0]);a2=Math.max(a2,p[0]);o1=Math.min(o1,p[1]);o2=Math.max(o2,p[1])});
+    const k=Math.cos((a1+a2)/2*Math.PI/180),bw=(o2-o1)*k||1e-6,bh=(a2-a1)||1e-6,box=[90,210,W-180,690],sc=Math.min(box[2]/bw,box[3]/bh),ox=box[0]+(box[2]-bw*sc)/2,oy=box[1]+(box[3]-bh*sc)/2,P=p=>[ox+(p[1]-o1)*k*sc,oy+(a2-p[0])*sc];
+    x.lineJoin="round";x.lineCap="round";x.strokeStyle="#F08A70";x.lineWidth=14;x.beginPath();pts.forEach((p,i)=>{const q=P(p);i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1])});x.stroke();
+    [[pts[0],"#4ADE80"],[pts[pts.length-1],"#F2BC45"]].forEach(([p,c])=>{const q=P(p);x.fillStyle=c;x.beginPath();x.arc(q[0],q[1],18,0,7);x.fill();x.strokeStyle="#fff";x.lineWidth=5;x.stroke()})}
+  x.fillStyle="#EAFBF4";x.font="800 56px Unbounded, sans-serif";x.fillText("Vital Rhythm",90,120);
+  x.fillStyle="#9FD9C6";x.font="700 30px Manrope, sans-serif";x.fillText(SPORTS[a.sport][0]+" · "+dDay(a.start)+" "+new Date(a.start).getFullYear(),90,168);
+  const s=a.stats,it=[["Məsafə",(a.dist/1000).toFixed(2)+" km"],["Vaxt",fmtT(a.t)],[a.sport==="bike"?"Orta sürət":"Temp",a.sport==="bike"?s.avg.toFixed(1)+" km/s":fmtPace(s.pace)+" /km"],["Maks. sürət",s.max.toFixed(1)+" km/s"],["Qalxma",r0(s.gain)+" m"],["Kalori",r0(a.kcal)+" kkal"]];
+  it.forEach(([l,v],i)=>{const cx=90+(i%3)*320,cy=1000+Math.floor(i/3)*160;x.fillStyle="#9FD9C6";x.font="800 27px Manrope, sans-serif";x.fillText(l.toUpperCase(),cx,cy);x.fillStyle="#fff";x.font="700 48px Unbounded, sans-serif";x.fillText(v,cx,cy+62)});
+  x.fillStyle="#F2BC45";x.font="800 26px Manrope, sans-serif";x.fillText("by VUİM",90,H-60);
+  return new Promise(r=>cv.toBlob(r,"image/png"));
+}
+const gpx=a=>`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Vital Rhythm by VUIM" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${SPORTS[a.sport][0]} ${new Date(a.start).toISOString().slice(0,10)}</name><trkseg>${a.pts.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}">${p[2]!=null?`<ele>${p[2]}</ele>`:""}<time>${new Date(p[3]).toISOString()}</time></trkpt>`).join("")}</trkseg></trk></gpx>`;
+async function shareFile(blob,name,text){const file=new File([blob],name,{type:blob.type});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Vital Rhythm",text});return}}catch(e){if(e.name==="AbortError")return}
+  const u=URL.createObjectURL(blob),l=document.createElement("a");l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast("Fayl yükləndi")}
+
+
+// ================= RESTAURANTS (location → nearby healthy places from OpenStreetMap + paid partners with discounts)
+const REST={status:"idle",lat:null,lon:null,city:"",area:"",places:[],partners:[],filter:"healthy",err:""};
+fetch(CONFIG.partnersUrl,{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(j=>{REST.partners=Array.isArray(j)?j.filter(p=>p&&p.id&&p.name):[];if(["home","rest"].includes(curHash()))render()}).catch(()=>{});
+const HEALTHY=/salad|salat|vegan|vegetar|healthy|fit|green|bowl|smoothie|organic|detoks|detox|grill|balıq|fish|seafood|mediterr|poke|juice/i;
+function healthScore(t){let s=0;const all=[t.name,t.cuisine,t["name:en"],t.description].filter(Boolean).join(" ");
+  if(/yes|only/.test(t["diet:vegetarian"]||""))s+=2;if(/yes|only/.test(t["diet:vegan"]||""))s+=2;if(HEALTHY.test(all))s+=2;if(t.amenity==="fast_food")s-=3;return s}
+const distKm=(a,b,c,d)=>hav([a,b],[c,d])/1000;
+function locate(){
+  if(!("geolocation" in navigator)){REST.status="err";REST.err="Bu telefon yer məlumatı vermir.";return render()}
+  REST.status="loc";render();
+  navigator.geolocation.getCurrentPosition(async p=>{REST.lat=p.coords.latitude;REST.lon=p.coords.longitude;REST.status="loading";render();
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${REST.lat}&lon=${REST.lon}&zoom=14&accept-language=az`).then(r=>r.json()).then(j=>{const a=j.address||{};REST.city=a.city||a.town||a.village||a.state||"";REST.area=a.city_district||a.suburb||a.district||"";if(curHash()==="rest")render()}).catch(()=>{});
+    try{await loadPlaces(3000);if(REST.places.length<6)await loadPlaces(8000);REST.status="ok"}catch(e){REST.status="err";REST.err="Yerlər yüklənmədi. İnterneti yoxlayıb yenidən cəhd edin."}
+    if(curHash()==="rest")render()},
+  e=>{REST.status="err";REST.err=e.code===1?"Yer icazəsi verilmədi. Telefonun parametrlərində bu proqrama yer icazəsi verin.":"Yer müəyyən edilmədi. Bir az sonra yenidən cəhd edin.";render()},{enableHighAccuracy:false,timeout:15000,maximumAge:300000});
+}
+async function loadPlaces(rad){
+  const q=`[out:json][timeout:20];(node["amenity"~"^(restaurant|cafe|fast_food)$"](around:${rad},${REST.lat},${REST.lon});way["amenity"~"^(restaurant|cafe)$"](around:${rad},${REST.lat},${REST.lon}););out center 120;`;
+  const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(q)});if(!r.ok)throw new Error("overpass");
+  const j=await r.json();
+  REST.places=(j.elements||[]).map(e=>{const t=e.tags||{},la=e.lat??e.center?.lat,lo=e.lon??e.center?.lon;return{name:t.name||t["name:az"]||t["name:en"],cuisine:t.cuisine||"",amenity:t.amenity,phone:t.phone||t["contact:phone"]||"",lat:la,lon:lo,score:healthScore({...t,amenity:t.amenity}),d:distKm(REST.lat,REST.lon,la,lo)}}).filter(x=>x.name&&x.lat);
+}
+const AMEN={restaurant:"Restoran",cafe:"Kafe",fast_food:"Fast food"};
+const mapsLink=(la,lo,name)=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name?name+" ":"")}${la},${lo}`;
+function partnerCard(p){
+  const d=REST.lat&&p.lat?distKm(REST.lat,REST.lon,p.lat,p.lon):null;
+  return `<div class="pcard"><div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><div style="min-width:0"><b style="font-size:16px">${esc(p.name)}</b><div class="small muted">${esc(p.city||"")}${p.address?" · "+esc(p.address):""}${d!=null?" · "+d.toFixed(1)+" km":""}</div></div>${p.discount?`<span class="disc">−${esc(p.discount)}</span>`:""}</div>
+    ${p.demo?`<span class="tag" style="align-self:flex-start">nümunə · real tərəfdaş deyil</span>`:""}
+    ${(p.menu||[]).length?`<div class="list">${p.menu.slice(0,4).map(m=>`<div class="item" style="padding:7px 0"><div class="n"><div><b>${esc(m.name)}</b><span>${esc(m.note||"")}</span></div></div><span class="k">${r0(+m.kcal||0)} kkal</span></div>`).join("")}</div>`:""}
+    <div class="grid2"><button class="primary" data-coupon="${esc(p.id)}">Endirim kuponu</button><a class="filebtn" style="text-decoration:none;padding:12px" href="${mapsLink(p.lat,p.lon,p.name)}" target="_blank" rel="noopener">Xəritədə</a></div></div>`;
+}
+function vRest(){
+  let h="";
+  const loc=REST.lat?`<span class="tag">${esc([REST.city,REST.area].filter(Boolean).join(" · ")||"Yeriniz müəyyən edildi")}</span>`:"";
+  if(REST.partners.length){
+    const ps=[...REST.partners].sort((a,b)=>(REST.lat&&a.lat&&b.lat)?distKm(REST.lat,REST.lon,a.lat,a.lon)-distKm(REST.lat,REST.lon,b.lat,b.lon):0);
+    h+=`<section class="card"><div class="row between"><h2>Tərəfdaş restoranlar</h2>${loc}</div><p class="small muted" style="margin:0">Vital Rhythm istifadəçilərinə endirim edən, kalorisi göstərilmiş sağlam menyu verən yerlər.</p>${ps.map(partnerCard).join("")}</section>`;
+  }
+  h+=`<section class="card"><div class="row between"><h2>Yaxınlıqdakı yerlər</h2>${REST.partners.length?"":loc}</div>`;
+  if(REST.status==="idle")h+=`<p class="small muted" style="margin:0">Yerinizi müəyyən edək: Bakıda və ya regionda yaxın sağlam yemək yerlərini göstərək.</p><button class="primary big" id="locBtn">Yerimi müəyyən et</button>`;
+  else if(REST.status==="loc"||REST.status==="loading")h+=`<div class="row"><span class="spin"></span><span>${REST.status==="loc"?"Yeriniz müəyyən edilir…":"Yaxın yerlər axtarılır…"}</span></div>`;
+  else if(REST.status==="err")h+=`<div class="alert warn"><span class="dot"></span><div>${REST.err}</div></div><button class="primary" id="locBtn">Yenidən cəhd et</button>`;
+  else{
+    const list=REST.places.filter(x=>REST.filter==="all"||x.score>0).sort((a,b)=>REST.filter==="all"?a.d-b.d:(b.score-a.score)||(a.d-b.d)).slice(0,30);
+    h+=`<div class="seg" style="grid-template-columns:1fr 1fr"><button data-rf="healthy" class="${REST.filter==="healthy"?"on":""}">Sağlam seçimlər</button><button data-rf="all" class="${REST.filter==="all"?"on":""}">Hamısı</button></div><div id="rmap"></div>`;
+    h+=list.length?`<div class="list">${list.map(x=>`<a class="item" style="text-decoration:none" href="${mapsLink(x.lat,x.lon,x.name)}" target="_blank" rel="noopener"><span class="n">${avatar(x.name,x.score>0?"Tərəvəz":"Öz")}<div><b>${esc(x.name)}</b><span>${AMEN[x.amenity]||""}${x.cuisine?" · "+esc(x.cuisine.replace(/;/g,", ")):""}</span></div></span><span class="k">${x.d<1?r0(x.d*1000)+" m":x.d.toFixed(1)+" km"}${x.score>0?`<br><span class="hl">sağlam</span>`:""}</span></a>`).join("")}</div>`
+      :`<p class="small muted" style="margin:0">Bu ərazidə "sağlam" kimi işarələnmiş yer tapılmadı. "Hamısı" seçin.</p>`;
+    h+=`<p class="small muted" style="margin:0">Məlumat OpenStreetMap-dəndir. "Sağlam" işarəsi adı və mətbəxinə görə təxminidir.</p>`;
+  }
+  h+=`</section>`;
+  h+=`<section class="card tipcard"><h3>Restoranda sağlam seçim</h3><ul class="tips"><li>Qızardılmış yox, qril və ya buxarda bişmiş seçin.</li><li>Salatın sousunu ayrıca istəyin.</li><li>Çörək və şirin içkini azaldın, su sifariş edin.</li><li>Porsiya böyükdürsə, yarısını qablaşdırın.</li></ul></section>`;
+  if(CONFIG.contact)h+=`<section class="card"><h2>Restoran sahibisiniz?</h2><p class="small muted" style="margin:0">Sağlam menyunuzu Vital Rhythm istifadəçilərinə təqdim edin.</p><div class="row"><code>${esc(CONFIG.contact)}</code></div></section>`;
+  return h;
+}
+function initRestMap(){
+  const el=$("#rmap");if(!el||typeof L==="undefined"||!REST.lat)return;
+  MAP=L.map(el,{zoomControl:false}).setView([REST.lat,REST.lon],14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(MAP);
+  L.circleMarker([REST.lat,REST.lon],{radius:8,color:"#fff",weight:3,fillColor:"#2484C4",fillOpacity:1}).addTo(MAP).bindTooltip("Siz");
+  REST.partners.filter(p=>p.lat).forEach(p=>L.circleMarker([p.lat,p.lon],{radius:9,color:"#fff",weight:3,fillColor:"#E26B4E",fillOpacity:1}).addTo(MAP).bindPopup(esc(p.name)+(p.discount?" · −"+esc(p.discount):"")));
+  REST.places.filter(x=>REST.filter==="all"||x.score>0).slice(0,30).forEach(x=>L.circleMarker([x.lat,x.lon],{radius:6,color:"#fff",weight:2,fillColor:x.score>0?"#15803D":"#7A8AA0",fillOpacity:1}).addTo(MAP).bindPopup(esc(x.name)));
+}
+// Coupon: code = PARTNER-USER-DAY-CHECK. The check digits let the restaurant's verify page spot made-up codes.
+const dayNo=()=>Math.floor((Date.now()+4*3600e3)/864e5);
+function fnv(str){let h=2166136261;for(const ch of str){h^=ch.codePointAt(0);h=Math.imul(h,16777619)>>>0}return h}
+const couponCode=(p,day=dayNo())=>{const base=`${String(p.code||p.id).toUpperCase()}-${S.uid}-${day.toString(36).toUpperCase()}`;return base+"-"+(fnv(base+"|"+(p.salt||"VR"))%46656).toString(36).toUpperCase().padStart(3,"0")};
+let CPN=null;
+function vCoupon(){
+  const p=REST.partners.find(x=>x.id===CPN);if(!p)return `<section class="card"><p>Tərəfdaş tapılmadı.</p></section>`;
+  const code=couponCode(p);
+  return `<section class="coupon"><span class="tag">${esc(p.name)}</span><span class="disc" style="font-size:22px">−${esc(p.discount||"")}</span>
+    <div id="qr"></div><div class="code">${code}</div>
+    <p class="small muted">Kassada bu kodu və ya QR-ı göstərin. Kupon <b>yalnız bu gün</b> etibarlıdır.</p>${p.terms?`<p class="small">${esc(p.terms)}</p>`:""}
+    ${p.demo?`<span class="tag">nümunə kupon</span>`:""}</section>
+    <section class="card"><h2>Necə işləyir?</h2><ol class="steps"><li>Sifarişdən əvvəl kuponu göstərin.</li><li>İşçi QR-ı telefonu ilə skan edib kodu yoxlayır.</li><li>Endirim hesabınıza tətbiq olunur.</li></ol></section>`;
+}
+function drawQR(){const el=$("#qr"),p=REST.partners.find(x=>x.id===CPN);if(!el||!p)return;const url=new URL("verify.html",location.href).href+"#"+couponCode(p);
+  if(typeof QRCode==="undefined"){el.innerHTML=`<p class="small" style="color:#333;max-width:200px">${esc(url)}</p>`;return}
+  new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M})}
+
+// ================= INSTALL
+let DEFER=null;const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();DEFER=e;if(!isStandalone())$("#installBtn").hidden=false});
+window.addEventListener("appinstalled",()=>{$("#installBtn").hidden=true;toast("Tətbiq quraşdırıldı")});
+if(isIOS&&!isStandalone())$("#installBtn").hidden=false;
+function sheet(html){$("#sheetBox").innerHTML=html+`<button class="primary big" id="sheetX">Bağla</button>`;$("#sheet").hidden=false;$("#sheetX").onclick=()=>$("#sheet").hidden=true}
+$("#sheet").onclick=e=>{if(e.target.id==="sheet")$("#sheet").hidden=true};
+function showInstall(){
+  if(DEFER){DEFER.prompt();DEFER.userChoice.finally(()=>{DEFER=null;$("#installBtn").hidden=true});return}
+  if(isStandalone())return sheet(`<h2>Artıq quraşdırılıb</h2><p class="muted" style="margin:0">Vital Rhythm ana ekranınızdadır.</p>`);
+  sheet(`<h2>Telefona quraşdırmaq</h2><ol class="steps">${isIOS?`<li><b>Safari</b>-də aşağıdakı <b>Paylaş</b> düyməsini basın.</li><li><b>"Ana ekrana əlavə et"</b> seçin.</li><li><b>"Əlavə et"</b> basın.</li>`:`<li><b>Chrome</b>-da sağ yuxarıdakı <b>⋮</b> menyusunu açın.</li><li><b>"Tətbiqi quraşdır"</b> və ya <b>"Ana ekrana əlavə et"</b> seçin.</li><li>Təsdiqləyin.</li>`}</ol>`)}
+$("#installBtn").onclick=showInstall;
+if("serviceWorker" in navigator&&location.protocol==="https:"){
+  navigator.serviceWorker.register("sw.js").then(reg=>{reg.update().catch(()=>{});reg.addEventListener("updatefound",()=>{const w=reg.installing;w&&w.addEventListener("statechange",()=>{if(w.state==="installed"&&navigator.serviceWorker.controller)toast("Yeni versiya hazırdır. Proqramı bağlayıb açın.")})})}).catch(()=>{});
+}
+
+// ================= RENDER
+function route(){render();window.scrollTo(0,0)}
+function render(){
+  if(MAP){MAP.remove();MAP=null;LINE=null;ME=null}
+  const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":base==="coupon"?"rest":["move","act"].includes(base)?"home":"");
+  const [t1,t2]=h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
+  $("#ttl").textContent=t1;$("#sub").textContent=t2;$("#backBtn").hidden=h==="home";$("#profBtn").hidden=h==="profile";
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  const v=$("#view");
+  v.innerHTML=h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
+  if(h==="move")initMap(TR.pts,TR.state!=="idle");
+  if(h==="rest")initRestMap();
+  if(h==="coupon")drawQR();
+  if(h.startsWith("act-")&&S.acts[+h.slice(4)])initMap(S.acts[+h.slice(4)].pts,false);
+  if(h==="move"&&TR.state==="idle"&&TR.acc==null&&S.gpsAsked&&"geolocation" in navigator)navigator.geolocation.getCurrentPosition(p=>{TR.acc=p.coords.accuracy;if(MAP)MAP.setView([p.coords.latitude,p.coords.longitude],16);updLive()},()=>{},{enableHighAccuracy:true,timeout:15000});
+  bind(h);
+}
+function afterAdd(msg){save();const t=totals(),c=calc();toast(t.k>c.target+t.burn?`${msg} · Diqqət: norma aşıldı!`:msg)}
+function bind(h){
+  const on=(sel,ev,fn)=>document.querySelectorAll(sel).forEach(el=>el.addEventListener(ev,fn));
+  on("#view [data-go]","click",e=>{const g=e.currentTarget.dataset.go;TABS.includes(g)?goTab(g):go(g)});
+  on("[data-w]","click",e=>{const d=day();d.water=Math.max(0,d.water+ +e.currentTarget.dataset.w);save();toast(`Su: ${d.water} ml`);render()});
+  on("[data-del]","click",e=>{day().foods.splice(+e.currentTarget.dataset.del,1);save();render()});
+  on("[data-dex]","click",e=>{day().ex.splice(+e.currentTarget.dataset.dex,1);save();render()});
+  on("#locBtn","click",locate);
+  on("[data-rf]","click",e=>{REST.filter=e.currentTarget.dataset.rf;render()});
+  on("[data-coupon]","click",e=>{CPN=e.currentTarget.dataset.coupon;S.coupons.push({p:CPN,t:Date.now()});save();go("coupon")});
+  // food
+  on("[data-cat]","click",e=>{CAT=e.currentTarget.dataset.cat;render()});
+  const q=$("#q");if(q)q.addEventListener("input",e=>{Q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)});
+  on("[data-f]","click",e=>go("fi-"+encodeURIComponent(e.currentTarget.dataset.f)));
+  if($("#g")){$("#g").addEventListener("input",prevFood);prevFood();on("[data-por]","click",e=>{$("#g").value=e.currentTarget.dataset.por;prevFood()})}
+  on("#addF","click",()=>{const n=decodeURIComponent(h.slice(3)),gr=+$("#g").value;if(!(gr>0))return toast("Miqdarı yazın");const f=FMAP[n];day().foods.push({n,g:gr,m:$("#m").value});if(f[7])day().water+=gr;afterAdd(`${f[0]} əlavə edildi`);back()});
+  on("#addC","click",()=>{const n=$("#cn").value.trim(),k=+$("#ck").value,gr=+$("#cg").value;if(!n||!(k>=0)||!(gr>0))return toast("Ad, kalori və miqdarı doldurun");day().foods.push({n,g:gr,m:$("#cm").value,k100:k});afterAdd(`${n} əlavə edildi`);goTab("home")});
+  // scan
+  on("#camIn,#galIn","change",e=>{const f=e.target.files[0];if(!f)return;SC.note=$("#note").value;if(SC.url)URL.revokeObjectURL(SC.url);SC.file=f;SC.url=URL.createObjectURL(f);SC.res=null;SC.err="";render();if(aiKey())analyze()});
+  on("#anal","click",analyze);on("#stopA","click",()=>SC.ctl?.abort());on("#note","input",e=>SC.note=e.target.value);
+  on("[data-gi]","change",e=>{SC.res.items[+e.target.dataset.gi].grams=+e.target.value||0;render()});
+  on("#scAdd","click",()=>{const m=$("#scMeal").value;SC.res.items.forEach(i=>{if(+i.grams>0)day().foods.push({n:String(i.name),g:r0(+i.grams),m,ai:1,k100:+i.kcal_per100||0,p100:+i.p100||0,f100:+i.f100||0,c100:+i.c100||0})});
+    if(SC.url)URL.revokeObjectURL(SC.url);Object.assign(SC,{file:null,url:"",note:"",res:null,err:""});afterAdd("Əlavə edildi");goTab("home")});
+  on("#aiSave","click",async e=>{
+    const k=$("#aiKey").value.replace(/[\s"'`]+/g,""),msg=$("#aiMsg"),btn=e.currentTarget;$("#aiKey").value=k;
+    const say=(t,c)=>{msg.hidden=false;msg.style.color=c;msg.innerHTML=t};
+    if(k.length<20)return say("Açar çox qısadır. Google-dakı kopyala ikonuna basıb yenidən yapışdırın.","var(--danger)");
+    btn.disabled=true;say("Açar yoxlanılır…","var(--muted)");
+    try{const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1",{headers:{"x-goog-api-key":k}});
+      if(r.ok){S.ai.key=k;save();toast("Açar işləyir və yadda saxlanıldı");back();return}
+      const j=await r.json().catch(()=>({})),m=j?.error?.message||"";
+      if(r.status===400||r.status===401)say("Google bu açarı qəbul etmədi. Açarı yenidən kopyalayın. ("+esc(m.slice(0,100))+")","var(--danger)");
+      else if(r.status===403)say("Açar var, amma Gemini xidməti bu layihədə aktiv deyil. AI Studio-da yeni açar yaradın. ("+esc(m.slice(0,100))+")","var(--danger)");
+      else{S.ai.key=k;save();say("Açar yadda saxlanıldı, amma yoxlama alınmadı ("+r.status+"). Şəkil çəkib sınayın.","var(--warn)")}
+    }catch(err){S.ai.key=k;save();say("İnternet yoxlaması alınmadı, açar yadda saxlanıldı. Şəkil çəkib sınayın.","var(--warn)")}
+    finally{btn.disabled=false}});
+  on("#aiDel","click",()=>{S.ai.key="";save();toast("Açar silindi");render()});
+  // plan
+  on("[data-pt]","click",e=>{PLANTAB=e.currentTarget.dataset.pt;render()});
+  on("#usePlan","click",()=>{scaledPlan().forEach(([m,it])=>it.forEach(([n,g])=>day().foods.push({n,g,m})));afterAdd("Menyu bugünə əlavə edildi");goTab("home")});
+  // profile
+  on("#saveP","click",()=>{S.profile={sex:$("#p_sex").value,age:+$("#p_age").value,h:+$("#p_h").value,w:+$("#p_w").value,act:+$("#p_act").value,goal:$("#p_goal").value};S.first=false;save();toast("Yadda saxlanıldı");back()});
+  on("#howInstall","click",showInstall);
+  on("#wipe","click",()=>{$("#wipeC").hidden=false});on("#wipeN","click",()=>{$("#wipeC").hidden=true});
+  on("#wipeY","click",()=>{S.days={};S.acts=[];save();render();toast("Bütün qeydlər silindi")});
+  // move
+  on("[data-sport]","click",e=>{TR.sport=e.currentTarget.dataset.sport;render()});
+  on("#trStart","click",()=>{S.gpsAsked=true;save();startTrack()});
+  on("#trPause","click",()=>{TR.state="paused";TR.curSp=0;render()});
+  on("#trResume","click",()=>{TR.state="running";TR.lastTick=Date.now();const l=TR.pts[TR.pts.length-1];if(l)l[3]=Date.now();render()});
+  on("#trStop","click",stopTrack);
+  on("[data-act]","click",e=>go("act-"+e.currentTarget.dataset.act));
+  on("#actDel","click",()=>{S.acts.splice(+h.slice(4),1);save();toast("Silindi");back()});
+  on("#shareImg","click",async()=>{const a=S.acts[+h.slice(4)];shareFile(await routeImage(a),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.png`,`${SPORTS[a.sport][0]}: ${(a.dist/1000).toFixed(2)} km, ${fmtT(a.t)}`)});
+  on("#shareGpx","click",()=>{const a=S.acts[+h.slice(4)];shareFile(new Blob([gpx(a)],{type:"application/gpx+xml"}),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.gpx`,"GPX marşrut")});
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Vital Rhythm — by VUİM",
+  "short_name": "Vital Rhythm",
+  "description": "Kalori, su, GPS hərəkət və sağlam menyu",
+  "lang": "az",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EFF4F1",
+  "theme_color": "#0B5D4B",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
