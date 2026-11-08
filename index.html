@@ -276,6 +276,21 @@ const GOALS={lose:"Arıqlamaq",keep:"Çəkini saxlamaq",gain:"Əzələ / çəki 
 const SPORTS={walk:["Yeriş",3.8],run:["Qaçış",8.5],bike:["Velosiped",6.5]};
 const TIPS=["Yeməkdən 20 dəqiqə əvvəl bir stəkan su için: daha az yeyirsiniz.","Boşqabın yarısını tərəvəzlə doldurun.","Şirin içkini su və ya şəkərsiz çayla əvəz edin.","Hər saat 3–5 dəqiqə ayağa qalxıb gəzin.","Yavaş yeyin. Doyma hissi 15–20 dəqiqəyə gəlir.","Duzu azaldın: gündə 5 q-dan az (bir çay qaşığı).","Gündə 7–9 saat yuxu iştahı tənzimləyir.","Çörəyi qara çörək və ya təndir çörəyi ilə əvəz edin.","Gündə 400 q meyvə və tərəvəz yeyin.","Həftədə 150 dəqiqə sürətli yeriş ürək üçün ən sadə dərmandır."];
 
+
+// Natural remedies: what the research actually shows, with the source a user can open.
+const HERBS=[
+ {n:"Qara zirə (çörəkotu)",lat:"Nigella sativa",ev:2,good:"Elmi icmallara görə qan şəkərinin uzunmüddətli göstəricisini (HbA1c), ümumi və «pis» (LDL) xolesterini, bəzi tədqiqatlarda isə təzyiqi bir qədər aşağı sala bilər.",note:"Sübutların əksəriyyəti zəif keyfiyyətlidir, böyük tədqiqatlar hələ lazımdır. Ən çox rast gəlinən əlavə təsir mədə narahatlığıdır.",how:"Çörəyə, salata, qatığa çimdik-çimdik səpin; yağını yeməyə qatmaq olar.",rec:"Qara zirəli qatıq salatı: 200 q qatıq + doğranmış xiyar + 1/2 çay qaşığı qara zirə + bir az nanə.",src:["Frontiers in Nutrition (2023) — sistematik icmalların icmalı","https://www.frontiersin.org/articles/10.3389/fnut.2023.1107750/full"]},
+ {n:"Zəncəfil",lat:"Zingiber officinale",ev:2,good:"Hamiləlikdə ürəkbulanmaya, aybaşı ağrılarına kömək edə bilər; diz osteoartritində bir qədər yüngülləşmə göstərilib.",note:"Mədə yanması və narahatlıq verə bilər. Dərman qəbul edirsinizsə və ya hamiləsinizsə əvvəl həkimlə danışın.",how:"Çaya, şorbaya, toyuq yeməklərinə təzə doğrayıb əlavə edin.",rec:"Zəncəfil-limon çayı: 3–4 nazik dilim zəncəfil + 1 dilim limon, 250 ml qaynar suda 10 dəq dəmləyin.",src:["NIH / NCCIH — Ginger","https://www.nccih.nih.gov/health/ginger"]},
+ {n:"Bal (öskürək üçün)",lat:"",ev:3,good:"Cochrane icmalına görə bal 1–18 yaşlı uşaqlarda kəskin öskürəyin tezliyini və şiddətini azalda, yuxunu yaxşılaşdıra bilər.",note:"1 yaşdan kiçik körpələrə bal VERMƏYİN (botulizm riski). Şəkər xəstələri miqdara diqqət etsin.",how:"Yatmazdan əvvəl 1 çay qaşığı bal və ya ilıq çaya qatıb.",rec:"Ballı-limonlu ilıq su: 1 çay qaşığı bal + yarım limon suyu, 200 ml ilıq (qaynar yox) su.",src:["Cochrane icmalı (AAFP xülasəsi)","https://www.aafp.org/pubs/afp/issues/2016/0701/p20.html"]},
+ {n:"Çobanyastığı",lat:"Matricaria chamomilla",ev:1,good:"İlkin işlər narahatlıqda kömək edə biləcəyini göstərir; yuxusuzluqda faydası sübut olunmayıb. Ağız qıcıqlanmasında yaxalama kimi kiçik tədqiqatlar var.",note:"Ambroziya, papatya allergiyası olanlarda reaksiya verə bilər. Varfarin və doğuşa nəzarət həbləri ilə qarşılıqlı təsir ehtimalı var.",how:"Axşam çayı kimi, şəkərsiz.",rec:"Çobanyastığı-bal çayı: 1 xörək qaşığı quru çiçək, 250 ml qaynar su, 5 dəq dəmləyin.",src:["NIH / NCCIH — Chamomile","https://www.nccih.nih.gov/health/chamomile?form=MG0AV3"]},
+ {n:"Nanə",lat:"Mentha piperita",ev:3,good:"Bağırsağa davamlı örtüklü nanə yağı kapsulları böyüklərdə qıcıqlanmış bağırsaq sindromu (IBS) əlamətlərini və qarın ağrısını azalda bilər.",note:"Mədə yanması verə bilər. Mentolu körpə və balaca uşağın üzünə yaxın sürtməyin, tənəffüsə təsir edə bilər.",how:"Təzə nanəni çaya, salata, dovğaya əlavə edin.",rec:"Nanəli ayran: 250 ml ayran + bir neçə nanə yarpağı + çimdik duz.",src:["NIH / NCCIH — Peppermint Oil","https://www.nccih.nih.gov/health/peppermintoil"]},
+ {n:"Sarımsaq",lat:"Allium sativum",ev:2,good:"Ümumi və LDL xolesterini, qan şəkərini bir qədər, təzyiqi isə məhdud sübutla azalda bilər.",note:"Qanaxma riskini artıra bilər: qan durulducu və ya aspirin qəbul edənlər, əməliyyatdan əvvəl həkimə deyin. Çiy sarımsağı dəriyə sürtməyin.",how:"Yeməklərə, salatlara, qatığa təzə əzib.",rec:"Sarımsaqlı qatıq sousu: 150 q qatıq + 1 diş əzilmiş sarımsaq + şüyüd — ət və tərəvəzə.",src:["NIH / NCCIH — Garlic","https://nccih.nih.gov/health/garlic"]},
+ {n:"Zerdeçal (kurkuma)",lat:"Curcuma longa",ev:1,good:"Diz osteoartritində ağrını yüngülləşdirə biləcəyinə dair ilkin sübut var; digər iddialar üçün sübut kifayət deyil.",note:"Yeməkdəki miqdar təhlükəsizdir. Güclü kurkumin əlavələri ilə qaraciyər zədəsi halları olub. Hamiləlikdə əlavə kimi qəbul etməyin.",how:"Plova, toyuğa, mərci şorbasına; qara bibərlə birlikdə.",rec:"Qızıl süd: 250 ml süd + 1/2 çay qaşığı zerdeçal + çimdik qara bibər + darçın, 3 dəq qızdırın.",src:["NIH / NCCIH — Turmeric","https://www.nccih.nih.gov/health/turmeric"]},
+ {n:"Yaşıl çay",lat:"Camellia sinensis",ev:2,good:"Ümumi və LDL xolesterini bir qədər azalda bilər (daha çox ekstraktlarla).",note:"Ekstrakt həbləri ilə nadir qaraciyər zədəsi halları var — çay kimi içmək daha təhlükəsizdir. Kofein var; bəzi təzyiq və xolesterin dərmanları ilə qarşılıqlı təsir edir.",how:"Gündə 1–3 fincan, şəkərsiz.",rec:"Nanəli yaşıl çay: 1 çay qaşığı yaşıl çay + 3 nanə yarpağı, 80°C suda 3 dəq.",src:["NIH / NCCIH — Green Tea","https://nccih.nih.gov/health/green-tea"]},
+ {n:"Darçın",lat:"Cinnamomum",ev:1,good:"Xalq arasında şəkəri salmaq üçün işlədilir, lakin NIH-in qeyd etdiyi analizdə diabet və ürək göstəricilərinə təsiri təsdiqlənməyib.",note:"Kassiya darçınında kumarin var, çox miqdarda zərərli ola bilər. Şəkər xəstəliyinin müalicəsini əvəz etmir.",how:"Yulafa, qatığa, almaya çimdik-çimdik — şəkər əvəzinə dad üçün.",rec:"Darçınlı bişmiş alma: alma ortadan kəsilir, üstünə darçın və bir neçə qoz, 180°C-də 20 dəq.",src:["NIH / NCCAM — Cinnamon","https://webarchive.library.unt.edu/web/20130222014706/http://nccam.nih.gov/health/cinnamon"]}
+];
+const EVTXT=["","Zəif sübut","Orta-zəif sübut","Orta sübut"],EVCOL=["","var(--warn)","var(--sun)","var(--ok)"];
+
 // ================= STATE
 const KEY="vital-rhythm-app-v1";
 function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){return null}}
@@ -377,7 +392,7 @@ function vDiary(){
   h+=`</section>`;
   if((d.ex||[]).length)h+=`<section class="card"><h2>Bu günün hərəkəti</h2><div class="list">${d.ex.map((e,i)=>`<div class="item"><div class="n">${avatar(e.n,"Zülal")}<div><b>${esc(e.n)}</b><span>${e.min} dəq${e.km?` · ${e.km.toFixed(2)} km`:""}</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">−${r0(exK(e))}</span><button class="x" data-dex="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></section>`;
   h+=weekChart(c);
-  h+=`<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${tip}</p></section>`;
+  h+=tipCard();
   return h;
 }
 function vHome(){
@@ -397,8 +412,14 @@ function vHome(){
   </div>`;
   h+=`<div class="strip"><button data-w="250"><b style="color:var(--water)">+250</b>ml su</button><button data-go="food"><b style="color:var(--accent)">+</b>Yemək seç</button><button data-go="plan"><b style="color:var(--sun)">Menyu</b>bu günə</button></div>`;
   const a=alerts(t,c).filter(x=>x[0]==="danger");a.forEach(x=>h+=`<div class="alert danger"><span class="dot"></span><div>${x[1]}</div></div>`);
-  h+=`<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${TIPS[new Date().getDate()%TIPS.length]}</p></section>`;
+  h+=`${tipCard()}`;
   return h;
+}
+function tipCard(){
+  const d=new Date().getDate();
+  if(d%2){const hb=HERBS[Math.floor(d/2)%HERBS.length];
+    return `<section class="card tipcard"><div class="row between"><h3>Günün təbii məsləhəti</h3><span class="tag" style="color:${EVCOL[hb.ev]}">${EVTXT[hb.ev]}</span></div><p style="margin:0;font-weight:800;font-size:16px">${hb.n}</p><p style="margin:0" class="small">${hb.good}</p><button class="ghost" data-herb="${HERBS.indexOf(hb)}" style="align-self:flex-start;padding:8px 12px">Ətraflı və resept ›</button></section>`}
+  return `<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${TIPS[d%TIPS.length]}</p></section>`;
 }
 function weekChart(c){
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push([d,totals(dk(d)).k])}
@@ -531,14 +552,70 @@ function scaledPlan(){const c=calc(),plan=PLANS[S.profile.goal];const base=plan.
 let PLANTAB="menu";
 function vPlan(){
   const c=calc(),g=S.profile.goal,sp=scaledPlan(),kc=it=>it.reduce((a,[n,gr])=>a+FMAP[n][1]*gr/100,0),tot=sp.reduce((s,[,it])=>s+kc(it),0);
-  let h=`<div class="seg"><button data-pt="menu" class="${PLANTAB==="menu"?"on":""}">Menyu</button><button data-pt="fit" class="${PLANTAB==="fit"?"on":""}">Məşq</button><button data-pt="tips" class="${PLANTAB==="tips"?"on":""}">Qaydalar</button></div>`;
+  let h=`<div class="seg" style="grid-template-columns:repeat(4,1fr)">${[["menu","Menyu"],["mine","Şəxsi"],["tips","Təbii"],["fit","Məşq"]].map(([k,v])=>`<button data-pt="${k}" class="${PLANTAB===k?"on":""}">${v}</button>`).join("")}</div>`;
+  if(PLANTAB==="mine")h+=vMine();
+  if(PLANTAB==="tips")h+=vHerbs();
   if(PLANTAB==="menu"){h+=`<section class="card"><div class="row between"><h2>Günlük menyu</h2><span class="tag">${GOALS[g]}</span></div><p class="small muted" style="margin:0">Hədəfiniz ${c.target} kkal. Menyu ${r0(tot)} kkal-a uyğunlaşdırılıb.</p>`;
     sp.forEach(([m,it])=>h+=`<div class="meal"><div class="row between"><b>${m}</b><span class="small muted">${r0(kc(it))} kkal</span></div><span class="small">${it.map(([n,gr])=>`${esc(n)} — ${gr} q`).join(" · ")}</span></div>`);
     h+=`<button class="primary big" id="usePlan">Bu menyunu bugünə əlavə et</button></section>`}
   if(PLANTAB==="fit")h+=`<section class="card"><div class="row between"><h2>Həftəlik məşq</h2><span class="tag">${GOALS[g]}</span></div><div>${FIT[g].map(([d,t])=>`<div class="day"><b>${d}</b><span>${t}</span></div>`).join("")}</div><p class="small muted" style="margin:0">Hər məşqdən əvvəl 5–10 dəq isinmə. Ağrı, baş gicəllənmə və ya təngnəfəslik olarsa dayanın.</p></section>`;
-  if(PLANTAB==="tips")h+=`<section class="card"><h2>Gündəlik qaydalar</h2><ul class="tips"><li>Gündə ən azı 400 q meyvə və tərəvəz (ÜST).</li><li>Əlavə şəkər ümumi kalorinin 10%-dən az olsun.</li><li>Duz gündə 5 q-dan az (bir çay qaşığı).</li><li>Həftədə ən azı 150–300 dəq orta aktivlik və 2 gün güc məşqi.</li><li>Şirin içkiləri su, şəkərsiz çay və ya ayranla əvəz edin.</li><li>Yuxu 7–9 saat.</li><li>Şam yeməyini yatmazdan 2–3 saat əvvəl bitirin.</li></ul></section>
+  if(PLANTAB==="fit")h+=`<section class="card"><h2>Gündəlik qaydalar</h2><ul class="tips"><li>Gündə ən azı 400 q meyvə və tərəvəz (ÜST).</li><li>Əlavə şəkər ümumi kalorinin 10%-dən az olsun.</li><li>Duz gündə 5 q-dan az (bir çay qaşığı).</li><li>Həftədə ən azı 150–300 dəq orta aktivlik və 2 gün güc məşqi.</li><li>Şirin içkiləri su, şəkərsiz çay və ya ayranla əvəz edin.</li><li>Yuxu 7–9 saat.</li><li>Şam yeməyini yatmazdan 2–3 saat əvvəl bitirin.</li></ul></section>
     <section class="card"><h2>Təbii vasitələr haqqında</h2><p class="small" style="margin:0">Bitki çayları (çobanyastığı, nanə, kəklikotu) içki kimi menyuya daxil edilə bilər. Bitki preparatlarını müalicə məqsədilə istifadə etməzdən əvvəl həkimlə məsləhətləşin: bəzi otlar dərmanlarla qarşılıqlı təsirə girir.</p></section>`;
   return h;
+}
+
+
+let OPENHERB=-1;
+function vHerbs(){
+  return `<section class="card"><h2>Təbii vasitələr və unudulmuş reseptlər</h2><p class="small muted" style="margin:0">Xalq təbabətində işlənən otlar və məhsullar: elmin nə dediyi, ehtiyat qaydaları və sadə resept. Mənbəyə toxunub özünüz oxuya bilərsiniz.</p>
+  ${HERBS.map((b,i)=>`<div style="border-top:1px solid var(--line);padding-top:10px"><button class="item" data-herb="${i}" style="padding:4px 0"><span class="n"><span class="av" style="background:${EVCOL[b.ev]}">${esc(b.n.charAt(0))}</span><div><b>${esc(b.n)}</b><span>${b.lat?esc(b.lat)+" · ":""}${EVTXT[b.ev]}</span></div></span><span class="k">${OPENHERB===i?"−":"+"}</span></button>
+   ${OPENHERB===i?`<div style="display:flex;flex-direction:column;gap:8px;padding:6px 0 4px">
+     <p style="margin:0"><b>Nə deyir elm:</b> ${b.good}</p>
+     <div class="alert warn" style="padding:10px 12px"><span class="dot"></span><div><b>Ehtiyat:</b> ${b.note}</div></div>
+     <p style="margin:0"><b>Necə istifadə:</b> ${b.how}</p>
+     <p style="margin:0;background:var(--surface2);border-radius:12px;padding:10px"><b>Resept:</b> ${b.rec}</p>
+     <a href="${b.src[1]}" target="_blank" rel="noopener" class="small" style="color:var(--accent);font-weight:800">Mənbə: ${esc(b.src[0])} ›</a></div>`:""}</div>`).join("")}
+  <p class="small muted" style="margin:0">Bu məlumatlar müalicə deyil. Xroniki xəstəlik, hamiləlik və ya daimi dərman qəbulu varsa, ot və əlavələri həkimlə razılaşdırın.</p></section>`;
+}
+// Personal 7-day menu built by Gemini from the user's profile and wishes.
+S.pmenu=S.pmenu||null;S.pref=S.pref||{dislike:"",allergy:"",health:"",budget:"orta",cuisine:"Azərbaycan"};
+const PM={busy:false,err:"",day:0,ctl:null};
+function vMine(){
+  const p=S.pref,c=calc();
+  let h=`<section class="card"><h2>Şəxsi menyu</h2><p class="small muted" style="margin:0">Hədəfiniz ${c.target} kkal (${GOALS[S.profile.goal].toLowerCase()}). Zövqünüzü yazın, süni intellekt 7 günlük menyu qursun.</p>
+   <label class="f">Sevmədiyim və ya yemədiyim<input id="pfDis" value="${esc(p.dislike)}" placeholder="məs. balıq, göbələk, donuz əti"></label>
+   <label class="f">Allergiya / dözümsüzlük<input id="pfAll" value="${esc(p.allergy)}" placeholder="məs. qoz, laktoza"></label>
+   <label class="f">Sağlamlıq qeydi (istəyə bağlı)<input id="pfHealth" value="${esc(p.health)}" placeholder="məs. şəkər xəstəliyi, yüksək təzyiq"></label>
+   <div class="grid2"><label class="f">Büdcə<select id="pfBud">${["qənaətli","orta","rahat"].map(x=>`<option ${x===p.budget?"selected":""}>${x}</option>`).join("")}</select></label>
+   <label class="f">Mətbəx<select id="pfCui">${["Azərbaycan","Qarışıq","Aralıq dənizi"].map(x=>`<option ${x===p.cuisine?"selected":""}>${x}</option>`).join("")}</select></label></div>
+   ${PM.busy?`<div class="row"><span class="spin"></span><span style="flex:1">Menyu qurulur… 20–60 saniyə</span><button class="ghost" id="pmStop">Dayandır</button></div>`:`<button class="primary big" id="pmGo">${S.pmenu?"Yeni menyu qur":"Mənim menyumu qur"}</button>`}
+   ${PM.err?`<div class="alert warn"><span class="dot"></span><div>${PM.err}</div></div>`:""}</section>`;
+  const m=S.pmenu;
+  if(m&&Array.isArray(m.days)&&m.days.length){
+    const d=m.days[Math.min(PM.day,m.days.length-1)],tot=(d.meals||[]).reduce((s,x)=>s+(+x.kcal||0),0);
+    h+=`<section class="card"><div class="chips">${m.days.map((x,i)=>`<button class="chip ${i===PM.day?"on":""}" data-pmd="${i}">${esc(x.day||(i+1)+"-ci gün")}</button>`).join("")}</div>
+     <div class="row between"><h2>${esc(d.day||"")}</h2><span class="tag">${r0(tot)} kkal</span></div>
+     ${(d.meals||[]).map(x=>`<div class="meal"><div class="row between"><b>${esc(x.meal)}</b><span class="small muted">${r0(+x.kcal||0)} kkal</span></div><span class="small">${(x.items||[]).map(it=>`${esc(it.name)} — ${r0(+it.grams||0)} q`).join(" · ")}</span>${x.tip?`<span class="small muted">${esc(x.tip)}</span>`:""}</div>`).join("")}
+     <button class="primary" id="pmAdd">Bu günü gündəliyə əlavə et</button>
+     ${m.note?`<p class="small muted" style="margin:0">${esc(m.note)}</p>`:""}</section>`;
+  }
+  return h;
+}
+async function buildMenu(){
+  S.pref={dislike:$("#pfDis").value.trim(),allergy:$("#pfAll").value.trim(),health:$("#pfHealth").value.trim(),budget:$("#pfBud").value,cuisine:$("#pfCui").value};save();
+  if(!aiKey()){PM.err="AI açarı qoşulmayıb.";return render()}
+  const c=calc(),p=S.profile,f=S.pref;
+  const prompt=`Sən dietoloq köməkçisisən. 7 günlük sağlam menyu qur. İstifadəçi: ${p.sex==="m"?"kişi":"qadın"}, ${p.age} yaş, ${p.h} sm, ${p.w} kq, məqsəd: ${GOALS[p.goal]}. Gündəlik hədəf ${c.target} kkal (±5%), zülal ~${c.prot} q, yağ ~${c.fat} q, karbohidrat ~${c.carb} q.
+Mətbəx: ${f.cuisine} (Azərbaycanda asan tapılan məhsullar). Büdcə: ${f.budget}. Yemir: ${f.dislike||"yoxdur"}. Allergiya: ${f.allergy||"yoxdur"} — bunları QƏTİYYƏN daxil etmə. Sağlamlıq qeydi: ${f.health||"yoxdur"} — varsa, ümumi qəbul olunmuş qidalanma qaydalarına uyğunlaşdır (məs. şəkər xəstəliyində əlavə şəkəri çıxar, təzyiqdə duzu azalt), dərman və müalicə yazma.
+Hər gün 4 öğün: Səhər, Nahar, Ara qəlyanaltı, Şam. Hər məhsul üçün qram və 100 q-a kalori, zülal, yağ, karbohidrat ver. Günlər bir-birini təkrarlamasın.
+Yalnız bu JSON, mətnlər Azərbaycan dilində:
+{"days":[{"day":"Bazar ertəsi","meals":[{"meal":"Səhər","kcal":450,"tip":"qısa məsləhət","items":[{"name":"Yulaf","grams":50,"kcal_per100":380,"p100":13,"f100":7,"c100":66}]}]}],"note":"ümumi qısa qeyd"}`;
+  PM.busy=true;PM.err="";PM.ctl=new AbortController();render();
+  try{const r=await askAI([{text:prompt}],PM.ctl.signal);if(!r||!Array.isArray(r.days)||!r.days.length)throw{status:"json"};
+    r.days.forEach(d=>(d.meals||[]).forEach(m=>{if(!m.kcal)m.kcal=(m.items||[]).reduce((s,i)=>s+(+i.kcal_per100||0)*(+i.grams||0)/100,0)}));
+    S.pmenu=r;PM.day=0;save();toast("Şəxsi menyunuz hazırdır")}
+  catch(e){PM.err=e?.name==="AbortError"?"":e?.status===429?"Pulsuz limit bir müddət doldu. Bir az sonra yenidən cəhd edin.":"Menyu qurulmadı. İnterneti yoxlayıb yenidən cəhd edin."}
+  finally{PM.busy=false;if(curHash()==="plan")render()}
 }
 
 // ================= PROFILE
@@ -808,6 +885,10 @@ function bind(h){
   on("#aiDel","click",()=>{S.ai.key="";save();toast("Açar silindi");render()});
   // plan
   on("[data-pt]","click",e=>{PLANTAB=e.currentTarget.dataset.pt;render()});
+  on("[data-herb]","click",e=>{const i=+e.currentTarget.dataset.herb;if(curHash()!=="plan"){PLANTAB="tips";OPENHERB=i;goTab("plan");return}OPENHERB=OPENHERB===i?-1:i;render()});
+  on("#pmGo","click",buildMenu);on("#pmStop","click",()=>PM.ctl?.abort());
+  on("[data-pmd]","click",e=>{PM.day=+e.currentTarget.dataset.pmd;render()});
+  on("#pmAdd","click",()=>{const d=S.pmenu.days[PM.day];(d.meals||[]).forEach(m=>{const meal=MEALS.includes(m.meal)?m.meal:"Ara qəlyanaltı";(m.items||[]).forEach(i=>{if(+i.grams>0)day().foods.push({n:String(i.name),g:r0(+i.grams),m:meal,ai:1,k100:+i.kcal_per100||0,p100:+i.p100||0,f100:+i.f100||0,c100:+i.c100||0})})});afterAdd("Gündəliyə əlavə edildi");goTab("diary")});
   on("#usePlan","click",()=>{scaledPlan().forEach(([m,it])=>it.forEach(([n,g])=>day().foods.push({n,g,m})));afterAdd("Menyu bugünə əlavə edildi");goTab("home")});
   // profile
   on("#saveP","click",()=>{S.profile={sex:$("#p_sex").value,age:+$("#p_age").value,h:+$("#p_h").value,w:+$("#p_w").value,act:+$("#p_act").value,goal:$("#p_goal").value};S.first=false;save();toast("Yadda saxlanıldı");back()});
