@@ -172,6 +172,62 @@ ul.tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;fo
 .coupon .code{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:.06em;word-break:break-all}
 #qr{background:#fff;padding:12px;border-radius:16px}
 #qr img,#qr canvas{display:block}
+/* clear calorie balance */
+.eq{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:4px;text-align:center}
+.eq div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.eq b{font-family:var(--display);font-size:17px;font-weight:800}
+.eq small{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.eq i{font-style:normal;font-weight:800;color:var(--muted);font-size:18px}
+.eq .res b{color:var(--accent)}.eq .res.over b{color:var(--danger)}
+details.why summary{cursor:pointer;font-size:13px;font-weight:800;color:var(--accent)}
+details.why p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.mrow{display:grid;grid-template-columns:110px 1fr 74px;gap:8px;align-items:center;font-size:13px}
+.mrow small{display:block;color:var(--muted);font-size:11px}
+/* live tracking bar */
+#liveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:1001;border-radius:99px;padding:9px 16px;background:var(--danger);color:#fff;font-weight:800;font-size:13px;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);display:flex;gap:8px;align-items:center}
+#liveBar i{width:9px;height:9px;border-radius:50%;background:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.3}}
+/* guide */
+#guide{position:fixed;z-index:1001;width:62px;height:62px;border-radius:50%;padding:0;border:3px solid #fff;background:var(--surface) center/cover no-repeat;box-shadow:0 10px 24px -8px rgba(0,0,0,.45);touch-action:none;cursor:grab}
+#guide::after{content:"";position:absolute;right:-1px;bottom:2px;width:14px;height:14px;border-radius:50%;background:#25D366;border:2px solid #fff}
+#guide .gdot{position:absolute;top:-6px;left:-6px;min-width:20px;height:20px;border-radius:99px;background:var(--coral);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 5px}
+#gpanel{position:fixed;z-index:1002;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));bottom:calc(88px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;max-height:min(72vh,560px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 50px -20px rgba(0,0,0,.5);overflow:hidden}
+#gpanel .gh{display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(150deg,var(--brand),var(--brand2));color:var(--on-brand)}
+#gpanel .gh img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7)}
+#gpanel .gh b{font-family:var(--display);font-size:15px;display:block}
+#gpanel .gh small{opacity:.85;font-weight:700;font-size:12px}
+#gpanel .gb{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.msg{max-width:86%;padding:10px 12px;border-radius:16px;font-size:14px;line-height:1.4}
+.msg.g{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.u{background:#DCF8C6;color:#13201B;border-bottom-right-radius:6px;align-self:flex-end}
+.msg.u small{display:block;color:#3c6b4c;font-size:11px;margin-top:3px;font-weight:700}
+#gpanel .gq{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 0;scrollbar-width:none}
+#gpanel .gf{display:flex;gap:8px;padding:10px 12px 12px;align-items:flex-end}
+#gpanel textarea{min-height:44px;max-height:110px;flex:1}
+.wa{background:#25D366;color:#06301a;font-weight:800}
+/* shop */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0;position:relative}
+.pimg{aspect-ratio:1/1;width:100%;max-width:100%;display:grid;place-items:center;font-family:var(--display);font-size:34px;font-weight:800;color:#fff;background-size:cover;background-position:center;border:0;padding:0;border-radius:0}
+.pc .pb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.pc .pn{font-weight:800;font-size:14px;line-height:1.25;overflow-wrap:anywhere;text-align:left;background:transparent;padding:0;border-radius:0}
+.pc .pv{font-size:12px;color:var(--muted)}
+.price{font-family:var(--display);font-weight:800;font-size:16px}
+.old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-left:4px}
+.heart{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#C0262D;font-size:17px;line-height:1}
+.badge-s{position:absolute;top:8px;left:8px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--coral);color:#fff}
+.addc{padding:9px;border-radius:12px;font-size:13px;margin-top:auto}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:auto}
+.stepper button{padding:8px 12px;border-radius:0;background:var(--surface2);font-size:16px}
+.stepper span{flex:1;text-align:center;font-weight:800}
+#cartBar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:1000;max-width:536px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-radius:18px;background:var(--ink);color:var(--bg);font-weight:800;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+nav.tabs .cb{position:relative}
+nav.tabs .cb em{position:absolute;top:4px;left:calc(50% + 4px);min-width:18px;height:18px;border-radius:99px;background:var(--coral);color:#fff;font-style:normal;font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+.ship{height:8px;border-radius:9px;background:var(--surface2);overflow:hidden}.ship i{display:block;height:100%;background:var(--ok);border-radius:9px}
+.ostat{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--q2);color:var(--q2i)}
+.radio{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.radio label{display:flex;gap:8px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;font-weight:700;font-size:14px;cursor:pointer}
+.radio input{width:auto}
 /* scan */
 .drop{border:2px dashed var(--line);border-radius:20px;min-height:200px;display:grid;place-items:center;text-align:center;padding:14px;background:var(--bg);overflow:hidden}
 .drop img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;display:block}
@@ -227,10 +283,14 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:13px
   <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Ana</button>
   <button data-tab="diary"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Gündəlik</button>
   <button data-tab="scan" class="cam" aria-label="Şəkil ilə hesabla"><span class="bub"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>Şəkil</button>
-  <button data-tab="rest"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restoran</button>
+  <button data-tab="shop" class="cb"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Mağaza<em id="cartN" hidden>0</em></button>
   <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="3"/><path d="M8 2v4M16 2v4M8 11h8M8 15h5"/></svg>Plan</button>
 </div></nav>
 <div class="toast" id="toast" hidden></div>
+<button id="liveBar" hidden><i></i><span id="liveTxt">Hərəkət davam edir</span></button>
+<button id="cartBar" hidden><span id="cartTxt">Səbət</span><span>Səbətə bax ›</span></button>
+<button id="guide" hidden aria-label="Bələdçi"><span class="gdot" id="gdot" hidden>1</span></button>
+<div id="gpanel" hidden></div>
 <div class="sheet" id="sheet" hidden><div class="box" id="sheetBox"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -301,12 +361,16 @@ const TODAY=dk(new Date());
 const AZM=["yanvar","fevral","mart","aprel","may","iyun","iyul","avqust","sentyabr","oktyabr","noyabr","dekabr"],AZW=["bazar","bazar ertəsi","çərşənbə axşamı","çərşənbə","cümə axşamı","cümə","şənbə"],AZWS=["B.","B.e.","Ç.a.","Ç.","C.a.","C.","Ş."];
 const dDay=d=>(d=new Date(d),d.getDate()+" "+AZM[d.getMonth()]),dTime=d=>(d=new Date(d),pad(d.getHours())+":"+pad(d.getMinutes()));
 let S=load()||{profile:{sex:"m",age:35,h:175,w:80,act:1,goal:"keep"},days:{},acts:[],first:true};
-S.acts=S.acts||[];S.ai=S.ai||{key:""};S.coupons=S.coupons||[];
+S.acts=S.acts||[];S.ai=S.ai||{key:""};S.coupons=S.coupons||[];S.weights=S.weights||[];S.cart=S.cart||[];S.favs=S.favs||[];S.orders=S.orders||[];S.chat=S.chat||[];
 if(!S.uid){S.uid=Array.from({length:6},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*32)]).join("");}
 // App owner settings. geminiKey: the shared key every user's photo analysis runs on (restrict it to this site's address in Google Cloud).
 // The shared key is stored scrambled so automated scanners of public code do not flag it; its real protection is the website restriction set in Google Cloud.
 const _k=["QnR3eHFqNk1YOXF4RThRNUk2TlI4YkEuUUE=","Z0VnMjZTbVhWXzhjR0pwdmcydGoxTDdGUi1F"];
-const CONFIG={geminiKey:(()=>{try{return atob(_k[1]+_k[0]).split("").reverse().join("")}catch(e){return""}})(),contact:"",partnersUrl:"partners.json"};
+const CONFIG={geminiKey:(()=>{try{return atob(_k[1]+_k[0]).split("").reverse().join("")}catch(e){return""}})(),contact:"",partnersUrl:"partners.json",
+  // Guide: put her WhatsApp number in international form without "+" (e.g. 994501234567).
+  guide:{name:"Ülviyyə",role:"Şəxsi fitnes bələdçiniz",whatsapp:"",photo:"ulviyye.jpg"},
+  // Shop: orders go to this WhatsApp. catalogCsv = Google Sheets "Publish to web" CSV link (optional; otherwise catalog.json).
+  shop:{whatsapp:"",catalogCsv:"",sheetEditUrl:"",catalogUrl:"catalog.json",cur:"₼",freeFrom:50,fee:3,adminPin:"2580"}};
 const aiKey=()=>S.ai.key||CONFIG.geminiKey;
 function day(k=TODAY){if(!S.days[k])S.days[k]={foods:[],water:0,ex:[]};return S.days[k]}
 
@@ -320,7 +384,7 @@ function calc(){
 }
 function entry(f){const r=FMAP[f.n]||[f.n,f.k100||0,f.p100||0,f.f100||0,f.c100||0];const x=f.g/100;return{k:r[1]*x,p:r[2]*x,fa:r[3]*x,c:r[4]*x}}
 function exK(e){if(e.kcal!=null)return e.kcal;const m=(EX.find(x=>x[0]===e.n)||[0,4])[1];return m*3.5*(+S.profile.w||70)/200*e.min}
-function totals(k=TODAY){const d=S.days[k]||{foods:[],ex:[],water:0};const t={k:0,p:0,fa:0,c:0};d.foods.forEach(f=>{const e=entry(f);t.k+=e.k;t.p+=e.p;t.fa+=e.fa;t.c+=e.c});t.burn=(d.ex||[]).reduce((s,e)=>s+exK(e),0);t.water=d.water||0;return t}
+function totals(k=TODAY){const d=S.days[k]||{foods:[],ex:[],water:0};const t={k:0,p:0,fa:0,c:0};d.foods.forEach(f=>{const e=entry(f);t.k+=e.k;t.p+=e.p;t.fa+=e.fa;t.c+=e.c});t.burn=(d.ex||[]).reduce((s,e)=>s+exK(e),0);t.water=d.water||0;t.steps=(d.ex||[]).reduce((s,e)=>s+(+e.steps||0),0);return t}
 const r0=n=>Math.round(n);
 function streak(){const c=calc();let n=0;for(let i=1;i<60;i++){const d=new Date();d.setDate(d.getDate()-i);const t=totals(dk(d));if(t.k>0&&t.k<=c.target+t.burn)n++;else break}const t=totals();if(t.k>0&&t.k<=c.target+t.burn)n++;return n}
 
@@ -336,8 +400,8 @@ const ICON={cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="
 const svg=k=>`<svg viewBox="0 0 24 24">${ICON[k]}</svg>`;
 
 // ================= ROUTER (works with the phone's back button)
-const TABS=["home","diary","scan","rest","plan"];
-const TITLES={home:["Vital Rhythm","by VUİM"],diary:["Gündəlik","Bu günün balansı"],rest:["Restoranlar","Sağlam yemək yaxınlıqda"],food:["Yemək əlavə et","Axtar və seç"],scan:["Şəkil ilə hesabla","AI analiz"],move:["Hərəkət","GPS izləmə"],plan:["Plan","Menyu və məşq"],profile:["Profil","Normalarınız"],ai:["AI açarı","Şəkil analizi üçün"]};
+const TABS=["home","diary","scan","shop","plan"];
+const TITLES={home:["Vital Rhythm","by VUİM"],shop:["Mağaza","Sağlamlıq məhsulları"],cart:["Səbət","Sifarişiniz"],checkout:["Sifariş","Məlumatlarınız"],orders:["Sifarişlərim","Tarixçə"],admin:["Mağaza admini","Kataloq"],reg:["Qeydiyyat","Ad və nömrə"],diary:["Gündəlik","Bu günün balansı"],rest:["Restoranlar","Sağlam yemək yaxınlıqda"],food:["Yemək əlavə et","Axtar və seç"],scan:["Şəkil ilə hesabla","AI analiz"],move:["Hərəkət","GPS izləmə"],plan:["Plan","Menyu və məşq"],profile:["Profil","Normalarınız"],ai:["AI açarı","Şəkil analizi üçün"]};
 const curHash=()=>(location.hash||"#home").slice(1);
 // Every history entry carries its depth above "home", so Back always ends on Home and Home is one tap away.
 const depth=()=>(history.state&&history.state.d)||0;
@@ -371,11 +435,14 @@ function vDiary(){
   const st=streak(),tip=TIPS[new Date().getDate()%TIPS.length],wp=Math.min(100,t.water/c.water*100);
   let h="";
   if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Əvvəlcə boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
-  h+=`<section class="hero"><div style="position:relative;z-index:1"><div class="hi">${hi} · ${AZW[new Date().getDay()]}, ${dDay(new Date())}</div><p class="msg">${msg}</p></div>
-    <div class="hrow"><div class="ring"><svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="${R}" stroke="rgba(255,255,255,.16)" stroke-width="13" fill="none"/><circle class="p" cx="70" cy="70" r="${R}" stroke="${over?"#FF8A80":t.k>limit*.9?"#FFD27A":"#9FF2D6"}" stroke-width="13" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg>
-      <div class="c"><b>${r0(Math.abs(limit-t.k))}</b><span>${over?"kkal artıq":"kkal qalıb"}</span></div></div>
-      <div class="hk"><div><span>Hədəf</span><b>${c.target}</b></div><div><span>Yeyilən</span><b>${r0(t.k)}</b></div><div><span>Hərəkət</span><b>+${r0(t.burn)}</b></div><div><span>Seriya</span><b>${st} gün</b></div></div></div>
-    <div class="mac">${mb("Zülal",t.p,c.prot,"#9FF2D6")}${mb("Yağ",t.fa,c.fat,"#FFD27A")}${mb("Karb.",t.c,c.carb,"#9CD4FF")}</div></section>`;
+  const left=limit-t.k,mr=(n,ex,v,g,clr)=>`<div class="mrow"><span><b>${n}</b><small>${ex}</small></span><div class="bar"><i style="width:${Math.min(100,v/g*100)}%;background:${v>g*1.15?"var(--danger)":clr}"></i></div><span style="text-align:right"><b>${r0(v)}</b> / ${g} q</span></div>`;
+  h+=`<section class="card"><div class="row between"><h2>Bu günün kalori balansı</h2><span class="tag">${dDay(new Date())}</span></div>
+    <div class="eq"><div><b>${c.target}</b><small>Norma</small></div><i>−</i><div><b>${r0(t.k)}</b><small>Yediniz</small></div><i>+</i><div><b>${r0(t.burn)}</b><small>Hərəkət</small></div><i>=</i><div class="res ${over?"over":""}"><b>${r0(Math.abs(left))}</b><small>${over?"Artıq":"Qalıb"}</small></div></div>
+    <div class="bar" style="height:12px"><i style="width:${pct*100}%;background:${over?"var(--danger)":t.k>limit*.9?"var(--warn)":"var(--accent)"}"></i></div>
+    <p style="margin:0;font-weight:700">${over?`Bu gün normadan ${r0(-left)} kkal çox yediniz.`:t.k===0?`Bu gün ${r0(limit)} kkal yeyə bilərsiniz.`:`Bu gün hələ ${r0(left)} kkal yeyə bilərsiniz.`}</p>
+    <details class="why"><summary>Bu rəqəmlər nədir?</summary><p><b>Norma</b> — boyunuz, çəkiniz, yaşınız və məqsədinizə görə gündə yeyə biləcəyiniz kalori.<br><b>Yediniz</b> — bu gün əlavə etdiyiniz yemək və içkilərin cəmi.<br><b>Hərəkət</b> — məşqlə yandırdığınız kalori; o qədər əlavə yemək olar.<br><b>Qalıb</b> — bu gün hələ yeyə biləcəyiniz kalori.</p></details></section>
+  <section class="card"><h2>Nədən ibarət idi?</h2>${mr("Zülal","ət, balıq, yumurta, pendir",t.p,c.prot,"var(--violet)")}${mr("Yağ","yağ, qoz, kərə",t.fa,c.fat,"var(--sun)")}${mr("Karbohidrat","çörək, düyü, meyvə, şirniyyat",t.c,c.carb,"var(--water)")}
+    <p class="small muted" style="margin:0">Soldakı rəqəm yediyiniz, sağdakı gündəlik normanızdır (qramla).</p></section>`;
   h+=`<div class="tiles" hidden><button class="tile" data-go="scan"><i style="background:linear-gradient(150deg,var(--coral),var(--sun))">${svg("cam")}</i>Şəkil</button>
     <button class="tile" data-w="250"><i style="background:var(--water)">${svg("drop")}</i>+ Su</button>
     <button class="tile" data-go="food"><i style="background:var(--accent)">${svg("plus")}</i>Yemək</button>
@@ -390,10 +457,33 @@ function vDiary(){
     h+=`<div><div class="row between"><h3>${m}</h3><span class="small muted">${r0(sum)} kkal</span></div><div class="list">${fs.map(([f,i])=>`<div class="item"><div class="n">${avatar(f.n,FMAP[f.n]?FMAP[f.n][6]:(f.ai?"AI":"Öz"))}<div><b>${esc(f.n)}</b><span>${f.g} q/ml</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">${r0(entry(f).k)}</span><button class="x" data-del="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></div>`});
   if(!any)h+=`<p class="muted small" style="margin:0">Hələ heç nə yoxdur. Yeməyin şəklini çəkin və ya siyahıdan seçin.</p>`;
   h+=`</section>`;
-  if((d.ex||[]).length)h+=`<section class="card"><h2>Bu günün hərəkəti</h2><div class="list">${d.ex.map((e,i)=>`<div class="item"><div class="n">${avatar(e.n,"Zülal")}<div><b>${esc(e.n)}</b><span>${e.min} dəq${e.km?` · ${e.km.toFixed(2)} km`:""}</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">−${r0(exK(e))}</span><button class="x" data-dex="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></section>`;
+  if((d.ex||[]).length)h+=`<section class="card"><h2>Bu günün hərəkəti</h2><div class="list">${d.ex.map((e,i)=>`<div class="item"><div class="n">${avatar(e.n,"Zülal")}<div><b>${esc(e.n)}</b><span>${e.min} dəq${e.km?` · ${(+e.km).toFixed(2)} km`:""}${e.steps?` · ${(+e.steps).toLocaleString()} addım`:""}</span></div></div><div class="row" style="flex-wrap:nowrap"><span class="k">−${r0(exK(e))}</span><button class="x" data-dex="${i}" aria-label="Sil">×</button></div></div>`).join("")}</div></section>`;
   h+=weekChart(c);
+  h+=weightCard();
+  h+=`<button class="ghost big" id="shareDay">Günün nəticəsini paylaş</button>`;
   h+=tipCard();
   return h;
+}
+function weightCard(){
+  const ws=S.weights.slice(-30),p=S.profile,lo=18.5*(p.h/100)**2,hi=24.9*(p.h/100)**2;
+  let ch="";
+  if(ws.length>1){const W=320,H=110,mn=Math.min(...ws.map(x=>x.w),lo)-1,mx=Math.max(...ws.map(x=>x.w),hi)+1,X=i=>10+i*(W-20)/(ws.length-1),Y=v=>10+(H-28)*(1-(v-mn)/(mx-mn));
+    ch=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Çəki qrafiki"><rect x="0" y="${Y(hi)}" width="${W}" height="${Y(lo)-Y(hi)}" fill="var(--ok)" opacity=".1"/><text x="${W-4}" y="${Y(hi)+11}" font-size="9" text-anchor="end" fill="var(--ok)">sağlam aralıq</text>
+      <polyline points="${ws.map((x,i)=>X(i)+","+Y(x.w)).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>${ws.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x.w)}" r="${i===ws.length-1?4.5:2.5}" fill="var(--accent)"/>`).join("")}
+      <text x="10" y="${H-4}" font-size="9" fill="var(--muted)">${dDay(ws[0].d)}</text><text x="${W-10}" y="${H-4}" font-size="9" text-anchor="end" fill="var(--muted)">${dDay(ws[ws.length-1].d)}</text></svg>`}
+  const first=S.weights[0],last=S.weights[S.weights.length-1],diff=first&&last?last.w-first.w:0;
+  return `<section class="card"><div class="row between"><h2>Çəkim</h2>${S.weights.length>1?`<span class="tag" style="color:${diff<=0?"var(--ok)":"var(--warn)"}">${diff>0?"+":""}${diff.toFixed(1)} kq</span>`:""}</div>${ch}
+    <div class="row" style="flex-wrap:nowrap"><input id="wIn" type="number" inputmode="decimal" step="0.1" value="${last?last.w:p.w}" style="flex:1"><button class="primary" id="wSave">Yadda saxla</button></div>
+    <p class="small muted" style="margin:0">Sağlam çəki aralığınız: ${r0(lo)}–${r0(hi)} kq. Səhər, yeməkdən əvvəl çəkilin.</p></section>`;
+}
+async function shareDay(){
+  const c=calc(),t=totals(),W=1080,H=1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#0B5D4B");g.addColorStop(1,"#12866B");x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle="#EAFBF4";x.font="800 56px Unbounded, sans-serif";x.fillText("Vital Rhythm",80,120);x.fillStyle="#9FD9C6";x.font="700 32px Manrope, sans-serif";x.fillText("Günün nəticəsi · "+dDay(new Date()),80,170);
+  const it=[["Yeyilən",r0(t.k)+" kkal"],["Norma",c.target+" kkal"],["Hərəkət",r0(t.burn)+" kkal"],["Su",(t.water/1000).toFixed(1)+" L"],["Addım",(t.steps||0).toLocaleString()],["Seriya",streak()+" gün"]];
+  it.forEach(([l,v],i)=>{const cx=80+(i%2)*480,cy=330+Math.floor(i/2)*220;x.fillStyle="rgba(255,255,255,.1)";x.beginPath();x.roundRect(cx-20,cy-80,440,180,28);x.fill();x.fillStyle="#9FD9C6";x.font="800 28px Manrope, sans-serif";x.fillText(l.toUpperCase(),cx,cy-20);x.fillStyle="#fff";x.font="800 58px Unbounded, sans-serif";x.fillText(v,cx,cy+56)});
+  x.fillStyle="#F2BC45";x.font="800 28px Manrope, sans-serif";x.fillText("by VUİM",80,H-60);
+  const b=await new Promise(r=>cv.toBlob(r,"image/png"));shareFile(b,`vital-rhythm-${TODAY}.png`,`Bu gün: ${r0(t.k)} kkal, ${(t.water/1000).toFixed(1)} L su — Vital Rhythm`);
 }
 function vHome(){
   const c=calc(),t=totals(),limit=c.target+t.burn,left=limit-t.k,over=left<0,pct=Math.min(1,t.k/limit),R=30,C=2*Math.PI*R;
@@ -655,6 +745,9 @@ function vProfile(){
     <p class="small muted" style="margin:0">Mifflin–St Jeor düsturu. Xroniki xəstəlik, hamiləlik və ya dərman qəbulu varsa normaları həkimlə dəqiqləşdirin.</p></section>
   <section class="card"><h2>Tənzimləmələr</h2>
     <button class="item" data-go="ai"><span class="n"><span class="av" style="background:linear-gradient(150deg,var(--coral),var(--sun))">AI</span><div><b>Şəkil analizi açarı</b><span>${S.ai.key?"Öz açarınız":CONFIG.geminiKey?"Ümumi açar işləyir":"Qoşulmayıb"}</span></div></span><span class="k">›</span></button>
+    <button class="item" data-go="reg"><span class="n"><span class="av" style="background:var(--q3i)">${esc((S.user?.name||"?").charAt(0))}</span><div><b>${S.user?esc(S.user.name):"Qeydiyyat"}</b><span>${S.user?fmtPhone(S.user.phone):"Ad və WhatsApp nömrəsi"}</span></div></span><span class="k">›</span></button>
+    <button class="item" data-go="orders"><span class="n"><span class="av" style="background:var(--coral)">₼</span><div><b>Sifarişlərim</b><span>${S.orders.length} sifariş</span></div></span><span class="k">›</span></button>
+    <button class="item" data-go="admin"><span class="n"><span class="av" style="background:var(--slate)">A</span><div><b>Mağaza admini</b><span>Kataloq və sifarişlər</span></div></span><span class="k">›</span></button>
     <button class="item" id="howInstall"><span class="n"><span class="av" style="background:var(--accent)">↓</span><div><b>Telefona quraşdırmaq</b><span>Ana ekrana ikon əlavə et</span></div></span><span class="k">›</span></button>
     <button class="item" id="wipe"><span class="n"><span class="av" style="background:var(--danger)">×</span><div><b>Bütün qeydləri sil</b><span>Profil qalır</span></div></span><span class="k">›</span></button>
     <div id="wipeC" hidden class="row"><span class="small">Əminsiniz?</span><button class="red" id="wipeY">Bəli, sil</button><button class="ghost" id="wipeN">Xeyr</button></div></section>
@@ -668,11 +761,11 @@ const hav=(a,b)=>{const R=6371000,t=x=>x*Math.PI/180,dl=t(b[0]-a[0]),dn=t(b[1]-a
 const steps=(dist,sport)=>sport==="bike"?0:r0(dist/(((+S.profile.h||170)/100)*(sport==="run"?0.65:0.415)));
 const kcalFor=(sport,sec)=>SPORTS[sport][1]*3.5*(+S.profile.w||70)/200*(sec/60);
 function curStats(){const t=TR.elapsed,km=TR.dist/1000;let fast=null,slow=null;TR.splits.forEach((s,i)=>{if(!fast||s<fast.t)fast={i,t:s};if(!slow||s>slow.t)slow={i,t:s}});
-  return{t,km,avg:t>0?km/(t/3600):0,max:TR.maxSp*3.6,cur:TR.curSp*3.6,gain:TR.gain,loss:TR.loss,minA:TR.minAlt,maxA:TR.maxAlt,pace:km>0?t/km:0,fast,slow,steps:steps(TR.dist,TR.sport),kcal:kcalFor(TR.sport,t)}}
+  return{t,km,avg:t>0?km/(t/3600):0,max:TR.maxSp*3.6,cur:TR.curSp*3.6,gain:TR.gain,loss:TR.loss,minA:TR.minAlt,maxA:TR.maxAlt,pace:km>0?t/km:0,fast,slow,steps:TR.sport==="bike"?0:((TR.steps||0)>20?TR.steps:steps(TR.dist,TR.sport)),stepSrc:(TR.steps||0)>20?"sensor":"təxmini",kcal:kcalFor(TR.sport,t)}}
 function statGrid(s,sport){const bike=sport==="bike";
   return `<div class="stats"><div class="st"><small>Vaxt</small><b>${fmtT(s.t)}</b></div><div class="st"><small>${bike?"Sürət":"Temp /km"}</small><b>${bike?s.cur.toFixed(1):fmtPace(s.pace)}</b></div><div class="st"><small>Orta sürət</small><b>${s.avg.toFixed(1)}</b></div>
   <div class="st"><small>Maks. sürət</small><b>${s.max.toFixed(1)}</b></div><div class="st"><small>Qalxma ↑</small><b>${r0(s.gain)} m</b></div><div class="st"><small>Enmə ↓</small><b>${r0(s.loss)} m</b></div>
-  <div class="st"><small>Hündürlük</small><b>${s.minA==null?"—":r0(s.minA)+"–"+r0(s.maxA)}</b></div><div class="st"><small>Addım</small><b>${bike?"—":s.steps.toLocaleString()}</b></div><div class="st"><small>Kalori</small><b>${r0(s.kcal)}</b></div></div>
+  <div class="st"><small>Hündürlük</small><b>${s.minA==null?"—":r0(s.minA)+"–"+r0(s.maxA)}</b></div><div class="st"><small>Addım${s.stepSrc==="təxmini"?" ≈":""}</small><b>${bike?"—":(s.steps||0).toLocaleString()}</b></div><div class="st"><small>Kalori</small><b>${r0(s.kcal)}</b></div></div>
   <p class="small muted" style="margin:0;text-align:center">Sürət km/saat ilə</p>
   ${s.fast?`<dl class="kv"><dt>Ən sürətli km</dt><dd>${s.fast.i+1}-ci · ${fmtT(s.fast.t)}</dd><dt>Ən yavaş km</dt><dd>${s.slow.i+1}-ci · ${fmtT(s.slow.t)}</dd></dl>`:""}`}
 function gpsQ(){return TR.acc==null?["GPS gözlənilir","var(--muted)"]:TR.acc<=15?["GPS əla · ±"+r0(TR.acc)+" m","var(--ok)"]:TR.acc<=35?["GPS orta · ±"+r0(TR.acc)+" m","var(--warn)"]:["GPS zəif · ±"+r0(TR.acc)+" m","var(--danger)"]}
@@ -681,9 +774,10 @@ function vMove(){
   let h=`<section class="card">${live?"":`<div class="seg">${Object.entries(SPORTS).map(([k,v])=>`<button data-sport="${k}" class="${TR.sport===k?"on":""}">${v[0]}</button>`).join("")}</div>`}
     <div id="map"></div>
     <div class="row between"><span class="gpsq" id="gq" style="color:${q[1]}"><i></i>${q[0]}</span>${live?`<span class="tag">${SPORTS[TR.sport][0]}${TR.state==="paused"?" · fasilə":""}</span>`:""}</div>
+    ${!live&&S.trLive?`<div class="alert warn"><span class="dot"></span><div>Yarımçıq qalmış hərəkət var: ${(S.trLive.dist/1000).toFixed(2)} km, ${fmtT(S.trLive.elapsed)}.<div class="row" style="margin-top:8px"><button class="primary" id="trRes">Bərpa et</button><button class="ghost" id="trDrop">Sil</button></div></div></div>`:""}
     <div class="bigstat"><b id="bigKm">${s.km.toFixed(2)}</b><span>km</span></div><div id="liveStats">${statGrid(s,TR.sport)}</div>
     ${TR.state==="idle"?`<button class="primary big" id="trStart">Start</button><p class="small muted" style="margin:0">Hərəkət zamanı proqram açıq qalsın. Telefon kilidlənəndə GPS dayana bilər.</p>`:`<div class="ctrl">${TR.state==="running"?`<button class="big" id="trPause">Fasilə</button>`:`<button class="primary big" id="trResume">Davam</button>`}<button class="red big" id="trStop">Bitir</button></div>`}</section>`;
-  if(S.acts.length)h+=`<section class="card"><h2>Tarixçə</h2><div class="list">${S.acts.map((a,i)=>`<button class="item" data-act="${i}"><span class="n">${avatar(SPORTS[a.sport][0],"Zülal")}<div><b>${SPORTS[a.sport][0]} · ${(a.dist/1000).toFixed(2)} km</b><span>${dDay(a.start)}, ${dTime(a.start)} · ${fmtT(a.t)}</span></div></span><span class="k">${r0(a.kcal)} kkal ›</span></button>`).join("")}</div></section>`;
+  if(S.acts.length)h+=`<section class="card"><div class="row between"><h2>Tarixçə</h2><span class="tag">${S.acts.length} hərəkət · ${(S.acts.reduce((a,x)=>a+x.dist,0)/1000).toFixed(1)} km</span></div><div class="list">${S.acts.map((a,i)=>`<button class="item" data-act="${i}"><span class="n">${avatar(SPORTS[a.sport][0],"Zülal")}<div><b>${SPORTS[a.sport][0]} · ${(a.dist/1000).toFixed(2)} km</b><span>${dDay(a.start)}, ${dTime(a.start)} · ${fmtT(a.t)}</span></div></span><span class="k">${r0(a.kcal)} kkal ›</span></button>`).join("")}</div></section>`;
   return h;
 }
 function vActivity(i){const a=S.acts[i];if(!a)return vMove();
@@ -717,21 +811,32 @@ function onPos(pos){
 }
 function onErr(e){toast({1:"GPS icazəsi verilmədi. Telefonun parametrlərində yer icazəsi verin.",2:"Yer müəyyən edilmir. Açıq havaya çıxın.",3:"GPS cavab vermir, gözləyin."}[e.code]||"GPS xətası")}
 function updLive(){if(curHash()!=="move")return;const s=curStats(),k=$("#bigKm"),g=$("#liveStats"),q=$("#gq");if(k)k.textContent=s.km.toFixed(2);if(g)g.innerHTML=statGrid(s,TR.sport);if(q){const v=gpsQ();q.style.color=v[1];q.innerHTML=`<i></i>${v[0]}`}}
-function tick(){const now=Date.now();if(TR.state==="running")TR.elapsed+=(now-TR.lastTick)/1000;TR.lastTick=now;updLive()}
+function tick(){const now=Date.now();if(TR.state==="running")TR.elapsed+=(now-TR.lastTick)/1000;TR.lastTick=now;updLive();liveDot();if(Math.floor(TR.elapsed)%10===0)persistLive()}
 async function wakeOn(){try{TR.wake=await navigator.wakeLock?.request("screen")}catch(e){}}
-function liveDot(){document.querySelector('nav.tabs [data-tab="move"]').classList.toggle("live",TR.state!=="idle")}
+function liveDot(){const on=TR.state!=="idle",b=$("#liveBar");if(b){b.hidden=!on||curHash()==="move";$("#liveTxt").textContent=`${TR.state==="paused"?"Fasilə":"Hərəkət"} · ${(TR.dist/1000).toFixed(2)} km · ${fmtT(TR.elapsed)}`}}
+// Step sensor: counts real steps from the phone's motion sensor while tracking (works indoors too).
+const STEP={on:false,f:9.8,last:0,up:false};
+function onMotion(e){const a=e.accelerationIncludingGravity;if(!a||TR.state!=="running")return;const m=Math.hypot(a.x||0,a.y||0,a.z||0);STEP.f=STEP.f*0.9+m*0.1;const d=m-STEP.f,now=Date.now();
+  if(!STEP.up&&d>1.25&&now-STEP.last>280){STEP.up=true;STEP.last=now;TR.steps=(TR.steps||0)+1}else if(STEP.up&&d<0.2)STEP.up=false}
+async function motionOn(){try{if(typeof DeviceMotionEvent!=="undefined"&&DeviceMotionEvent.requestPermission){const r=await DeviceMotionEvent.requestPermission();if(r!=="granted")return}}catch(e){return}
+  if(!STEP.on){window.addEventListener("devicemotion",onMotion);STEP.on=true}}
+function motionOff(){if(STEP.on){window.removeEventListener("devicemotion",onMotion);STEP.on=false}}
+function persistLive(){if(TR.state==="idle"){if(S.trLive){delete S.trLive;save()}return}
+  const {watch,timer,wake,...rest}=TR;S.trLive={...rest,pts:TR.pts.slice(-1500),savedAt:Date.now()};save()}
+function startWatch(){TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});clearInterval(TR.timer);TR.timer=setInterval(tick,1000);wakeOn();liveDot()}
+function resumeLive(){const L0=S.trLive;if(!L0)return;Object.assign(TR,L0,{state:"paused",lastTick:Date.now()});startWatch();motionOn();toast("Hərəkət bərpa olundu. Davam basın.");go("move")}
 function startTrack(){
   if(!("geolocation" in navigator))return toast("Bu brauzer GPS-i dəstəkləmir");
   Object.assign(TR,{state:"running",pts:[],dist:0,elapsed:0,maxSp:0,gain:0,loss:0,minAlt:null,maxAlt:null,lastAlt:null,splits:[],lastSplitT:0,lastSplitD:0,curSp:0,startTs:Date.now(),lastTick:Date.now()});
-  TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});TR.timer=setInterval(tick,1000);wakeOn();liveDot();render();
+  TR.steps=0;startWatch();motionOn();render();
 }
 function stopTrack(){
-  if(TR.watch!=null)navigator.geolocation.clearWatch(TR.watch);clearInterval(TR.timer);try{TR.wake?.release()}catch(e){}
-  const s=curStats();TR.state="idle";liveDot();
-  if(TR.dist<20){toast("Məsafə çox qısadır, yadda saxlanılmadı");render();return}
+  if(TR.watch!=null)navigator.geolocation.clearWatch(TR.watch);clearInterval(TR.timer);try{TR.wake?.release()}catch(e){}motionOff();
+  const s=curStats();TR.state="idle";liveDot();delete S.trLive;save();
+  if(TR.dist<20&&s.steps<30){toast("Hərəkət çox qısadır, yadda saxlanılmadı");render();return}
   let pts=TR.pts;if(pts.length>1500){const st=Math.ceil(pts.length/1500);pts=pts.filter((_,i)=>i%st===0||i===TR.pts.length-1)}
   S.acts.unshift({sport:TR.sport,start:TR.startTs,t:s.t,dist:TR.dist,kcal:s.kcal,pts:pts.map(p=>[+p[0].toFixed(6),+p[1].toFixed(6),p[2]==null?null:+p[2].toFixed(1),p[3]]),stats:s});
-  day().ex.push({n:SPORTS[TR.sport][0]+" (GPS)",min:r0(s.t/60),kcal:s.kcal,km:s.km});save();
+  day().ex.push({n:SPORTS[TR.sport][0]+" (GPS)",min:r0(s.t/60),kcal:s.kcal,km:s.km,steps:TR.sport==="bike"?0:s.steps});save();
   toast(`Əla! ${s.km.toFixed(2)} km, ${r0(s.kcal)} kkal`);go("act-0");
 }
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&TR.state!=="idle")wakeOn()});
@@ -744,7 +849,7 @@ function routeImage(a){
     [[pts[0],"#4ADE80"],[pts[pts.length-1],"#F2BC45"]].forEach(([p,c])=>{const q=P(p);x.fillStyle=c;x.beginPath();x.arc(q[0],q[1],18,0,7);x.fill();x.strokeStyle="#fff";x.lineWidth=5;x.stroke()})}
   x.fillStyle="#EAFBF4";x.font="800 56px Unbounded, sans-serif";x.fillText("Vital Rhythm",90,120);
   x.fillStyle="#9FD9C6";x.font="700 30px Manrope, sans-serif";x.fillText(SPORTS[a.sport][0]+" · "+dDay(a.start)+" "+new Date(a.start).getFullYear(),90,168);
-  const s=a.stats,it=[["Məsafə",(a.dist/1000).toFixed(2)+" km"],["Vaxt",fmtT(a.t)],[a.sport==="bike"?"Orta sürət":"Temp",a.sport==="bike"?s.avg.toFixed(1)+" km/s":fmtPace(s.pace)+" /km"],["Maks. sürət",s.max.toFixed(1)+" km/s"],["Qalxma",r0(s.gain)+" m"],["Kalori",r0(a.kcal)+" kkal"]];
+  const s=a.stats,it=[["Məsafə",(a.dist/1000).toFixed(2)+" km"],["Vaxt",fmtT(a.t)],[a.sport==="bike"?"Orta sürət":"Addım",a.sport==="bike"?s.avg.toFixed(1)+" km/s":(s.steps||0).toLocaleString()],[a.sport==="bike"?"Maks. sürət":"Temp",a.sport==="bike"?s.max.toFixed(1)+" km/s":fmtPace(s.pace)+" /km"],["Qalxma",r0(s.gain)+" m"],["Kalori",r0(a.kcal)+" kkal"]];
   it.forEach(([l,v],i)=>{const cx=90+(i%3)*320,cy=1000+Math.floor(i/3)*160;x.fillStyle="#9FD9C6";x.font="800 27px Manrope, sans-serif";x.fillText(l.toUpperCase(),cx,cy);x.fillStyle="#fff";x.font="700 48px Unbounded, sans-serif";x.fillText(v,cx,cy+62)});
   x.fillStyle="#F2BC45";x.font="800 26px Manrope, sans-serif";x.fillText("by VUİM",90,H-60);
   return new Promise(r=>cv.toBlob(r,"image/png"));
@@ -835,6 +940,159 @@ function drawQR(){const el=$("#qr"),p=REST.partners.find(x=>x.id===CPN);if(!el||
   if(typeof QRCode==="undefined"){el.innerHTML=`<p class="small" style="color:#333;max-width:200px">${esc(url)}</p>`;return}
   new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M})}
 
+
+// ================= REGISTRATION
+const normPhone=v=>{let d=String(v||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d="994"+d.slice(1);if(d.length===9)d="994"+d;return d};
+const fmtPhone=d=>d&&d.length===12?`+${d.slice(0,3)} ${d.slice(3,5)} ${d.slice(5,8)} ${d.slice(8,10)} ${d.slice(10)}`:(d?"+"+d:"");
+function vReg(){const u=S.user||{};
+  return `<section class="card" style="align-items:center;text-align:center"><img src="${CONFIG.guide.photo}" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--q2)">
+    <h2>Salam! Mən ${CONFIG.guide.name}yəm</h2><p class="muted" style="margin:0">Bu gündən sizin şəxsi fitnes bələdçinizəm. Tanış olaq: adınızı və mobil nömrənizi yazın. Mənə və mağazaya yazdığınız mesajlar bu ad və nömrə ilə gələcək.</p></section>
+   <section class="card"><label class="f">Adınız<input id="rgName" value="${esc(u.name||"")}" placeholder="məs. Vüqar" autocomplete="name"></label>
+    <label class="f">Mobil nömrə (WhatsApp)<input id="rgPhone" type="tel" inputmode="tel" value="${esc(u.phone?fmtPhone(u.phone):"+994 ")}" placeholder="+994 50 123 45 67" autocomplete="tel"></label>
+    <button class="primary big" id="rgSave">${S.user?"Yadda saxla":"Tanış olaq"}</button>
+    <p class="small muted" style="margin:0">Məlumatlar yalnız bu telefonda saxlanılır və yalnız siz mesaj və ya sifariş göndərəndə istifadə olunur.</p></section>`}
+
+// ================= GUIDE (draggable avatar; real messages go to her WhatsApp)
+const G={open:false,drag:null};
+function guideInit(){
+  const g=$("#guide");g.style.backgroundImage=`url(${CONFIG.guide.photo})`;g.hidden=false;
+  const pos=S.gpos||{x:1,y:.78};place(pos);
+  g.addEventListener("pointerdown",e=>{G.drag={sx:e.clientX,sy:e.clientY,ox:g.offsetLeft,oy:g.offsetTop,moved:false};g.setPointerCapture(e.pointerId)});
+  g.addEventListener("pointermove",e=>{if(!G.drag)return;const dx=e.clientX-G.drag.sx,dy=e.clientY-G.drag.sy;if(Math.abs(dx)+Math.abs(dy)>6)G.drag.moved=true;if(G.drag.moved){g.style.left=clampX(G.drag.ox+dx)+"px";g.style.top=clampY(G.drag.oy+dy)+"px"}});
+  g.addEventListener("pointerup",()=>{if(!G.drag)return;const moved=G.drag.moved;G.drag=null;
+    if(moved){const W=innerWidth-g.offsetWidth,H=innerHeight-g.offsetHeight;const x=g.offsetLeft+31<innerWidth/2?0:1;S.gpos={x,y:g.offsetTop/H};save();place(S.gpos)}else toggleGuide()});
+  addEventListener("resize",()=>place(S.gpos||{x:1,y:.78}));
+  if(!S.chatSeen){$("#gdot").hidden=false}
+}
+const clampX=v=>Math.max(6,Math.min(innerWidth-68,v)),clampY=v=>Math.max(70,Math.min(innerHeight-150,v));
+function place(p){const g=$("#guide");g.style.left=(p.x?innerWidth-68-Math.max(0,parseInt(getComputedStyle(document.body).paddingRight)||0)-8:10)+"px";g.style.top=clampY(p.y*(innerHeight-62))+"px"}
+function guideLines(){
+  const c=calc(),t=totals(),n=S.user?.name?", "+S.user.name:"",h=new Date().getHours(),hi=h<12?"Sabahınız xeyir":h<18?"Günortanız xeyir":"Axşamınız xeyir";
+  const out=[`${hi}${n}! Mən ${CONFIG.guide.name}, ${CONFIG.guide.role.toLowerCase()}. Bu gündən birlikdə işləyəcəyik.`];
+  if(S.first)out.push("Əvvəlcə profilinizi dolduraq: boy, çəki və məqsəd. Normalarınızı mən hesablayacam.");
+  else{const left=c.target+t.burn-t.k;out.push(left<0?`Bu gün normadan ${r0(-left)} kkal çox yemisiniz. Axşam yüngül şam və 30 dəqiqəlik yeriş yaxşı olar.`:t.k===0?`Bu gün üçün normanız ${c.target} kkal. Səhər yeməyinin şəklini çəkin, hesablayaq.`:`Bu gün hələ ${r0(left)} kkal yeyə bilərsiniz. Su: ${(t.water/1000).toFixed(1)} / ${(c.water/1000).toFixed(1)} L.`)}
+  out.push("Sualınız varsa aşağıda yazın — mesajınız birbaşa mənim WhatsApp-ıma gələcək.");
+  return out}
+function renderGuide(){
+  const gp=$("#gpanel");if(!G.open){gp.hidden=true;return}
+  gp.hidden=false;
+  gp.innerHTML=`<div class="gh"><img src="${CONFIG.guide.photo}" alt=""><div style="flex:1;min-width:0"><b>${CONFIG.guide.name}</b><small>${CONFIG.guide.role} · WhatsApp</small></div><button class="ib" id="gClose" aria-label="Bağla"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+   <div class="gb" id="gBody">${guideLines().map(l=>`<div class="msg g">${l}</div>`).join("")}${S.chat.slice(-8).map(m=>`<div class="msg u">${esc(m.t)}<small>WhatsApp-a göndərildi · ${dTime(m.at)}</small></div>`).join("")}</div>
+   <div class="gq">${[["Bu gün nə yeyim?","pm"],["Məşq planı","fit"],["Şəkil çək","scan"],["Mağaza","shop"]].map(([t,k])=>`<button class="chip" data-gq="${k}">${t}</button>`).join("")}</div>
+   <div class="gf"><textarea id="gTxt" placeholder="${CONFIG.guide.name}ya yazın…"></textarea><button class="wa" id="gSend" style="padding:12px 14px">Göndər</button></div>`;
+  const b=$("#gBody");b.scrollTop=b.scrollHeight;
+  $("#gClose").onclick=toggleGuide;
+  gp.querySelectorAll("[data-gq]").forEach(x=>x.onclick=()=>{const k=x.dataset.gq;G.open=false;renderGuide();if(k==="pm"){PLANTAB="mine";goTab("plan")}else if(k==="fit"){PLANTAB="fit";goTab("plan")}else goTab(k)});
+  $("#gSend").onclick=()=>{const t=$("#gTxt").value.trim();if(!t)return toast("Mesajı yazın");
+    if(!S.user){G.open=false;renderGuide();toast("Əvvəlcə tanış olaq");go("reg");return}
+    if(!CONFIG.guide.whatsapp)return toast("Bələdçinin WhatsApp nömrəsi hələ qoşulmayıb");
+    S.chat.push({t,at:Date.now()});save();
+    openWA(CONFIG.guide.whatsapp,`Salam ${CONFIG.guide.name} xanım! Mən ${S.user.name} (${fmtPhone(S.user.phone)}).\n\n${t}\n\n— Vital Rhythm`);renderGuide()};
+}
+function toggleGuide(){G.open=!G.open;if(G.open&&!S.chatSeen){S.chatSeen=1;save();$("#gdot").hidden=true}renderGuide()}
+function openWA(num,text){const u=`https://wa.me/${num}?text=${encodeURIComponent(text)}`;const w=window.open(u,"_blank");if(!w)location.href=u}
+
+// ================= SHOP
+const SHOP={items:[],cats:[],status:"idle",cat:"Hamısı",q:"",src:""};
+const money=v=>(Math.round(v*100)/100).toFixed(2).replace(/\.00$/,"")+" "+CONFIG.shop.cur;
+const PCOL=["var(--q1i)","var(--q2i)","var(--q3i)","var(--q4i)","var(--sun)","var(--berry)"];
+function parseCSV(t){const rows=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===","){row.push(f);f=""}else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);rows.push(row);row=[];f=""}else f+=c}
+  if(f||row.length){row.push(f);rows.push(row)}return rows.filter(r=>r.some(x=>x.trim()))}
+const COLS={id:["id","kod"],cat:["kateqoriya","category"],name:["ad","name","məhsul"],price:["qiymət","qiymet","price"],old:["köhnə qiymət","kohne qiymet","old_price","köhnə_qiymət"],img:["şəkil","sekil","image","photo"],desc:["təsvir","tesvir","description"],size:["həcm","hecm","size"],stock:["stok","stock","var"],top:["tövsiyə","tovsiye","featured"]};
+function fromCSV(t){const r=parseCSV(t);if(r.length<2)return[];const hd=r[0].map(h=>h.trim().toLowerCase());const ix=k=>COLS[k].map(n=>hd.indexOf(n)).find(i=>i>=0);
+  const I={};Object.keys(COLS).forEach(k=>I[k]=ix(k));
+  return r.slice(1).map((x,n)=>({id:(I.id!=null&&x[I.id]?.trim())||"p"+(n+1),cat:(x[I.cat]||"Digər").trim(),name:(x[I.name]||"").trim(),price:parseFloat(String(x[I.price]||"").replace(",","."))||0,old:parseFloat(String(I.old!=null?x[I.old]:"").replace(",","."))||0,img:(I.img!=null?x[I.img]:"").trim(),desc:(I.desc!=null?x[I.desc]:"").trim(),size:(I.size!=null?x[I.size]:"").trim(),stock:I.stock==null||!/^(0|yox|no|false)$/i.test((x[I.stock]||"").trim()),top:I.top!=null&&/^(1|bəli|beli|yes|true|x)$/i.test((x[I.top]||"").trim())})).filter(p=>p.name)}
+function driveImg(u){const m=String(u||"").match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([\w-]+)/);return m?`https://lh3.googleusercontent.com/d/${m[1]}=w600`:u}
+async function loadShop(force){
+  if(SHOP.status==="ok"&&!force)return;
+  if(!SHOP.items.length&&S.catCache){SHOP.items=S.catCache;SHOP.status="ok"}
+  try{let items;
+    if(CONFIG.shop.catalogCsv){const r=await fetch(CONFIG.shop.catalogCsv,{cache:"no-store"});if(!r.ok)throw 0;items=fromCSV(await r.text());SHOP.src="Google Sheets"}
+    else{const r=await fetch(CONFIG.shop.catalogUrl,{cache:"no-store"});if(!r.ok)throw 0;items=(await r.json()).filter(p=>p&&p.name);SHOP.src="catalog.json"}
+    items.forEach(p=>{p.img=driveImg(p.img);p.price=+p.price||0;p.old=+p.old||0;if(p.stock==null)p.stock=true});
+    SHOP.items=items;SHOP.status="ok";S.catCache=items;save();
+  }catch(e){if(!SHOP.items.length)SHOP.status="err"}
+  SHOP.cats=[...new Set(SHOP.items.map(p=>p.cat))];
+  if(["shop","cart","admin"].includes(curHash())||curHash().startsWith("prod-"))render();updCart();
+}
+const pById=id=>SHOP.items.find(p=>p.id===id);
+const cartQty=id=>(S.cart.find(c=>c.id===id)||{}).q||0;
+function cartSum(){let n=0,sum=0;S.cart.forEach(c=>{const p=pById(c.id);if(p){n+=c.q;sum+=p.price*c.q}});const fee=sum===0||sum>=CONFIG.shop.freeFrom?0:CONFIG.shop.fee;return{n,sum,fee,total:sum+fee}}
+function setQty(id,q){const c=S.cart.find(x=>x.id===id);if(q<=0){S.cart=S.cart.filter(x=>x.id!==id)}else if(c)c.q=q;else S.cart.push({id,q});save();updCart()}
+function updCart(){const {n,total}=cartSum(),e=$("#cartN");if(e){e.hidden=!n;e.textContent=n}
+  const b=$("#cartBar"),h=curHash(),show=n>0&&(h==="shop"||h.startsWith("prod-"));if(b){b.hidden=!show;$("#cartTxt").textContent=`Səbət · ${n} məhsul · ${money(total)}`}}
+function pimg(p,cls="pimg"){const i=SHOP.items.indexOf(p);return p.img?`<div class="${cls}" style="background-image:url('${esc(p.img)}');background-color:var(--surface2)" role="img" aria-label="${esc(p.name)}"></div>`:`<div class="${cls}" style="background:linear-gradient(150deg,${PCOL[i%PCOL.length]},var(--brand2))">${esc(p.name.charAt(0))}</div>`}
+function pcard(p){const q=cartQty(p.id),fav=S.favs.includes(p.id);
+  return `<div class="pc"><button data-prod="${esc(p.id)}" style="padding:0;border-radius:0;background:none">${pimg(p)}</button>${p.old>p.price?`<span class="badge-s">−${r0((1-p.price/p.old)*100)}%</span>`:""}<button class="heart" data-fav="${esc(p.id)}" aria-label="Sevimli">${fav?"♥":"♡"}</button>
+   <div class="pb"><button class="pn" data-prod="${esc(p.id)}">${esc(p.name)}</button>${p.size?`<span class="pv">${esc(p.size)}</span>`:""}<div><span class="price">${money(p.price)}</span>${p.old>p.price?`<span class="old">${money(p.old)}</span>`:""}</div>
+   ${!p.stock?`<span class="small muted" style="margin-top:auto">Hazırda yoxdur</span>`:q?`<div class="stepper"><button data-q="${esc(p.id)}" data-d="-1">−</button><span>${q}</span><button data-q="${esc(p.id)}" data-d="1">+</button></div>`:`<button class="primary addc" data-q="${esc(p.id)}" data-d="1">Səbətə at</button>`}</div></div>`}
+function vShop(){
+  if(SHOP.status!=="ok"){if(SHOP.status==="idle")loadShop();return SHOP.status==="err"?`<div class="alert warn"><span class="dot"></span><div>Kataloq yüklənmədi. İnterneti yoxlayın.<div class="row" style="margin-top:8px"><button class="primary" id="shRetry">Yenidən</button></div></div></div>`:`<div class="row"><span class="spin"></span><span>Kataloq yüklənir…</span></div>`}
+  const cats=["Hamısı","Sevimlilər",...SHOP.cats],q=SHOP.q.toLowerCase();
+  const list=SHOP.items.filter(p=>(SHOP.cat==="Hamısı"||(SHOP.cat==="Sevimlilər"?S.favs.includes(p.id):p.cat===SHOP.cat))&&(!q||(p.name+" "+p.desc+" "+p.cat).toLowerCase().includes(q)));
+  const top=SHOP.items.filter(p=>p.top&&p.stock).slice(0,8),demo=SHOP.items.some(p=>p.demo);
+  let h=`<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="shQ" type="search" placeholder="Məhsul axtar…" value="${esc(SHOP.q)}"></div>
+   <div class="chips">${cats.map(c=>`<button class="chip ${c===SHOP.cat?"on":""}" data-scat="${esc(c)}">${esc(c)}${c==="Sevimlilər"&&S.favs.length?" ("+S.favs.length+")":""}</button>`).join("")}</div>`;
+  if(demo)h+=`<div class="alert info"><span class="dot"></span><div>Bunlar nümunə məhsullardır. Admin kataloqu yükləyəndə real məhsullar görünəcək.</div></div>`;
+  if(top.length&&SHOP.cat==="Hamısı"&&!q)h+=`<section class="card" style="padding:14px"><h3>Tövsiyə olunan</h3><div style="display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:10px;overflow-x:auto;scrollbar-width:none">${top.map(pcard).join("")}</div></section>`;
+  h+=list.length?`<div class="pgrid">${list.map(pcard).join("")}</div>`:`<p class="muted small">${SHOP.cat==="Sevimlilər"?"Sevimli məhsul yoxdur. Məhsulda ♡ işarəsinə toxunun.":"Heç nə tapılmadı."}</p>`;
+  h+=`<div class="grid2"><button class="ghost" data-go="orders">Sifarişlərim${S.orders.length?" ("+S.orders.length+")":""}</button><button class="ghost" data-go="cart">Səbət (${cartSum().n})</button></div>`;
+  return h}
+let PQ=1;
+function vProd(id){const p=pById(id);if(!p)return vShop();const q=cartQty(p.id),fav=S.favs.includes(p.id);
+  return `<section class="card" style="padding:0;overflow:hidden">${pimg(p)}<div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+   <div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><div style="min-width:0"><span class="tag">${esc(p.cat)}</span><h2 style="margin-top:6px">${esc(p.name)}</h2>${p.size?`<span class="small muted">${esc(p.size)}</span>`:""}</div><button class="ghost" data-fav="${esc(p.id)}" style="padding:10px 12px;color:var(--danger)">${fav?"♥":"♡"}</button></div>
+   <div><span class="price" style="font-size:24px">${money(p.price)}</span>${p.old>p.price?`<span class="old" style="font-size:15px">${money(p.old)}</span>`:""}</div>
+   ${p.desc?`<p style="margin:0;white-space:pre-line">${esc(p.desc)}</p>`:""}
+   ${p.stock?`<div class="row" style="flex-wrap:nowrap"><div class="stepper" style="margin:0;width:130px"><button id="pqM">−</button><span id="pqV">${PQ}</span><button id="pqP">+</button></div><button class="primary" id="pAdd" style="flex:1">Səbətə at · ${money(p.price*PQ)}</button></div>${q?`<p class="small muted" style="margin:0">Səbətdə artıq ${q} ədəd var.</p>`:""}`:`<div class="alert warn"><span class="dot"></span><div>Hazırda stokda yoxdur.</div></div>`}
+   <p class="small muted" style="margin:0">Qida əlavələri dərman deyil. Xroniki xəstəlik, hamiləlik və ya dərman qəbulu varsa, istifadədən əvvəl həkimlə məsləhətləşin.</p></div></section>`}
+function vCart(){const {n,sum,fee,total}=cartSum(),fr=CONFIG.shop.freeFrom;
+  if(!n)return `<section class="card" style="align-items:center;text-align:center"><h2>Səbət boşdur</h2><p class="muted" style="margin:0">Mağazadan məhsul seçin.</p><button class="primary" data-tabgo="shop">Alış-verişə başla</button></section>${S.orders.length?`<button class="ghost big" data-go="orders">Sifarişlərim</button>`:""}`;
+  return `<section class="card"><div class="list">${S.cart.map(c=>{const p=pById(c.id);if(!p)return"";return `<div class="item" style="align-items:flex-start"><div class="n" style="align-items:flex-start"><div style="width:58px;flex:none;border-radius:12px;overflow:hidden">${pimg(p)}</div><div><b>${esc(p.name)}</b><span>${money(p.price)}${p.size?" · "+esc(p.size):""}</span>
+     <div class="stepper" style="width:120px;margin-top:6px"><button data-q="${esc(p.id)}" data-d="-1">−</button><span>${c.q}</span><button data-q="${esc(p.id)}" data-d="1">+</button></div></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="k">${money(p.price*c.q)}</span><button class="x" data-rm="${esc(p.id)}" aria-label="Sil">×</button></div></div>`}).join("")}</div></section>
+   <section class="card"><dl class="kv"><dt>Məhsullar (${n})</dt><dd>${money(sum)}</dd><dt>Çatdırılma</dt><dd>${fee?money(fee):"Pulsuz"}</dd><dt style="color:var(--ink);font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(total)}</dd></dl>
+    ${sum<fr?`<div class="ship"><i style="width:${sum/fr*100}%"></i></div><p class="small muted" style="margin:0">Pulsuz çatdırılmaya ${money(fr-sum)} qalıb.</p>`:`<p class="small" style="margin:0;color:var(--ok);font-weight:800">Çatdırılma pulsuzdur ✓</p>`}
+    <button class="primary big" data-go="checkout">Sifarişi rəsmiləşdir</button><button class="ghost" data-tabgo="shop">Alış-verişə davam et</button><button class="ghost" id="cartClear" style="color:var(--danger)">Səbəti boşalt</button></section>`}
+function vCheckout(){const u=S.user||{},o=S.lastShip||{};const {n,total}=cartSum();if(!n)return vCart();
+  return `<section class="card"><h2>Çatdırılma məlumatı</h2>
+   <label class="f">Ad, soyad<input id="coName" value="${esc(o.name||u.name||"")}" autocomplete="name"></label>
+   <label class="f">Mobil nömrə<input id="coPhone" type="tel" inputmode="tel" value="${esc(fmtPhone(o.phone||u.phone||"")||"+994 ")}" autocomplete="tel"></label>
+   <div class="radio"><label><input type="radio" name="coDel" value="Çatdırılma" ${o.del!=="Özüm götürəcəm"?"checked":""}>Çatdırılma</label><label><input type="radio" name="coDel" value="Özüm götürəcəm" ${o.del==="Özüm götürəcəm"?"checked":""}>Özüm götürəcəm</label></div>
+   <label class="f">Şəhər / rayon<input id="coCity" value="${esc(o.city||"Bakı")}"></label>
+   <label class="f">Ünvan<input id="coAddr" value="${esc(o.addr||"")}" placeholder="küçə, ev, mənzil" autocomplete="street-address"></label>
+   <div class="radio"><label><input type="radio" name="coPay" value="Nağd" ${o.pay!=="Kartla (çatdırılmada)"?"checked":""}>Nağd</label><label><input type="radio" name="coPay" value="Kartla (çatdırılmada)" ${o.pay==="Kartla (çatdırılmada)"?"checked":""}>Kartla</label></div>
+   <label class="f">Qeyd (istəyə bağlı)<textarea id="coNote" placeholder="məs. zəng edin, saat 18-dən sonra">${esc(o.note||"")}</textarea></label></section>
+   <section class="card"><dl class="kv"><dt>Ödəniləcək</dt><dd style="font-size:18px">${money(total)}</dd></dl>
+   <button class="wa big" id="coSend">Sifarişi WhatsApp ilə göndər</button><p class="small muted" style="margin:0">WhatsApp açılacaq, hazır mesajı göndərin. Satıcı sizinlə əlaqə saxlayıb sifarişi təsdiqləyəcək.</p></section>`}
+function placeOrder(){
+  const name=$("#coName").value.trim(),phone=normPhone($("#coPhone").value),del=document.querySelector('[name=coDel]:checked').value,pay=document.querySelector('[name=coPay]:checked').value,city=$("#coCity").value.trim(),addr=$("#coAddr").value.trim(),note=$("#coNote").value.trim();
+  if(!name)return toast("Adınızı yazın");if(phone.length<11)return toast("Nömrəni düzgün yazın: +994 50 123 45 67");if(del==="Çatdırılma"&&!addr)return toast("Ünvanı yazın");
+  if(!CONFIG.shop.whatsapp)return toast("Mağazanın WhatsApp nömrəsi hələ qoşulmayıb");
+  S.lastShip={name,phone,del,pay,city,addr,note};if(!S.user)S.user={name,phone};
+  const {sum,fee,total}=cartSum(),d=new Date(),no=`VR-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+  const items=S.cart.map(c=>{const p=pById(c.id);return p?{id:p.id,name:p.name,price:p.price,q:c.q}:null}).filter(Boolean);
+  const txt=`🛒 Yeni sifariş ${no}\n\n${items.map((x,i)=>`${i+1}. ${x.name} × ${x.q} = ${money(x.price*x.q)}`).join("\n")}\n\nMəhsullar: ${money(sum)}\nÇatdırılma: ${fee?money(fee):"pulsuz"}\nCƏMİ: ${money(total)}\n\n👤 ${name}\n📞 ${fmtPhone(phone)}\n🚚 ${del}${del==="Çatdırılma"?`: ${city}, ${addr}`:""}\n💳 ${pay}${note?`\n📝 ${note}`:""}\n\n— Vital Rhythm`;
+  S.orders.unshift({no,at:Date.now(),items,sum,fee,total,del,status:"Göndərildi"});S.cart=[];save();updCart();
+  openWA(CONFIG.shop.whatsapp,txt);history.replaceState({d:depth()},"","#orders");route();toast("Sifariş hazırlandı. WhatsApp-da göndərin.");
+}
+function vOrders(){if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
+  return S.orders.map((o,i)=>`<section class="card"><div class="row between"><b>${o.no}</b><span class="ostat">${o.status}</span></div><span class="small muted">${dDay(o.at)} ${new Date(o.at).getFullYear()}, ${dTime(o.at)} · ${o.del}</span>
+   <div class="list">${o.items.map(x=>`<div class="item" style="padding:6px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
+   <div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>
+   <div class="grid2"><button class="primary" data-reorder="${i}">Yenidən sifariş</button><button class="ghost" data-ask="${i}">Status soruş</button></div></section>`).join("")}
+function vAdmin(){
+  if(!S.adminOk)return `<section class="card"><h2>Admin girişi</h2><label class="f">PIN kod<input id="adPin" type="password" inputmode="numeric"></label><button class="primary" id="adIn">Daxil ol</button></section>`;
+  const byCat={};SHOP.items.forEach(p=>byCat[p.cat]=(byCat[p.cat]||0)+1);
+  const bad=SHOP.items.filter(p=>!p.price||!p.cat);
+  return `<section class="card"><h2>Kataloq</h2><dl class="kv"><dt>Mənbə</dt><dd>${esc(SHOP.src||"—")}</dd><dt>Məhsul sayı</dt><dd>${SHOP.items.length}</dd>${Object.entries(byCat).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${bad.length?`<div class="alert warn"><span class="dot"></span><div>${bad.length} məhsulda qiymət və ya kateqoriya yoxdur: ${bad.slice(0,5).map(p=>esc(p.name)).join(", ")}</div></div>`:""}
+    <button class="primary" id="adReload">Kataloqu yenilə</button>${CONFIG.shop.sheetEditUrl?`<a class="filebtn" href="${CONFIG.shop.sheetEditUrl}" target="_blank" rel="noopener" style="text-decoration:none">Google cədvəli aç (redaktə)</a>`:""}</section>
+   <section class="card"><h2>Məhsul necə əlavə olunur?</h2><ol class="steps"><li>Google cədvəlində hər sətir bir məhsuldur.</li><li>Sütunlar: <code>id, kateqoriya, ad, qiymət, köhnə qiymət, şəkil, təsvir, həcm, stok, tövsiyə</code></li><li><b>şəkil</b> — şəklin linki (Google Drive linki də olar, "Linki olan hər kəs" icazəsi ilə).</li><li><b>stok</b> — "yox" yazsanız "Hazırda yoxdur" görünür; <b>tövsiyə</b> — "bəli" yazsanız yuxarıda göstərilir.</li><li>Dəyişiklik 1–5 dəqiqəyə tətbiqdə görünür.</li></ol>
+    <button class="ghost" id="adTpl">Şablon sətirlərini kopyala</button></section>
+   <section class="card"><h2>Sifarişlər</h2><p class="small muted" style="margin:0">Sifarişlər mağazanın WhatsApp nömrəsinə gəlir: ${CONFIG.shop.whatsapp?esc(fmtPhone(CONFIG.shop.whatsapp)):"<b>hələ qoşulmayıb</b>"}.</p></section>
+   <button class="ghost" id="adOut">Çıxış</button>`}
+
 // ================= INSTALL
 let DEFER=null;const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -853,17 +1111,18 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 
 // ================= RENDER
-function route(){render();window.scrollTo(0,0)}
+function route(){if(typeof G!=="undefined"&&G.open){G.open=false;renderGuide()}render();window.scrollTo(0,0)}
 function render(){
   if(MAP){MAP.remove();MAP=null;LINE=null;ME=null}
-  const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":base==="coupon"?"rest":["move","act"].includes(base)?"home":"");
-  const [t1,t2]=h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
+  const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":["prod","cart","checkout","orders","admin"].includes(base)?"shop":["move","act","rest","coupon"].includes(base)?"home":"");
+  const [t1,t2]=h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
   $("#ttl").textContent=t1;$("#sub").textContent=t2;$("#backBtn").hidden=h==="home";$("#profBtn").hidden=h==="profile";
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const v=$("#view");
-  v.innerHTML=h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
+  v.innerHTML=h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
   if(h==="move")initMap(TR.pts,TR.state!=="idle");
   if(h==="rest")initRestMap();
+  updCart();liveDot();if(!h.startsWith("prod-"))PQ=1;
   if(h==="coupon")drawQR();
   if(h.startsWith("act-")&&S.acts[+h.slice(4)])initMap(S.acts[+h.slice(4)].pts,false);
   if(h==="move"&&TR.state==="idle"&&TR.acc==null&&S.gpsAsked&&"geolocation" in navigator)navigator.geolocation.getCurrentPosition(p=>{TR.acc=p.coords.accuracy;if(MAP)MAP.setView([p.coords.latitude,p.coords.longitude],16);updLive()},()=>{},{enableHighAccuracy:true,timeout:15000});
@@ -877,6 +1136,27 @@ function bind(h){
   on("[data-del]","click",e=>{day().foods.splice(+e.currentTarget.dataset.del,1);save();render()});
   on("[data-dex]","click",e=>{day().ex.splice(+e.currentTarget.dataset.dex,1);save();render()});
   on("#locBtn","click",locate);
+  on("#trRes","click",resumeLive);on("#trDrop","click",()=>{delete S.trLive;save();render()});
+  on("#wSave","click",()=>{const w=+$("#wIn").value;if(!(w>20&&w<400))return toast("Çəkini düzgün yazın");const e=S.weights.find(x=>x.d===TODAY);if(e)e.w=w;else S.weights.push({d:TODAY,w});S.profile.w=w;save();toast("Çəki yadda saxlanıldı, normalar yeniləndi");render()});
+  on("#shareDay","click",shareDay);
+  on("#rgSave","click",()=>{const name=$("#rgName").value.trim(),phone=normPhone($("#rgPhone").value);if(!name)return toast("Adınızı yazın");if(phone.length!==12)return toast("Nömrəni düzgün yazın: +994 50 123 45 67");S.user={name,phone};save();toast(`Xoş gəldiniz, ${name}!`);S.first?go("profile"):back()});
+  on("[data-scat]","click",e=>{SHOP.cat=e.currentTarget.dataset.scat;render()});
+  const sq=$("#shQ");if(sq)sq.addEventListener("input",e=>{SHOP.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#shQ");n.focus();n.setSelectionRange(pos,pos)});
+  on("#shRetry","click",()=>{SHOP.status="idle";render()});
+  on("[data-prod]","click",e=>go("prod-"+e.currentTarget.dataset.prod));
+  on("[data-fav]","click",e=>{const id=e.currentTarget.dataset.fav;S.favs=S.favs.includes(id)?S.favs.filter(x=>x!==id):[...S.favs,id];save();toast(S.favs.includes(id)?"Sevimlilərə əlavə edildi":"Sevimlilərdən çıxarıldı");render()});
+  on("[data-q]","click",e=>{const id=e.currentTarget.dataset.q,d=+e.currentTarget.dataset.d;setQty(id,cartQty(id)+d);if(d>0&&cartQty(id)===1)toast("Səbətə əlavə edildi");render()});
+  on("[data-rm]","click",e=>{setQty(e.currentTarget.dataset.rm,0);render()});
+  on("#pqM","click",()=>{PQ=Math.max(1,PQ-1);render()});on("#pqP","click",()=>{PQ++;render()});
+  on("#pAdd","click",()=>{const id=h.slice(5);setQty(id,cartQty(id)+PQ);toast(`Səbətə əlavə edildi (${PQ})`);PQ=1;render()});
+  on("#cartClear","click",()=>{S.cart=[];save();updCart();render()});
+  on("#coSend","click",placeOrder);
+  on("[data-reorder]","click",e=>{const o=S.orders[+e.currentTarget.dataset.reorder];o.items.forEach(x=>{if(pById(x.id))setQty(x.id,cartQty(x.id)+x.q)});toast("Məhsullar səbətə əlavə edildi");go("cart")});
+  on("[data-ask]","click",e=>{const o=S.orders[+e.currentTarget.dataset.ask];if(!CONFIG.shop.whatsapp)return toast("Mağazanın nömrəsi hələ qoşulmayıb");openWA(CONFIG.shop.whatsapp,`Salam! ${o.no} nömrəli sifarişimin statusu nədir?\n${S.user?S.user.name+" ("+fmtPhone(S.user.phone)+")":""}`)});
+  on("#adIn","click",()=>{if($("#adPin").value===CONFIG.shop.adminPin){S.adminOk=1;save();render()}else toast("PIN səhvdir")});
+  on("#adOut","click",()=>{S.adminOk=0;save();back()});
+  on("#adReload","click",async()=>{toast("Yenilənir…");await loadShop(true);toast(`Kataloq: ${SHOP.items.length} məhsul`)});
+  on("#adTpl","click",async()=>{const t="id\tkateqoriya\tad\tqiymət\tköhnə qiymət\tşəkil\ttəsvir\thəcm\tstok\ttövsiyə\nP001\tBitki çayları\tNümunə çay\t12\t15\t\tQısa təsvir\t20 paket\tvar\tbəli";try{await navigator.clipboard.writeText(t);toast("Kopyalandı — Google cədvəlinə yapışdırın")}catch(e){toast("Kopyalamaq alınmadı")}});
   on("[data-rf]","click",e=>{REST.filter=e.currentTarget.dataset.rf;render()});
   on("[data-coupon]","click",e=>{CPN=e.currentTarget.dataset.coupon;S.coupons.push({p:CPN,t:Date.now()});save();go("coupon")});
   // food
@@ -932,7 +1212,11 @@ function bind(h){
   on("#shareImg","click",async()=>{const a=S.acts[+h.slice(4)];shareFile(await routeImage(a),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.png`,`${SPORTS[a.sport][0]}: ${(a.dist/1000).toFixed(2)} km, ${fmtT(a.t)}`)});
   on("#shareGpx","click",()=>{const a=S.acts[+h.slice(4)];shareFile(new Blob([gpx(a)],{type:"application/gpx+xml"}),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.gpx`,"GPX marşrut")});
 }
+$("#cartBar").onclick=()=>go("cart");
+$("#liveBar").onclick=()=>go("move");
+guideInit();loadShop();
 render();
+if(!S.user&&!S.regAsked){S.regAsked=1;save();setTimeout(()=>go("reg"),400)}
 </script>
 </body>
 </html>
