@@ -484,20 +484,49 @@ function scanResult(){
     <p class="small muted" style="margin:0">Şəkildən hesablama təxminidir, ±20% fərq ola bilər.</p></section>`;
 }
 function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1280,sc=Math.min(1,m/Math.max(img.width,img.height)),cv=document.createElement("canvas");cv.width=r0(img.width*sc);cv.height=r0(img.height*sc);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",0.82).split(",")[1])};img.onerror=()=>rej(new Error("img"));img.src=URL.createObjectURL(file)})}
-const MODELS=["gemini-2.5-flash","gemini-flash-latest","gemini-3-flash-preview","gemini-2.5-flash-lite"];
+// Newer models first; aliases follow Google's current release. Each key type is tried on every route Google accepts it on.
+const MODELS=["gemini-flash-latest","gemini-2.5-flash","gemini-3-flash-preview","gemini-flash-lite-latest","gemini-2.5-flash-lite"];
+const ROUTES=[
+  (m,k)=>({url:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,h:{"x-goog-api-key":k}}),
+  (m,k)=>({url:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(k)}`,h:{}}),
+  (m,k)=>({url:`https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent?key=${encodeURIComponent(k)}`,h:{}})
+];
 async function askAI(parts,signal){
-  let last;for(const m of (S.ai.model?[S.ai.model,...MODELS.filter(x=>x!==S.ai.model)]:MODELS)){
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:"POST",signal,headers:{"Content-Type":"application/json","x-goog-api-key":aiKey()},
-      body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}})});
-    if(r.status===404){last={status:404};continue}
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok)throw{status:r.status,msg:j?.error?.message||""};
-    S.ai.model=m;save();
-    const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("");
-    const a=txt.indexOf("{"),b=txt.lastIndexOf("}");if(a<0)throw{status:"json"};
-    return JSON.parse(txt.slice(a,b+1));
+  const k=aiKey(),body=JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}});
+  const models=S.ai.model?[S.ai.model,...MODELS.filter(x=>x!==S.ai.model)]:MODELS;
+  const order=S.ai.route!=null?[S.ai.route,...[0,1,2].filter(i=>i!==S.ai.route)]:[0,1,2];
+  let last=null;
+  for(const ri of order){
+    for(const m of models){
+      const o=ROUTES[ri](m,k);let r;
+      try{r=await fetch(o.url,{method:"POST",signal,headers:{"Content-Type":"application/json",...o.h},body})}
+      catch(e){if(e?.name==="AbortError")throw e;last={status:"net",msg:String(e?.message||e)};break}
+      const j=await r.json().catch(()=>({}));
+      if(r.ok){
+        S.ai.model=m;S.ai.route=ri;save();
+        const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("");
+        const a=txt.indexOf("{"),b=txt.lastIndexOf("}");if(a<0)throw{status:"json"};
+        return JSON.parse(txt.slice(a,b+1));
+      }
+      const msg=j?.error?.message||"",st=j?.error?.status||"";last={status:r.status,msg,st};
+      if(r.status===404||(r.status===400&&/model/i.test(msg)&&!/key/i.test(msg)))continue; // this model is gone, try the next
+      if(r.status===429||r.status>=500)throw last;                                         // busy or over quota
+      break;                                                                                // key rejected here, try the next route
+    }
   }
-  throw last||{status:404};
+  S.ai.route=null;S.ai.model=null;save();
+  throw last||{status:"net"};
+}
+function aiErrText(e){
+  if(e?.name==="AbortError")return "";
+  const tail=e?.msg?`<br><span class="small" style="opacity:.8">Google: ${esc(String(e.msg).slice(0,160))}${e.status?" ("+e.status+")":""}</span>`:"";
+  if(e?.message==="img")return "Şəkil oxunmadı. Başqa şəkil seçin.";
+  if(e?.status===429)return "Pulsuz limit bir müddət doldu. Bir dəqiqə sonra yenidən cəhd edin."+tail;
+  if(e?.status==="json")return "Cavab oxunmadı. Yenidən cəhd edin.";
+  if(e?.status===403&&/referer|referrer/i.test(e.msg||""))return "Açarın sayt məhdudiyyəti səhvdir. Google Cloud-da bunu yazın: <code>https://vugarmammadov82-debug.github.io/*</code>"+tail;
+  if(e?.status===401||e?.status===403||(e?.status===400&&/key/i.test(e.msg||"")))return "Google AI açarını qəbul etmədi. Yeni açar lazımdır."+tail;
+  if(e?.status==="net"||!navigator.onLine)return "Google-a qoşulmaq alınmadı. İnterneti yoxlayın."+tail;
+  return "Xəta baş verdi. Yenidən cəhd edin."+tail;
 }
 async function analyze(){
   SC.note=($("#note")?.value||"").trim();
@@ -517,14 +546,7 @@ Yalnız bu JSON-u qaytar, mətnlər Azərbaycan dilində:
     const parts=[{text:prompt}];if(SC.file)parts.push({inline_data:{mime_type:"image/jpeg",data:await shrink(SC.file)}});
     const res=await askAI(parts,SC.ctl.signal);if(!res||!Array.isArray(res.items))throw{status:"json"};SC.res=res;
   }catch(e){
-    if(e?.name==="AbortError")SC.err="";
-    else if(e?.status===400&&/API key/i.test(e.msg))SC.err=`AI açarı yanlışdır. <a href="#ai">Açarı yoxlayın</a>.`;
-    else if(e?.status===403)SC.err="AI açarı bu xidmətə icazəli deyil. Açarı yenidən yaradın.";
-    else if(e?.status===429)SC.err="Pulsuz limit bir müddət doldu. Bir dəqiqə sonra yenidən cəhd edin.";
-    else if(e?.status==="json")SC.err="Cavab oxunmadı. Yenidən cəhd edin.";
-    else if(e?.status===404)SC.err="AI modeli tapılmadı. Bir az sonra yenidən cəhd edin.";
-    else if(!navigator.onLine)SC.err="İnternet yoxdur. Bağlantını yoxlayın.";
-    else SC.err="Bağlantı xətası. Yenidən cəhd edin."+(e?.msg?` (${esc(e.msg.slice(0,120))})`:"");
+    SC.err=aiErrText(e);
   }finally{SC.busy=false;if(curHash()==="scan")render()}
 }
 function vAI(){
@@ -534,6 +556,7 @@ function vAI(){
     <label class="f">AI açarı<input id="aiKey" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Açarı bura yapışdırın" value="${esc(S.ai.key)}"></label>
     <div id="aiMsg" class="small" hidden></div>
     <div class="grid2"><button class="primary" id="aiSave">Yadda saxla</button><button class="ghost" id="aiDel">Sil</button></div>
+    <button id="aiTest">Bağlantını yoxla</button><div id="aiTestOut" class="small" hidden></div>
     <p class="small muted" style="margin:0">Pulsuz planda gündəlik limit var, ailə istifadəsi üçün kifayətdir. Göndərilən şəkillər Google tərəfindən emal olunur.</p></section>`;
 }
 
@@ -614,7 +637,7 @@ Yalnız bu JSON, mətnlər Azərbaycan dilində:
   try{const r=await askAI([{text:prompt}],PM.ctl.signal);if(!r||!Array.isArray(r.days)||!r.days.length)throw{status:"json"};
     r.days.forEach(d=>(d.meals||[]).forEach(m=>{if(!m.kcal)m.kcal=(m.items||[]).reduce((s,i)=>s+(+i.kcal_per100||0)*(+i.grams||0)/100,0)}));
     S.pmenu=r;PM.day=0;save();toast("Şəxsi menyunuz hazırdır")}
-  catch(e){PM.err=e?.name==="AbortError"?"":e?.status===429?"Pulsuz limit bir müddət doldu. Bir az sonra yenidən cəhd edin.":"Menyu qurulmadı. İnterneti yoxlayıb yenidən cəhd edin."}
+  catch(e){PM.err=aiErrText(e)}
   finally{PM.busy=false;if(curHash()==="plan")render()}
 }
 
@@ -882,6 +905,9 @@ function bind(h){
       else{S.ai.key=k;save();say("Açar yadda saxlanıldı, amma yoxlama alınmadı ("+r.status+"). Şəkil çəkib sınayın.","var(--warn)")}
     }catch(err){S.ai.key=k;save();say("İnternet yoxlaması alınmadı, açar yadda saxlanıldı. Şəkil çəkib sınayın.","var(--warn)")}
     finally{btn.disabled=false}});
+  on("#aiTest","click",async e=>{const b=e.currentTarget,o=$("#aiTestOut");b.disabled=true;o.hidden=false;o.innerHTML="Yoxlanılır…";
+    try{const r=await askAI([{text:'Yalnız bu JSON-u qaytar: {"ok":true}'}]);o.innerHTML=`<span style="color:var(--ok);font-weight:800">İşləyir ✓</span> <span class="muted">(${esc(S.ai.model)}, yol ${S.ai.route+1})</span>`}
+    catch(err){o.innerHTML=`<span style="color:var(--danger);font-weight:700">${aiErrText(err)||"Dayandırıldı"}</span>`}finally{b.disabled=false}});
   on("#aiDel","click",()=>{S.ai.key="";save();toast("Açar silindi");render()});
   // plan
   on("[data-pt]","click",e=>{PLANTAB=e.currentTarget.dataset.pt;render()});
