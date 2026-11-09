@@ -1,4 +1,9 @@
 {
   "guide": { "whatsapp": "994552361076", "name": "Ülviyyə" },
-  "shop": { "whatsapp": "994552361076", "adminPin": "2580", "catalogCsv": "", "sheetEditUrl": "" }
+  "shop": {
+    "whatsapp": "994552361076",
+    "adminPin": "2580",
+    "catalogCsv": "https://docs.google.com/spreadsheets/d/10h-iTndkCZ9Il5hYZ-r10WiitMyW8B9PtD1YvXFt1Y4/gviz/tq?tqx=out:csv&headers=1",
+    "sheetEditUrl": "https://docs.google.com/spreadsheets/d/10h-iTndkCZ9Il5hYZ-r10WiitMyW8B9PtD1YvXFt1Y4/edit"
+  }
 }

@@ -403,7 +403,7 @@ const CONFIG={geminiKey:(()=>{try{return atob(_k[1]+_k[0]).split("").reverse().j
   // Guide: put her WhatsApp number in international form without "+" (e.g. 994501234567).
   guide:{name:"Ülviyyə",role:"Şəxsi fitnes bələdçiniz",whatsapp:"994552361076",photo:"ulviyye.jpg"},
   // Shop: orders go to this WhatsApp. catalogCsv = Google Sheets "Publish to web" CSV link (optional; otherwise catalog.json).
-  shop:{whatsapp:"994552361076",catalogCsv:"",sheetEditUrl:"",catalogUrl:"catalog.json",cur:"₼",freeFrom:50,fee:3,adminPin:"2580"}};
+  shop:{whatsapp:"994552361076",catalogCsv:"https://docs.google.com/spreadsheets/d/10h-iTndkCZ9Il5hYZ-r10WiitMyW8B9PtD1YvXFt1Y4/gviz/tq?tqx=out:csv&headers=1",sheetEditUrl:"https://docs.google.com/spreadsheets/d/10h-iTndkCZ9Il5hYZ-r10WiitMyW8B9PtD1YvXFt1Y4/edit",catalogUrl:"catalog.json",cur:"₼",freeFrom:50,fee:3,adminPin:"2580"}};
 const aiKey=()=>S.ai.key||CONFIG.geminiKey;
 function day(k=TODAY){if(!S.days[k])S.days[k]={foods:[],water:0,ex:[]};return S.days[k]}
 
