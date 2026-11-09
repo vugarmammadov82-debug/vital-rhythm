@@ -344,7 +344,7 @@ const EX=[["Yeriş (adi)",3.5],["Sürətli yeriş",4.3],["Qaçış",8],["Velosip
 const MEALS=["Səhər","Nahar","Şam","Ara qəlyanaltı"];
 const ACT=[["Hərəkətsiz (oturaq iş)",1.2],["Az aktiv (həftədə 1–3 məşq)",1.375],["Orta (həftədə 3–5 məşq)",1.55],["Yüksək (həftədə 6–7 məşq)",1.725],["Çox yüksək (fiziki iş)",1.9]];
 const GOALS={lose:"Arıqlamaq",keep:"Çəkini saxlamaq",gain:"Əzələ / çəki artımı"};
-const SPORTS={walk:["Yeriş",3.8],run:["Qaçış",8.5],bike:["Velosiped",6.5]};
+const SPORTS={walk:["Yeriş",3.8],run:["Qaçış",8.5],bike:["Velosiped",6.5],steps:["Addım (GPS-siz)",3.5]};
 const TIPS=["Yeməkdən 20 dəqiqə əvvəl bir stəkan su için: daha az yeyirsiniz.","Boşqabın yarısını tərəvəzlə doldurun.","Şirin içkini su və ya şəkərsiz çayla əvəz edin.","Hər saat 3–5 dəqiqə ayağa qalxıb gəzin.","Yavaş yeyin. Doyma hissi 15–20 dəqiqəyə gəlir.","Duzu azaldın: gündə 5 q-dan az (bir çay qaşığı).","Gündə 7–9 saat yuxu iştahı tənzimləyir.","Çörəyi qara çörək və ya təndir çörəyi ilə əvəz edin.","Gündə 400 q meyvə və tərəvəz yeyin.","Həftədə 150 dəqiqə sürətli yeriş ürək üçün ən sadə dərmandır."];
 
 
@@ -593,7 +593,7 @@ function vScan(){
    <div class="drop">${SC.url?`<img src="${SC.url}" alt="Seçilmiş şəkil">`:`<div class="ph"><svg viewBox="0 0 24 24">${ICON.cam}</svg><b>Yeməyin, içkinin və ya etiketin şəklini çəkin</b><span class="small">Boşqabı yuxarıdan, yaxşı işıqda çəkin</span></div>`}</div>
    <div class="grid2"><label class="filebtn main">Kamera<input id="camIn" type="file" accept="image/*" capture="environment"></label><label class="filebtn">Qalereya<input id="galIn" type="file" accept="image/*"></label></div>
    <label class="f">Əlavə qeyd (istəyə bağlı)<textarea id="note" placeholder="məs: yarım porsiya, çayda 2 qaşıq şəkər, yağda qızardılıb">${esc(SC.note)}</textarea></label>
-   ${SC.busy?`<div class="row"><span class="spin"></span><span style="flex:1">Analiz edilir…</span><button class="ghost" id="stopA">Dayandır</button></div>`:`<button class="primary big" id="anal">${SC.res?"Qeydə görə yenidən hesabla":"Kalorini hesabla"}</button>`}
+   ${SC.busy?`<div class="row"><span class="spin"></span><span style="flex:1" id="anT">Analiz edilir…</span><button class="ghost" id="stopA">Dayandır</button></div>`:`<button class="primary big" id="anal">${SC.res?"Qeydə görə yenidən hesabla":"Kalorini hesabla"}</button>`}
    ${SC.err?`<div class="alert warn"><span class="dot"></span><div>${SC.err}</div></div>`:""}
    ${!key?`<div class="alert info"><span class="dot"></span><div>Şəkil analizi üçün bir dəfəlik pulsuz AI açarı lazımdır (2 dəqiqə).<div class="row" style="margin-top:8px"><button class="primary" data-go="ai">Açarı qoş</button></div></div></div>`:""}
   </section>`;
@@ -614,38 +614,39 @@ function scanResult(){
     <div class="grid2"><label class="f">Vaxt<select id="scMeal">${MEALS.map(m=>`<option ${m===mealNow()?"selected":""}>${m}</option>`).join("")}</select></label><button class="primary" id="scAdd" style="align-self:end">Bugünə əlavə et</button></div>
     <p class="small muted" style="margin:0">Şəkildən hesablama təxminidir, ±20% fərq ola bilər.</p></section>`;
 }
-function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1280,sc=Math.min(1,m/Math.max(img.width,img.height)),cv=document.createElement("canvas");cv.width=r0(img.width*sc);cv.height=r0(img.height*sc);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",0.82).split(",")[1])};img.onerror=()=>rej(new Error("img"));img.src=URL.createObjectURL(file)})}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=896,sc=Math.min(1,m/Math.max(img.width,img.height)),cv=document.createElement("canvas");cv.width=r0(img.width*sc);cv.height=r0(img.height*sc);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",0.75).split(",")[1])};img.onerror=()=>rej(new Error("img"));img.src=URL.createObjectURL(file)})}
 // Newer models first; aliases follow Google's current release. Each key type is tried on every route Google accepts it on.
-const MODELS=["gemini-flash-latest","gemini-2.5-flash","gemini-3-flash-preview","gemini-flash-lite-latest","gemini-2.5-flash-lite"];
+// Fastest first: 2.5 Flash with thinking switched off answers in a few seconds.
+const MODELS=["gemini-2.5-flash","gemini-flash-lite-latest","gemini-2.5-flash-lite","gemini-flash-latest","gemini-3-flash-preview"];
 const ROUTES=[
   (m,k)=>({url:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,h:{"x-goog-api-key":k}}),
   (m,k)=>({url:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(k)}`,h:{}}),
   (m,k)=>({url:`https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent?key=${encodeURIComponent(k)}`,h:{}})
 ];
 async function askAI(parts,signal){
-  const k=aiKey(),body=JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}});
-  const models=S.ai.model?[S.ai.model,...MODELS.filter(x=>x!==S.ai.model)]:MODELS;
+  const k=aiKey(),bodyFor=m=>JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3,...(/^gemini-2\.5/.test(m)?{thinkingConfig:{thinkingBudget:0}}:{})}});
+  const models=S.ai.fm?[S.ai.fm,...MODELS.filter(x=>x!==S.ai.fm)]:MODELS;
   const order=S.ai.route!=null?[S.ai.route,...[0,1,2].filter(i=>i!==S.ai.route)]:[0,1,2];
   let last=null;
   for(const ri of order){
     for(const m of models){
       const o=ROUTES[ri](m,k);let r;
-      try{r=await fetch(o.url,{method:"POST",signal,headers:{"Content-Type":"application/json",...o.h},body})}
+      try{r=await fetch(o.url,{method:"POST",signal,headers:{"Content-Type":"application/json",...o.h},body:bodyFor(m)})}
       catch(e){if(e?.name==="AbortError")throw e;last={status:"net",msg:String(e?.message||e)};break}
       const j=await r.json().catch(()=>({}));
       if(r.ok){
-        S.ai.model=m;S.ai.route=ri;save();
+        S.ai.fm=m;S.ai.route=ri;save();
         const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("");
         const a=txt.indexOf("{"),b=txt.lastIndexOf("}");if(a<0)throw{status:"json"};
         return JSON.parse(txt.slice(a,b+1));
       }
       const msg=j?.error?.message||"",st=j?.error?.status||"";last={status:r.status,msg,st};
-      if(r.status===404||(r.status===400&&/model/i.test(msg)&&!/key/i.test(msg)))continue; // this model is gone, try the next
+      if(r.status===404||(r.status===400&&/model|thinking/i.test(msg)&&!/key/i.test(msg)))continue; // this model is gone, try the next
       if(r.status===429||r.status>=500)throw last;                                         // busy or over quota
       break;                                                                                // key rejected here, try the next route
     }
   }
-  S.ai.route=null;S.ai.model=null;save();
+  S.ai.route=null;S.ai.fm=null;save();
   throw last||{status:"net"};
 }
 function aiErrText(e){
@@ -672,7 +673,7 @@ Tərkibdəki hər komponenti müəyyən et, təxmini çəkisini (qram və ya ml)
 "advice": 2–3 cümləlik praktik məsləhət: bu gün üçün çoxdur, yoxsa uyğundur, necə yüngülləşdirmək və ya nə ilə tamamlamaq olar. Tibbi diaqnoz və dərman tövsiyəsi vermə.
 Yalnız bu JSON-u qaytar, mətnlər Azərbaycan dilində:
 {"recognized":true,"items":[{"name":"Plov","grams":300,"kcal_per100":180,"p100":7,"f100":6,"c100":25,"confidence":"yüksək|orta|aşağı"}],"questions":["..."],"advice":"..."}`;
-  SC.busy=true;SC.err="";SC.ctl=new AbortController();render();
+  SC.busy=true;SC.err="";SC.ctl=new AbortController();render();const t0=Date.now(),tm=setInterval(()=>{const e=$("#anT");if(e)e.textContent=`Analiz edilir… ${Math.round((Date.now()-t0)/1000)} san`;else clearInterval(tm)},1000);
   try{
     const parts=[{text:prompt}];if(SC.file)parts.push({inline_data:{mime_type:"image/jpeg",data:await shrink(SC.file)}});
     const res=await askAI(parts,SC.ctl.signal);if(!res||!Array.isArray(res.items))throw{status:"json"};SC.res=res;
@@ -801,7 +802,7 @@ let MAP=null,LINE=null,ME=null;
 const hav=(a,b)=>{const R=6371000,t=x=>x*Math.PI/180,dl=t(b[0]-a[0]),dn=t(b[1]-a[1]),s=Math.sin(dl/2)**2+Math.cos(t(a[0]))*Math.cos(t(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(s))};
 const steps=(dist,sport)=>sport==="bike"?0:r0(dist/(((+S.profile.h||170)/100)*(sport==="run"?0.65:0.415)));
 const kcalFor=(sport,sec)=>SPORTS[sport][1]*3.5*(+S.profile.w||70)/200*(sec/60);
-function curStats(){const t=TR.elapsed,km=TR.dist/1000;let fast=null,slow=null;TR.splits.forEach((s,i)=>{if(!fast||s<fast.t)fast={i,t:s};if(!slow||s>slow.t)slow={i,t:s}});
+function curStats(){const t=TR.elapsed,km=TR.sport==="steps"?(TR.steps||0)*((+S.profile.h||170)/100*0.415)/1000:TR.dist/1000;let fast=null,slow=null;TR.splits.forEach((s,i)=>{if(!fast||s<fast.t)fast={i,t:s};if(!slow||s>slow.t)slow={i,t:s}});
   return{t,km,avg:t>0?km/(t/3600):0,max:TR.maxSp*3.6,cur:TR.curSp*3.6,gain:TR.gain,loss:TR.loss,minA:TR.minAlt,maxA:TR.maxAlt,pace:km>0?t/km:0,fast,slow,steps:TR.sport==="bike"?0:((TR.steps||0)>20?TR.steps:steps(TR.dist,TR.sport)),stepSrc:(TR.steps||0)>20?"sensor":"təxmini",kcal:kcalFor(TR.sport,t)}}
 function statGrid(s,sport){const bike=sport==="bike";
   return `<div class="stats"><div class="st"><small>Vaxt</small><b>${fmtT(s.t)}</b></div><div class="st"><small>${bike?"Sürət":"Temp /km"}</small><b>${bike?s.cur.toFixed(1):fmtPace(s.pace)}</b></div><div class="st"><small>Orta sürət</small><b>${s.avg.toFixed(1)}</b></div>
@@ -812,19 +813,21 @@ function statGrid(s,sport){const bike=sport==="bike";
 function gpsQ(){return TR.acc==null?["GPS gözlənilir","var(--muted)"]:TR.acc<=15?["GPS əla · ±"+r0(TR.acc)+" m","var(--ok)"]:TR.acc<=35?["GPS orta · ±"+r0(TR.acc)+" m","var(--warn)"]:["GPS zəif · ±"+r0(TR.acc)+" m","var(--danger)"]}
 function vMove(){
   const s=curStats(),live=TR.state!=="idle",q=gpsQ();
-  let h=`<section class="card">${live?"":`<div class="seg">${Object.entries(SPORTS).map(([k,v])=>`<button data-sport="${k}" class="${TR.sport===k?"on":""}">${v[0]}</button>`).join("")}</div>`}
-    <div id="map"></div>
-    <div class="row between"><span class="gpsq" id="gq" style="color:${q[1]}"><i></i>${q[0]}</span>${live?`<span class="tag">${SPORTS[TR.sport][0]}${TR.state==="paused"?" · fasilə":""}</span>`:""}</div>
+  let h=`<section class="card">${live?"":`<div class="seg" style="grid-template-columns:1fr 1fr">${Object.entries(SPORTS).map(([k,v])=>`<button data-sport="${k}" class="${TR.sport===k?"on":""}">${v[0]}</button>`).join("")}</div>`}
+    ${TR.sport==="steps"?"":`<div id="map"></div>`}
+    <div class="row between"><span class="gpsq" id="gq" style="color:${q[1]}">${TR.sport==="steps"?"GPS istifadə olunmur":`<i></i>${q[0]}`}</span>${live?`<span class="tag">${SPORTS[TR.sport][0]}${TR.state==="paused"?" · fasilə":""}</span>`:""}</div>
     ${!live&&S.trLive?`<div class="alert warn"><span class="dot"></span><div>Yarımçıq qalmış hərəkət var: ${(S.trLive.dist/1000).toFixed(2)} km, ${fmtT(S.trLive.elapsed)}.<div class="row" style="margin-top:8px"><button class="primary" id="trRes">Bərpa et</button><button class="ghost" id="trDrop">Sil</button></div></div></div>`:""}
-    <div class="bigstat"><b id="bigKm">${s.km.toFixed(2)}</b><span>km</span></div><div id="liveStats">${statGrid(s,TR.sport)}</div>
+    <div class="grid2" style="text-align:center"><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b id="bigKm">${s.km.toFixed(2)}</b><span>km</span></div><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b id="bigSt" style="color:var(--violet)">${TR.sport==="bike"?"—":(s.steps||0).toLocaleString()}</b><span>addım</span></div></div>
+    ${live?`<p class="small" id="sensTxt" style="margin:0;text-align:center;font-weight:700;color:${sensorOk()?"var(--ok)":"var(--muted)"}">${sensorOk()?"Addım sensoru işləyir ✓":"Addım sensoru yoxlanılır…"}</p>`:`<p class="small muted" style="margin:0;text-align:center">${TR.sport==="steps"?"Otaqda və ya qapalı yerdə addım saymaq üçün. Telefonu cibdə və ya əldə saxlayın.":"Addımları telefonun hərəkət sensoru sayır, məsafəni GPS ölçür."}</p>`}
+    <div id="liveStats">${statGrid(s,TR.sport)}</div>
     ${TR.state==="idle"?`<button class="primary big" id="trStart">Start</button><p class="small muted" style="margin:0">Hərəkət zamanı proqram açıq qalsın. Telefon kilidlənəndə GPS dayana bilər.</p>`:`<div class="ctrl">${TR.state==="running"?`<button class="big" id="trPause">Fasilə</button>`:`<button class="primary big" id="trResume">Davam</button>`}<button class="red big" id="trStop">Bitir</button></div>`}</section>`;
   if(S.acts.length)h+=`<section class="card"><div class="row between"><h2>Tarixçə</h2><span class="tag">${S.acts.length} hərəkət · ${(S.acts.reduce((a,x)=>a+x.dist,0)/1000).toFixed(1)} km</span></div><div class="list">${S.acts.map((a,i)=>`<button class="item" data-act="${i}"><span class="n">${avatar(SPORTS[a.sport][0],"Zülal")}<div><b>${SPORTS[a.sport][0]} · ${(a.dist/1000).toFixed(2)} km</b><span>${dDay(a.start)}, ${dTime(a.start)} · ${fmtT(a.t)}</span></div></span><span class="k">${r0(a.kcal)} kkal ›</span></button>`).join("")}</div></section>`;
   return h;
 }
 function vActivity(i){const a=S.acts[i];if(!a)return vMove();
   return `<section class="card"><div class="row between"><h2>${AZW[new Date(a.start).getDay()]}, ${dDay(a.start)} · ${dTime(a.start)}</h2><span class="tag">${SPORTS[a.sport][0]}</span></div>
-    <div id="map"></div><div class="bigstat"><b>${(a.dist/1000).toFixed(2)}</b><span>km</span></div>${statGrid(a.stats,a.sport)}
-    <div class="grid2"><button class="primary" id="shareImg">Şəkil kimi paylaş</button><button id="shareGpx">GPX (Strava)</button></div>
+    ${a.pts.length>1?`<div id="map"></div>`:""}<div class="grid2" style="text-align:center"><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b>${(a.dist/1000).toFixed(2)}</b><span>km</span></div><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b style="color:var(--violet)">${a.sport==="bike"?"—":(a.stats.steps||0).toLocaleString()}</b><span>addım</span></div></div>${statGrid(a.stats,a.sport)}
+    <div class="grid2"><button class="primary" id="shareImg">Şəkil kimi paylaş</button>${a.pts.length>1?`<button id="shareGpx">GPX (Strava)</button>`:`<button class="ghost" data-tabgo="diary">Gündəliyə bax</button>`}</div>
     <button class="ghost" id="actDel">Bu hərəkəti sil</button></section>`}
 function initMap(pts,live){
   const el=$("#map");if(!el)return;
@@ -851,33 +854,39 @@ function onPos(pos){
   updLive();
 }
 function onErr(e){toast({1:"GPS icazəsi verilmədi. Telefonun parametrlərində yer icazəsi verin.",2:"Yer müəyyən edilmir. Açıq havaya çıxın.",3:"GPS cavab vermir, gözləyin."}[e.code]||"GPS xətası")}
-function updLive(){if(curHash()!=="move")return;const s=curStats(),k=$("#bigKm"),g=$("#liveStats"),q=$("#gq");if(k)k.textContent=s.km.toFixed(2);if(g)g.innerHTML=statGrid(s,TR.sport);if(q){const v=gpsQ();q.style.color=v[1];q.innerHTML=`<i></i>${v[0]}`}}
+function updLive(){if(curHash()!=="move")return;const s=curStats(),k=$("#bigKm"),g=$("#liveStats"),q=$("#gq"),bs=$("#bigSt"),st=$("#sensTxt");if(k)k.textContent=s.km.toFixed(2);if(bs&&TR.sport!=="bike")bs.textContent=(s.steps||0).toLocaleString();
+  if(st&&TR.state!=="idle"){const ok=sensorOk();st.style.color=ok?"var(--ok)":TR.elapsed>4?"var(--warn)":"var(--muted)";st.textContent=ok?"Addım sensoru işləyir ✓":TR.elapsed>4?"Sensor tapılmadı — addımlar məsafəyə görə təxmin edilir":"Addım sensoru yoxlanılır…"}if(g)g.innerHTML=statGrid(s,TR.sport);if(q&&TR.sport!=="steps"){const v=gpsQ();q.style.color=v[1];q.innerHTML=`<i></i>${v[0]}`}}
 function tick(){const now=Date.now();if(TR.state==="running")TR.elapsed+=(now-TR.lastTick)/1000;TR.lastTick=now;updLive();liveDot();if(Math.floor(TR.elapsed)%10===0)persistLive()}
 async function wakeOn(){try{TR.wake=await navigator.wakeLock?.request("screen")}catch(e){}}
 function liveDot(){const on=TR.state!=="idle",b=$("#liveBar");if(b){b.hidden=!on||curHash()==="move";$("#liveTxt").textContent=`${TR.state==="paused"?"Fasilə":"Hərəkət"} · ${(TR.dist/1000).toFixed(2)} km · ${fmtT(TR.elapsed)}`}}
 // Step sensor: counts real steps from the phone's motion sensor while tracking (works indoors too).
-const STEP={on:false,f:9.8,last:0,up:false};
-function onMotion(e){const a=e.accelerationIncludingGravity;if(!a||TR.state!=="running")return;const m=Math.hypot(a.x||0,a.y||0,a.z||0);STEP.f=STEP.f*0.9+m*0.1;const d=m-STEP.f,now=Date.now();
-  if(!STEP.up&&d>1.25&&now-STEP.last>280){STEP.up=true;STEP.last=now;TR.steps=(TR.steps||0)+1}else if(STEP.up&&d<0.2)STEP.up=false}
-async function motionOn(){try{if(typeof DeviceMotionEvent!=="undefined"&&DeviceMotionEvent.requestPermission){const r=await DeviceMotionEvent.requestPermission();if(r!=="granted")return}}catch(e){return}
-  if(!STEP.on){window.addEventListener("devicemotion",onMotion);STEP.on=true}}
+const STEP={on:false,g:9.8,s:0,last:0,up:false,ev:0};
+// Step detection: remove gravity with a slow filter, smooth the rest, count each peak above 1 m/s² (min 0.3 s apart).
+function onMotion(e){const a=e.accelerationIncludingGravity;if(!a||a.x==null)return;STEP.ev++;if(TR.state!=="running")return;
+  const m=Math.hypot(a.x||0,a.y||0,a.z||0);STEP.g=STEP.g*0.95+m*0.05;STEP.s=STEP.s*0.6+(m-STEP.g)*0.4;const now=Date.now();
+  if(!STEP.up&&STEP.s>1.0&&now-STEP.last>300){STEP.up=true;STEP.last=now;TR.steps=(TR.steps||0)+1}else if(STEP.up&&STEP.s<0.1)STEP.up=false}
+const sensorOk=()=>STEP.ev>0;
+// Always listen; only iPhone needs an explicit permission, and a refusal there just means no events arrive.
+function motionOn(){STEP.ev=0;if(!STEP.on){window.addEventListener("devicemotion",onMotion);STEP.on=true}
+  try{if(isIOS&&typeof DeviceMotionEvent!=="undefined"&&DeviceMotionEvent.requestPermission)DeviceMotionEvent.requestPermission().catch(()=>{})}catch(e){}}
 function motionOff(){if(STEP.on){window.removeEventListener("devicemotion",onMotion);STEP.on=false}}
 function persistLive(){if(TR.state==="idle"){if(S.trLive){delete S.trLive;save()}return}
   const {watch,timer,wake,...rest}=TR;S.trLive={...rest,pts:TR.pts.slice(-1500),savedAt:Date.now()};save()}
-function startWatch(){TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});clearInterval(TR.timer);TR.timer=setInterval(tick,1000);wakeOn();liveDot()}
+function startWatch(){if(TR.sport!=="steps"&&"geolocation" in navigator)TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});clearInterval(TR.timer);TR.timer=setInterval(tick,1000);wakeOn();liveDot()}
 function resumeLive(){const L0=S.trLive;if(!L0)return;Object.assign(TR,L0,{state:"paused",lastTick:Date.now()});startWatch();motionOn();toast("Hərəkət bərpa olundu. Davam basın.");go("move")}
 function startTrack(){
-  if(!("geolocation" in navigator))return toast("Bu brauzer GPS-i dəstəkləmir");
+  if(TR.sport!=="steps"&&!("geolocation" in navigator))return toast("Bu brauzer GPS-i dəstəkləmir");
   Object.assign(TR,{state:"running",pts:[],dist:0,elapsed:0,maxSp:0,gain:0,loss:0,minAlt:null,maxAlt:null,lastAlt:null,splits:[],lastSplitT:0,lastSplitD:0,curSp:0,startTs:Date.now(),lastTick:Date.now()});
   TR.steps=0;startWatch();motionOn();render();
 }
 function stopTrack(){
   if(TR.watch!=null)navigator.geolocation.clearWatch(TR.watch);clearInterval(TR.timer);try{TR.wake?.release()}catch(e){}motionOff();
   const s=curStats();TR.state="idle";liveDot();delete S.trLive;save();
-  if(TR.dist<20&&s.steps<30){toast("Hərəkət çox qısadır, yadda saxlanılmadı");render();return}
+  if(s.t<20&&TR.dist<20&&s.steps<20){toast("20 saniyədən qısa hərəkət yadda saxlanılmır");render();return}
+  if(TR.sport==="steps")TR.dist=s.km*1000;
   let pts=TR.pts;if(pts.length>1500){const st=Math.ceil(pts.length/1500);pts=pts.filter((_,i)=>i%st===0||i===TR.pts.length-1)}
   S.acts.unshift({sport:TR.sport,start:TR.startTs,t:s.t,dist:TR.dist,kcal:s.kcal,pts:pts.map(p=>[+p[0].toFixed(6),+p[1].toFixed(6),p[2]==null?null:+p[2].toFixed(1),p[3]]),stats:s});
-  day().ex.push({n:SPORTS[TR.sport][0]+" (GPS)",min:r0(s.t/60),kcal:s.kcal,km:s.km,steps:TR.sport==="bike"?0:s.steps});save();
+  day().ex.push({n:TR.sport==="steps"?"Addım":SPORTS[TR.sport][0]+" (GPS)",min:r0(s.t/60),kcal:s.kcal,km:s.km,steps:TR.sport==="bike"?0:s.steps});save();
   toast(`Əla! ${s.km.toFixed(2)} km, ${r0(s.kcal)} kkal`);go("act-0");
 }
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&TR.state!=="idle")wakeOn()});
@@ -1161,11 +1170,11 @@ function render(){
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const v=$("#view");
   v.innerHTML=h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
-  if(h==="move")initMap(TR.pts,TR.state!=="idle");
+  if(h==="move"&&TR.sport!=="steps")initMap(TR.pts,TR.state!=="idle");
   if(h==="rest")initRestMap();
   updCart();liveDot();if(!h.startsWith("prod-"))PQ=1;
   if(h==="coupon")drawQR();
-  if(h.startsWith("act-")&&S.acts[+h.slice(4)])initMap(S.acts[+h.slice(4)].pts,false);
+  if(h.startsWith("act-")&&S.acts[+h.slice(4)]&&S.acts[+h.slice(4)].pts.length>1)initMap(S.acts[+h.slice(4)].pts,false);
   if(h==="move"&&TR.state==="idle"&&TR.acc==null&&S.gpsAsked&&"geolocation" in navigator)navigator.geolocation.getCurrentPosition(p=>{TR.acc=p.coords.accuracy;if(MAP)MAP.setView([p.coords.latitude,p.coords.longitude],16);updLive()},()=>{},{enableHighAccuracy:true,timeout:15000});
   bind(h);
 }
@@ -1234,7 +1243,7 @@ function bind(h){
     }catch(err){S.ai.key=k;save();say("İnternet yoxlaması alınmadı, açar yadda saxlanıldı. Şəkil çəkib sınayın.","var(--warn)")}
     finally{btn.disabled=false}});
   on("#aiTest","click",async e=>{const b=e.currentTarget,o=$("#aiTestOut");b.disabled=true;o.hidden=false;o.innerHTML="Yoxlanılır…";
-    try{const r=await askAI([{text:'Yalnız bu JSON-u qaytar: {"ok":true}'}]);o.innerHTML=`<span style="color:var(--ok);font-weight:800">İşləyir ✓</span> <span class="muted">(${esc(S.ai.model)}, yol ${S.ai.route+1})</span>`}
+    try{const r=await askAI([{text:'Yalnız bu JSON-u qaytar: {"ok":true}'}]);o.innerHTML=`<span style="color:var(--ok);font-weight:800">İşləyir ✓</span> <span class="muted">(${esc(S.ai.fm)}, yol ${S.ai.route+1})</span>`}
     catch(err){o.innerHTML=`<span style="color:var(--danger);font-weight:700">${aiErrText(err)||"Dayandırıldı"}</span>`}finally{b.disabled=false}});
   on("#aiDel","click",()=>{S.ai.key="";save();toast("Açar silindi");render()});
   // plan
@@ -1262,6 +1271,7 @@ function bind(h){
 }
 $("#cartBar").onclick=()=>go("cart");
 $("#liveBar").onclick=()=>go("move");
+fetch("config.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;["guide","shop"].forEach(k=>{if(j[k])Object.entries(j[k]).forEach(([a,b])=>{if(b!==""&&b!=null)CONFIG[k][a]=b})})}).catch(()=>{});
 guideInit();loadShop();
 render();
 if(!S.user&&!S.regAsked){S.regAsked=1;save();setTimeout(()=>go("reg"),400)}
