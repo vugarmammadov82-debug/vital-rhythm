@@ -142,8 +142,8 @@ ul.tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;fo
 .seg button{padding:10px 4px;background:transparent;border-radius:12px}
 .seg button.on{background:var(--surface);color:var(--accent);box-shadow:0 2px 6px -3px rgba(0,0,0,.3)}
 /* home quadrants: soft tinted fields, deep ink for icons */
-:root{--q1:#FFE6DA;--q1i:#D2553A;--q2:#DDF2E8;--q2i:#0F7A62;--q3:#E9E4FB;--q3i:#5B47C2;--q4:#DCEDFA;--q4i:#1F6FAE}
-@media (prefers-color-scheme: dark){:root{--q1:#3A2620;--q1i:#F2A48E;--q2:#173329;--q2i:#6FE0BE;--q3:#272240;--q3i:#B8ABFA;--q4:#18293A;--q4i:#86C3F2}}
+:root{--q5:#FFF1CC;--q5i:#A86A00;--q6:#FCE3EE;--q6i:#B0336A;--q1:#FFE6DA;--q1i:#D2553A;--q2:#DDF2E8;--q2i:#0F7A62;--q3:#E9E4FB;--q3i:#5B47C2;--q4:#DCEDFA;--q4i:#1F6FAE}
+@media (prefers-color-scheme: dark){:root{--q5:#3A2F12;--q5i:#F5C451;--q6:#3B1F2C;--q6i:#F49AC0;--q1:#3A2620;--q1i:#F2A48E;--q2:#173329;--q2i:#6FE0BE;--q3:#272240;--q3i:#B8ABFA;--q4:#18293A;--q4i:#86C3F2}}
 .status{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:12px 14px}
 .status .ring{width:76px;height:76px}.status .ring svg{width:76px;height:76px}
 .status .ring .c b{font-size:16px}.status .ring .c span{font-size:9.5px}
@@ -153,13 +153,24 @@ ul.tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;fo
 .pills{display:flex;gap:6px;flex-wrap:wrap}
 .pills span{font-size:12px;font-weight:800;padding:4px 9px;border-radius:99px;background:var(--surface2)}
 .quads{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.quad{min-height:168px;border-radius:26px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;gap:10px;position:relative;overflow:hidden;border:0}
+.quad{transition:transform .18s cubic-bezier(.2,1.4,.4,1),box-shadow .18s;min-height:118px;border-radius:26px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;gap:10px;position:relative;overflow:hidden;border:0}
 .quad::after{content:"";position:absolute;right:-34px;bottom:-34px;width:110px;height:110px;border-radius:50%;background:currentColor;opacity:.07}
 .quad .qi{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:var(--surface);box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
 .quad .qi svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .quad b{display:block;font-family:var(--display);font-size:17px;font-weight:700;line-height:1.15;color:var(--ink)}
 .quad small{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-top:3px}
 .q1{background:var(--q1);color:var(--q1i)}.q2{background:var(--q2);color:var(--q2i)}.q3{background:var(--q3);color:var(--q3i)}.q4{background:var(--q4);color:var(--q4i)}
+.q5{background:var(--q5);color:var(--q5i)}.q6{background:var(--q6);color:var(--q6i)}
+.quad:hover{transform:scale(1.03)}.quad:active,.quad.press{transform:scale(1.07);box-shadow:0 14px 28px -14px currentColor;z-index:2}
+@media (prefers-reduced-motion:reduce){.quad,.quad:active,.quad.press,.quad:hover{transform:none;transition:none}}
+.tip{border-radius:22px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(140deg,var(--q5),var(--surface) 80%);border:1px solid var(--line)}
+.tip .tt{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tip .tt button{flex:none;padding:6px 11px;border-radius:99px;font-size:12px;font-weight:800;background:color-mix(in srgb,var(--surface) 75%,transparent);color:var(--muted)}
+.tip .tt button.on{background:var(--q5i);color:#fff}
+.tip b.h{font-family:var(--display);font-size:16px;line-height:1.25}
+.tip p{margin:0;font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tip a{color:var(--accent);font-weight:800;font-size:12.5px}
+.hscroll{display:grid;grid-auto-flow:column;grid-auto-columns:148px;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .strip button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:800}
 .strip button b{font-family:var(--display);font-size:16px}
@@ -349,6 +360,28 @@ const HERBS=[
  {n:"Yaşıl çay",lat:"Camellia sinensis",ev:2,good:"Ümumi və LDL xolesterini bir qədər azalda bilər (daha çox ekstraktlarla).",note:"Ekstrakt həbləri ilə nadir qaraciyər zədəsi halları var — çay kimi içmək daha təhlükəsizdir. Kofein var; bəzi təzyiq və xolesterin dərmanları ilə qarşılıqlı təsir edir.",how:"Gündə 1–3 fincan, şəkərsiz.",rec:"Nanəli yaşıl çay: 1 çay qaşığı yaşıl çay + 3 nanə yarpağı, 80°C suda 3 dəq.",src:["NIH / NCCIH — Green Tea","https://nccih.nih.gov/health/green-tea"]},
  {n:"Darçın",lat:"Cinnamomum",ev:1,good:"Xalq arasında şəkəri salmaq üçün işlədilir, lakin NIH-in qeyd etdiyi analizdə diabet və ürək göstəricilərinə təsiri təsdiqlənməyib.",note:"Kassiya darçınında kumarin var, çox miqdarda zərərli ola bilər. Şəkər xəstəliyinin müalicəsini əvəz etmir.",how:"Yulafa, qatığa, almaya çimdik-çimdik — şəkər əvəzinə dad üçün.",rec:"Darçınlı bişmiş alma: alma ortadan kəsilir, üstünə darçın və bir neçə qoz, 180°C-də 20 dəq.",src:["NIH / NCCAM — Cinnamon","https://webarchive.library.unt.edu/web/20130222014706/http://nccam.nih.gov/health/cinnamon"]}
 ];
+const WHO={diet:"https://www.who.int/news-room/fact-sheets/detail/healthy-diet",salt:"https://www.who.int/news-room/fact-sheets/detail/salt-reduction",act:"https://www.who.int/news-room/fact-sheets/detail/physical-activity"};
+const FACTS=[
+ {h:"5 ovuc meyvə-tərəvəz",t:"Gündə ən azı 400 q, yəni təxminən 5 ovuc meyvə və tərəvəz yeyin. Kartof bu hesaba daxil deyil.",src:["ÜST — Sağlam qidalanma",WHO.diet]},
+ {h:"Duz — bir çay qaşığı",t:"Gündə 5 q-dan az duz kifayətdir. Duzun çoxu hazır məhsullardan gəlir: çörək, kolbasa, turşu, pendir.",src:["ÜST — Duzun azaldılması",WHO.salt]},
+ {h:"Şəkəri azaldın",t:"Əlavə şəkər gündəlik kalorinin 10%-dən az olmalıdır, 5%-dən az olsa daha faydalıdır. Şirin içkilər əsas mənbədir.",src:["ÜST — Sağlam qidalanma",WHO.diet]},
+ {h:"Həftədə 150 dəqiqə",t:"Böyüklərə həftədə 150–300 dəqiqə orta tempdə hərəkət (sürətli yeriş) və 2 gün güc məşqi tövsiyə olunur.",src:["ÜST — Fiziki aktivlik",WHO.act]},
+ {h:"Az oturun",t:"Uzun oturmağı istənilən yüngül hərəkətlə əvəz etmək faydalıdır: pilləkən, qısa gəzinti, ayaq üstə danışıq.",src:["ÜST — Fiziki aktivlik",WHO.act]},
+ {h:"Yağın növü vacibdir",t:"Doymuş yağ kalorinin 10%-dən, trans-yağ isə 1%-dən az olsun. Marqarin və qızardılmış fast food əsas trans-yağ mənbəyidir.",src:["ÜST — Sağlam qidalanma",WHO.diet]},
+ {h:"Körpəyə bal olmaz",t:"1 yaşdan kiçik uşağa bal verilmir — botulizm riski var. Böyük uşaqlarda isə bal öskürəyi yüngülləşdirə bilər.",src:["Cochrane icmalı (AAFP)","https://www.aafp.org/pubs/afp/issues/2016/0701/p20.html"]},
+ {h:"Çay — həb yox",t:"Yaşıl çay ekstrakt həbləri ilə nadir qaraciyər zədəsi halları olub. Yaşıl çayı adi çay kimi içmək daha təhlükəsizdir.",src:["NIH / NCCIH — Green Tea","https://nccih.nih.gov/health/green-tea"]}
+];
+const RECIPES=[
+ {h:"Yüngül dovğa",k:"≈110 kkal / kasa",t:"500 ml qatıq + 500 ml su, 1 yumurta sarısı və 2 xörək qaşığı düyü qarışdırılır. Durmadan qarışdıraraq qaynadılır, sonra doğranmış şüyüd, keşniş, nanə və ispanaq əlavə edilib 5 dəqiqə bişirilir."},
+ {h:"İspanaqlı borani",k:"≈120 kkal / porsiya",t:"400 q ispanaq 1 çay qaşığı yağda 3–4 dəqiqə pörtlədilir, soyudulur. Üstünə 1 diş sarımsaq əzilmiş 200 q qatıq tökülür."},
+ {h:"Sobada kükü",k:"≈180 kkal / porsiya",t:"300 q göyərti (keşniş, şüyüd, soğan göyərtisi) xırdalanır, 4 yumurta və bir az duzla qarışdırılır. 1 xörək qaşığı yağla yağlanmış formada 180°C-də 20 dəqiqə bişirilir."},
+ {h:"Mərci şorbası",k:"≈250 kkal / kasa",t:"1 stəkan qırmızı mərci, 1 soğan, 1 kök, yarım çay qaşığı zerdeçal və 1 litr su ilə 25 dəqiqə bişirilir, blenderdən keçirilir. Limonla süfrəyə verilir."},
+ {h:"Qatıqlı badımcan salatı",k:"≈150 kkal / porsiya",t:"2 badımcan sobada 200°C-də 35 dəqiqə bişirilir, qabığı soyulub doğranır. 150 q qatıq, 1 diş sarımsaq və 1 xörək qaşığı xırda qozla qarışdırılır."},
+ {h:"Buxarda kütüm",k:"≈250 kkal / porsiya",t:"Balıq limon və şüyüdlə 20 dəqiqə buxarda bişirilir. Qızardılmış balıqdan təxminən iki dəfə az yağ olur."},
+ {h:"Qızıl süd",k:"≈160 kkal / stəkan",t:"250 ml süd, yarım çay qaşığı zerdeçal, çimdik qara bibər və darçın 3 dəqiqə qızdırılır. Axşam üçün."},
+ {h:"Darçınlı bişmiş alma",k:"≈120 kkal / ədəd",t:"Alma ortadan kəsilir, üstünə darçın və bir neçə qoz qoyulur, 180°C-də 20 dəqiqə bişirilir. Şəkərsiz desert."}
+];
+const TIP={k:["herb","fact","rec"][new Date().getDate()%3],i:{herb:new Date().getDate(),fact:new Date().getDate(),rec:new Date().getDate()}};
 const EVTXT=["","Zəif sübut","Orta-zəif sübut","Orta sübut"],EVCOL=["","var(--warn)","var(--sun)","var(--ok)"];
 
 // ================= STATE
@@ -494,22 +527,30 @@ function vHome(){
   if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
   h+=`<section class="status"><div class="ring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="var(--surface2)" stroke-width="8" fill="none"/><circle class="p" cx="38" cy="38" r="${R}" stroke="${over?"var(--danger)":"var(--accent)"}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg><div class="c"><b>${r0(Math.abs(left))}</b><span>${over?"artıq":"qalıb"}</span></div></div>
     <div class="ss"><span class="hi">${hi} · ${dDay(new Date())}</span><span class="msg">${msg}</span><div class="pills"><span>${r0(t.k)} / ${c.target} kkal</span><span>${(t.water/1000).toFixed(1)} L su</span></div></div></section>`;
+  h+=tipCard();
+  const cs=cartSum();
   h+=`<div class="quads">
     <button class="quad q1" data-go="scan"><span class="qi"><svg viewBox="0 0 24 24">${ICON.cam}</svg></span><span><b>Şəkil çək</b><small>Kalorini AI hesablasın</small></span></button>
-    <button class="quad q2" data-go="diary"><span class="qi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>Gündəlik</b><small>${over?r0(-left)+" kkal artıq":r0(left)+" kkal qalıb"}</small></span></button>
-    <button class="quad q3" data-go="move"><span class="qi"><svg viewBox="0 0 24 24">${ICON.run}</svg></span><span><b>Hərəkət</b><small>${TR.state!=="idle"?"Davam edir · "+(TR.dist/1000).toFixed(2)+" km":"Start · GPS xəritə"}</small></span></button>
+    <button class="quad q2" data-tabgo="diary"><span class="qi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>Gündəlik</b><small>${over?r0(-left)+" kkal artıq":r0(left)+" kkal qalıb"}</small></span></button>
+    <button class="quad q5" data-tabgo="shop"><span class="qi"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span><span><b>Mağaza</b><small>${cs.n?`Səbətdə ${cs.n} məhsul`:"Sağlamlıq məhsulları"}</small></span></button>
+    <button class="quad q3" data-go="move"><span class="qi"><svg viewBox="0 0 24 24">${ICON.run}</svg></span><span><b>Hərəkət</b><small>${TR.state!=="idle"?"Davam edir · "+(TR.dist/1000).toFixed(2)+" km":"Start · addım, xəritə"}</small></span></button>
     <button class="quad q4" data-go="rest"><span class="qi"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Restoranlar</b><small>${near}</small></span></button>
+    <button class="quad q6" data-tabgo="plan"><span class="qi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="3"/><path d="M8 2v4M16 2v4M8 11h8M8 15h5"/></svg></span><span><b>Menyu və plan</b><small>Şəxsi menyu, təbii vasitələr</small></span></button>
   </div>`;
-  h+=`<div class="strip"><button data-w="250"><b style="color:var(--water)">+250</b>ml su</button><button data-go="food"><b style="color:var(--accent)">+</b>Yemək seç</button><button data-go="plan"><b style="color:var(--sun)">Menyu</b>bu günə</button></div>`;
+  h+=`<div class="strip"><button data-w="250"><b style="color:var(--water)">+250</b>ml su</button><button data-go="food"><b style="color:var(--accent)">+</b>Yemək seç</button><button data-tabgo="diary"><b style="color:var(--sun)">${streak()}</b>gün seriya</button></div>`;
   const a=alerts(t,c).filter(x=>x[0]==="danger");a.forEach(x=>h+=`<div class="alert danger"><span class="dot"></span><div>${x[1]}</div></div>`);
-  h+=`${tipCard()}`;
+  const sp=SHOP.items.filter(p=>p.stock).sort((x,y)=>(y.top?1:0)-(x.top?1:0)).slice(0,8);
+  if(sp.length)h+=`<section class="card" style="padding:14px"><div class="row between"><h2>Mağaza</h2><button class="ghost" data-tabgo="shop" style="padding:7px 12px;font-size:13px">Hamısı ›</button></div><div class="hscroll">${sp.map(pcard).join("")}</div></section>`;
   return h;
 }
 function tipCard(){
-  const d=new Date().getDate();
-  if(d%2){const hb=HERBS[Math.floor(d/2)%HERBS.length];
-    return `<section class="card tipcard"><div class="row between"><h3>Günün təbii məsləhəti</h3><span class="tag" style="color:${EVCOL[hb.ev]}">${EVTXT[hb.ev]}</span></div><p style="margin:0;font-weight:800;font-size:16px">${hb.n}</p><p style="margin:0" class="small">${hb.good}</p><button class="ghost" data-herb="${HERBS.indexOf(hb)}" style="align-self:flex-start;padding:8px 12px">Ətraflı və resept ›</button></section>`}
-  return `<section class="card tipcard"><h3>Günün məsləhəti</h3><p style="margin:0;font-weight:700;font-size:16px">${TIPS[d%TIPS.length]}</p></section>`;
+  const tabs=[["herb","Nənə məsləhəti"],["fact","Bilirdinizmi?"],["rec","Sağlam resept"]],k=TIP.k,n=TIP.i[k];
+  let body="";
+  if(k==="herb"){const hb=HERBS[n%HERBS.length];body=`<div class="row between" style="flex-wrap:nowrap"><b class="h">${esc(hb.n)}</b><span class="tag" style="color:${EVCOL[hb.ev]};flex:none">${EVTXT[hb.ev]}</span></div><p>${hb.good}</p><a href="${hb.src[1]}" target="_blank" rel="noopener">Mənbə: ${esc(hb.src[0])} ›</a>`}
+  if(k==="fact"){const f=FACTS[n%FACTS.length];body=`<b class="h">${esc(f.h)}</b><p>${f.t}</p><a href="${f.src[1]}" target="_blank" rel="noopener">Mənbə: ${esc(f.src[0])} ›</a>`}
+  if(k==="rec"){const r=RECIPES[n%RECIPES.length];body=`<div class="row between" style="flex-wrap:nowrap"><b class="h">${esc(r.h)}</b><span class="tag" style="flex:none">${r.k}</span></div><p>${r.t}</p>`}
+  return `<section class="tip"><div class="tt">${tabs.map(([a,b])=>`<button data-tipk="${a}" class="${a===k?"on":""}">${b}</button>`).join("")}</div>${body}
+   <div class="row" style="justify-content:flex-end;gap:8px"><button class="ghost" ${k==="herb"?`data-herb="${n%HERBS.length}"`:`id="tipMore"`} style="padding:7px 12px;font-size:13px">${k==="herb"?"Resept və ehtiyat":"Tam oxu"}</button><button class="ghost" id="tipNext" style="padding:7px 12px;font-size:13px">Növbəti ›</button></div></section>`;
 }
 function weekChart(c){
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push([d,totals(dk(d)).k])}
@@ -1014,7 +1055,7 @@ async function loadShop(force){
     SHOP.items=items;SHOP.status="ok";S.catCache=items;save();
   }catch(e){if(!SHOP.items.length)SHOP.status="err"}
   SHOP.cats=[...new Set(SHOP.items.map(p=>p.cat))];
-  if(["shop","cart","admin"].includes(curHash())||curHash().startsWith("prod-"))render();updCart();
+  if(["home","shop","cart","admin"].includes(curHash())||curHash().startsWith("prod-"))render();updCart();
 }
 const pById=id=>SHOP.items.find(p=>p.id===id);
 const cartQty=id=>(S.cart.find(c=>c.id===id)||{}).q||0;
@@ -1131,11 +1172,18 @@ function render(){
 function afterAdd(msg){save();const t=totals(),c=calc();toast(t.k>c.target+t.burn?`${msg} · Diqqət: norma aşıldı!`:msg)}
 function bind(h){
   const on=(sel,ev,fn)=>document.querySelectorAll(sel).forEach(el=>el.addEventListener(ev,fn));
+  on("#view [data-tabgo]","click",e=>goTab(e.currentTarget.dataset.tabgo));
   on("#view [data-go]","click",e=>{const g=e.currentTarget.dataset.go;TABS.includes(g)?goTab(g):go(g)});
   on("[data-w]","click",e=>{const d=day();d.water=Math.max(0,d.water+ +e.currentTarget.dataset.w);save();toast(`Su: ${d.water} ml`);render()});
   on("[data-del]","click",e=>{day().foods.splice(+e.currentTarget.dataset.del,1);save();render()});
   on("[data-dex]","click",e=>{day().ex.splice(+e.currentTarget.dataset.dex,1);save();render()});
   on("#locBtn","click",locate);
+  on("[data-tipk]","click",e=>{TIP.k=e.currentTarget.dataset.tipk;render()});
+  on("#tipNext","click",()=>{TIP.i[TIP.k]++;render()});
+  on("#tipMore","click",e=>{const p=e.currentTarget.closest(".tip").querySelector("p");if(p){p.style.webkitLineClamp="unset";p.style.display="block"}e.currentTarget.remove()});
+  on(".quad","pointerdown",e=>e.currentTarget.classList.add("press"));
+  on(".quad","pointerup",e=>{const el=e.currentTarget;setTimeout(()=>el.classList.remove("press"),120)});
+  on(".quad","pointerleave",e=>e.currentTarget.classList.remove("press"));
   on("#trRes","click",resumeLive);on("#trDrop","click",()=>{delete S.trLive;save();render()});
   on("#wSave","click",()=>{const w=+$("#wIn").value;if(!(w>20&&w<400))return toast("Çəkini düzgün yazın");const e=S.weights.find(x=>x.d===TODAY);if(e)e.w=w;else S.weights.push({d:TODAY,w});S.profile.w=w;save();toast("Çəki yadda saxlanıldı, normalar yeniləndi");render()});
   on("#shareDay","click",shareDay);

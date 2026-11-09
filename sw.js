@@ -1,5 +1,5 @@
 // Vital Rhythm offline cache
-const CACHE = "vital-rhythm-v9";
+const CACHE = "vital-rhythm-v10";
 const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"];
