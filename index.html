@@ -208,7 +208,11 @@ details.why p{margin:6px 0 0;font-size:13px;color:var(--muted)}
 .mrow{display:grid;grid-template-columns:110px 1fr 74px;gap:8px;align-items:center;font-size:13px}
 .mrow small{display:block;color:var(--muted);font-size:11px}
 /* live tracking bar */
-#liveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:1001;border-radius:99px;padding:9px 16px;background:var(--danger);color:#fff;font-weight:800;font-size:13px;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);display:flex;gap:8px;align-items:center}
+#liveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:1001;border-radius:99px;padding:5px;background:var(--danger);color:#fff;font-weight:800;font-size:13px;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);display:flex;gap:4px;align-items:center;max-width:calc(100vw - 24px)}
+#liveBar.pz{background:#B45309}
+#liveBar button{background:none;border:0;color:#fff;font:inherit;display:flex;gap:8px;align-items:center;padding:6px 10px;border-radius:99px;white-space:nowrap}
+#liveBar .lc{background:rgba(255,255,255,.2);width:36px;height:36px;justify-content:center;padding:0;font-size:15px}
+#liveBar .lc.arm{background:#fff;color:var(--danger);width:auto;padding:0 12px}
 #liveBar i{width:9px;height:9px;border-radius:50%;background:#fff;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{opacity:.3}}
 /* guide */
@@ -348,7 +352,7 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:13px
   <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="3"/><path d="M8 2v4M16 2v4M8 11h8M8 15h5"/></svg>Plan</button>
 </div></nav>
 <div class="toast" id="toast" hidden></div>
-<button id="liveBar" hidden><i></i><span id="liveTxt">Hərəkət davam edir</span></button>
+<div id="liveBar" hidden><button id="lbGo"><i></i><span id="liveTxt">Hərəkət davam edir</span></button><button class="lc" id="lbPause" aria-label="Fasilə">❚❚</button><button class="lc" id="lbStop" aria-label="Bitir">■</button></div>
 <button id="cartBar" hidden><span id="cartTxt">Səbət</span><span>Səbətə bax ›</span></button>
 <button id="guide" hidden aria-label="Bələdçi"><span class="gdot" id="gdot" hidden>1</span></button>
 <div id="gpanel" hidden></div>
@@ -882,8 +886,30 @@ function vMove(){
 function vActivity(i){const a=S.acts[i];if(!a)return vMove();
   return `<section class="card"><div class="row between"><h2>${AZW[new Date(a.start).getDay()]}, ${dDay(a.start)} · ${dTime(a.start)}</h2><span class="tag">${SPORTS[a.sport][0]}</span></div>
     ${a.pts.length>1?`<div id="map"></div>`:""}<div class="grid2" style="text-align:center"><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b>${(a.dist/1000).toFixed(2)}</b><span>km</span></div><div class="bigstat" style="flex-direction:column;align-items:center;gap:0"><b style="color:var(--violet)">${a.sport==="bike"?"—":(a.stats.steps||0).toLocaleString()}</b><span>addım</span></div></div>${statGrid(a.stats,a.sport)}
-    <div class="grid2"><button class="primary" id="shareImg">Şəkil kimi paylaş</button>${a.pts.length>1?`<button id="shareGpx">GPX (Strava)</button>`:`<button class="ghost" data-tabgo="diary">Gündəliyə bax</button>`}</div>
+    <button class="wa big" id="shareLink">Link ilə paylaş (WhatsApp, sosial şəbəkə)</button><p class="small muted" style="margin:-4px 0 0;text-align:center">Açan şəxs xəritədə marşrutu, sürəti, hündürlüyü görəcək və tətbiqi yükləyə biləcək.</p>
+    <div class="grid2"><button class="ghost" id="copyLink">Linki kopyala</button><button class="primary" id="shareImg">Şəkil kimi</button></div>${a.pts.length>1?`<button class="ghost" id="shareGpx">GPX faylı (Strava, Garmin)</button>`:""}
     <button class="ghost" id="actDel">Bu hərəkəti sil</button></section>`}
+const SPE={walk:"🚶",run:"🏃",bike:"🚴",steps:"👟"};
+function polyEnc(pts){let o="",pl=0,pg=0;const e=v=>{v=v<0?~(v<<1):v<<1;let x="";while(v>=0x20){x+=String.fromCharCode((0x20|(v&0x1f))+63);v>>=5}return x+String.fromCharCode(v+63)};
+  for(const p of pts){const la=Math.round(p[0]*1e5),lo=Math.round(p[1]*1e5);o+=e(la-pl)+e(lo-pg);pl=la;pg=lo}return o}
+const thin=(a,n)=>a.length<=n?a:a.filter((_,i)=>i%Math.ceil(a.length/n)===0||i===a.length-1);
+function actSeries(a,n=80){const P=a.pts.filter(p=>p[3]);if(P.length<3)return null;const t0=P[0][3],t1=P[P.length-1][3],dt=(t1-t0)/n;if(dt<=0)return null;
+  const B=Array.from({length:n},()=>({d:0,t:0,al:[]}));
+  for(let i=1;i<P.length;i++){const k=Math.min(n-1,Math.floor((P[i][3]-t0)/dt)),seg=(P[i][3]-P[i-1][3])/1000;if(seg>0&&seg<120){B[k].d+=hav(P[i-1],P[i]);B[k].t+=seg}if(P[i][2]!=null)B[k].al.push(P[i][2])}
+  const sp=B.map(b=>b.t>0?b.d/b.t*3.6:0),el=B.map(b=>b.al.length?Math.round(b.al.reduce((x,y)=>x+y,0)/b.al.length):null);
+  const sm=sp.map((v,i)=>{const w=sp.slice(Math.max(0,i-1),i+2);return w.reduce((x,y)=>x+y,0)/w.length});
+  const mv=sm.filter(v=>v>=(a.sport==="bike"?3:1));
+  for(let i=1;i<el.length;i++)if(el[i]==null)el[i]=el[i-1];
+  return{sp:sm.map(v=>Math.round(v*10)),el,min:mv.length?+Math.min(...mv).toFixed(1):null}}
+const b64u=u=>{let s="";for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")};
+async function actLink(a){const st=a.stats||{},ser=a.pts.length>2?actSeries(a):null,pts=a.pts.length>1?thin(a.pts,350):[];
+  const o={v:1,s:a.sport,n:(S.user?.name||"").split(" ")[0],t0:a.start,t:Math.round(a.t),d:Math.round(a.dist),k:Math.round(a.kcal||0),st:a.sport==="bike"?0:Math.round(st.steps||0),
+    av:+(st.avg||0).toFixed(1),mx:+(st.max||0).toFixed(1),mn:ser?ser.min:null,g:Math.round(st.gain||0),l:Math.round(st.loss||0),a0:st.minA==null?null:Math.round(st.minA),a1:st.maxA==null?null:Math.round(st.maxA),
+    p:pts.length?polyEnc(pts):"",sp:ser?ser.sp:[],el:ser?ser.el:[],sx:st.fast?[st.fast.i,Math.round(st.fast.t),st.slow.i,Math.round(st.slow.t)]:null};
+  const json=JSON.stringify(o);let code="j"+b64u(new TextEncoder().encode(json));
+  try{if(window.CompressionStream){const z="z"+b64u(new Uint8Array(await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer()));if(z.length<code.length)code=z}}catch(e){}
+  return new URL("a.html#"+code,location.href.split("#")[0]).href}
+const actText=a=>`${SPE[a.sport]||"🏃"} ${SPORTS[a.sport][0]}: ${(a.dist/1000).toFixed(2)} km · ${fmtT(a.t)}${a.stats?.max?` · maks. ${a.stats.max.toFixed(1)} km/saat`:""}\nMarşrut və statistika — Vital Rhythm:`;
 function initMap(pts,live){
   const el=$("#map");if(!el)return;
   if(typeof L==="undefined"){el.innerHTML=`<div class="small muted" style="padding:16px">Xəritə yüklənmədi. İnterneti yoxlayın. Məsafə yenə də ölçülür.</div>`;return}
@@ -913,7 +939,10 @@ function updLive(){if(curHash()!=="move")return;const s=curStats(),k=$("#bigKm")
   if(st&&TR.state!=="idle"){const ok=sensorOk();st.style.color=ok?"var(--ok)":TR.elapsed>4?"var(--warn)":"var(--muted)";st.textContent=ok?"Addım sensoru işləyir ✓":TR.elapsed>4?"Sensor tapılmadı — addımlar məsafəyə görə təxmin edilir":"Addım sensoru yoxlanılır…"}if(g)g.innerHTML=statGrid(s,TR.sport);if(q&&TR.sport!=="steps"){const v=gpsQ();q.style.color=v[1];q.innerHTML=`<i></i>${v[0]}`}}
 function tick(){const now=Date.now();if(TR.state==="running")TR.elapsed+=(now-TR.lastTick)/1000;TR.lastTick=now;updLive();liveDot();if(Math.floor(TR.elapsed)%10===0)persistLive()}
 async function wakeOn(){try{TR.wake=await navigator.wakeLock?.request("screen")}catch(e){}}
-function liveDot(){const on=TR.state!=="idle",b=$("#liveBar");if(b){b.hidden=!on||curHash()==="move";$("#liveTxt").textContent=`${TR.state==="paused"?"Fasilə":"Hərəkət"} · ${(TR.dist/1000).toFixed(2)} km · ${fmtT(TR.elapsed)}`}}
+function liveDot(){const on=TR.state!=="idle",b=$("#liveBar");if(b){b.hidden=!on||curHash()==="move";b.classList.toggle("pz",TR.state==="paused");$("#liveTxt").textContent=`${TR.state==="paused"?"Fasilə":SPORTS[TR.sport][0]} · ${(TR.dist/1000).toFixed(2)} km · ${fmtT(TR.elapsed)}`;
+  const pb=$("#lbPause");if(pb){pb.textContent=TR.state==="paused"?"▶":"❚❚";pb.setAttribute("aria-label",TR.state==="paused"?"Davam":"Fasilə")}}}
+function trPause(){TR.state="paused";TR.curSp=0;persistLive();liveDot();if(curHash()==="move")render()}
+function trResume(){TR.state="running";TR.lastTick=Date.now();const l=TR.pts[TR.pts.length-1];if(l)l[3]=Date.now();persistLive();liveDot();if(curHash()==="move")render()}
 // Step sensor: counts real steps from the phone's motion sensor while tracking (works indoors too).
 const STEP={on:false,g:9.8,s:0,last:0,up:false,ev:0};
 // Step detection: remove gravity with a slow filter, smooth the rest, count each peak above 1 m/s² (min 0.3 s apart).
@@ -926,7 +955,12 @@ function motionOn(){STEP.ev=0;if(!STEP.on){window.addEventListener("devicemotion
   try{if(isIOS&&typeof DeviceMotionEvent!=="undefined"&&DeviceMotionEvent.requestPermission)DeviceMotionEvent.requestPermission().catch(()=>{})}catch(e){}}
 function motionOff(){if(STEP.on){window.removeEventListener("devicemotion",onMotion);STEP.on=false}}
 function persistLive(){if(TR.state==="idle"){if(S.trLive){delete S.trLive;save()}return}
-  const {watch,timer,wake,...rest}=TR;S.trLive={...rest,pts:TR.pts.slice(-1500),savedAt:Date.now()};save()}
+  const {watch,timer,wake,...rest}=TR;let pts=TR.pts;if(pts.length>2000){const k=Math.ceil(pts.length/2000);pts=pts.filter((_,i)=>i%k===0||i===TR.pts.length-1)}S.trLive={...rest,pts,savedAt:Date.now()};save()}
+function autoResume(){const L0=S.trLive;if(!L0||TR.state!=="idle")return;if(Date.now()-(L0.savedAt||0)>12*3600e3)return;
+  const gap=(Date.now()-(L0.savedAt||Date.now()))/1000;Object.assign(TR,L0,{lastTick:Date.now()});if(TR.state==="running")TR.elapsed+=gap;else TR.state="paused";
+  startWatch();motionOn();toast(TR.state==="running"?"Hərəkət davam edir ✓":"Hərəkət fasilədədir. Davam basın.")}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&TR.state!=="idle")persistLive()});
+window.addEventListener("pagehide",()=>{if(TR.state!=="idle")persistLive()});
 function startWatch(){if(TR.sport!=="steps"&&"geolocation" in navigator)TR.watch=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});clearInterval(TR.timer);TR.timer=setInterval(tick,1000);wakeOn();liveDot()}
 function resumeLive(){const L0=S.trLive;if(!L0)return;Object.assign(TR,L0,{state:"paused",lastTick:Date.now()});startWatch();motionOn();toast("Hərəkət bərpa olundu. Davam basın.");go("move")}
 function startTrack(){
@@ -1200,7 +1234,7 @@ function vShop(){
   if(ADM())h=`<div class="admbar"><b>Admin rejimi</b><button class="primary" data-go="ap-new" style="padding:10px 14px">+ Yeni məhsul</button></div>`+h;
   if(demo)h+=`<div class="alert info"><span class="dot"></span><div>Bunlar nümunə məhsullardır. Admin kataloqu yükləyəndə real məhsullar görünəcək.</div></div>`;
   if(top.length&&SHOP.cat==="Hamısı"&&!q)h+=`<section class="card" style="padding:14px"><h3>Tövsiyə olunan</h3><div style="display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:10px;overflow-x:auto;scrollbar-width:none">${top.map(pcard).join("")}</div></section>`;
-  h+=list.length?`<div class="pgrid">${list.map(pcard).join("")}</div>`:`<p class="muted small">${SHOP.cat==="Sevimlilər"?"Sevimli məhsul yoxdur. Məhsulda ♡ işarəsinə toxunun.":"Heç nə tapılmadı."}</p>`;
+  h+=list.length?`<div class="pgrid">${list.map(pcard).join("")}</div>`:`<p class="muted small">${SHOP.cat==="Sevimlilər"?"Sevimli məhsul yoxdur. Məhsulda ♡ işarəsinə toxunun.":SHOP.items.length?"Heç nə tapılmadı.":ADM()?"Kataloq boşdur. “+ Yeni məhsul” ilə ilk məhsulu əlavə edin.":"Mağaza tezliklə məhsullarla dolacaq. Bir az sonra yenidən baxın 🌿"}</p>`;
   h+=ADM()?`<div class="grid2"><button class="ghost" data-go="admin">Sifarişlər${newCount()?" ("+newCount()+" yeni)":""}</button><button class="ghost" data-go="ap-new">+ Yeni məhsul</button></div>`
     :`<div class="grid2"><button class="ghost" data-go="orders">Sifarişlərim${S.orders.length?" ("+S.orders.length+")":""}</button><button class="ghost" data-go="cart">Səbət (${cartSum().n})</button></div>`;
   return h}
@@ -1691,19 +1725,26 @@ function bind(h){
   // move
   on("[data-sport]","click",e=>{TR.sport=e.currentTarget.dataset.sport;render()});
   on("#trStart","click",()=>{S.gpsAsked=true;save();startTrack()});
-  on("#trPause","click",()=>{TR.state="paused";TR.curSp=0;render()});
-  on("#trResume","click",()=>{TR.state="running";TR.lastTick=Date.now();const l=TR.pts[TR.pts.length-1];if(l)l[3]=Date.now();render()});
+  on("#trPause","click",trPause);
+  on("#trResume","click",trResume);
   on("#trStop","click",stopTrack);
   on("[data-act]","click",e=>go("act-"+e.currentTarget.dataset.act));
   on("#actDel","click",()=>{S.acts.splice(+h.slice(4),1);save();toast("Silindi");back()});
   on("#shareImg","click",async()=>{const a=S.acts[+h.slice(4)];shareFile(await routeImage(a),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.png`,`${SPORTS[a.sport][0]}: ${(a.dist/1000).toFixed(2)} km, ${fmtT(a.t)}`)});
+  on("#shareLink","click",async e=>{const a=S.acts[+h.slice(4)],b=e.currentTarget;b.disabled=true;const url=await actLink(a),txt=actText(a);b.disabled=false;
+    try{if(navigator.share){await navigator.share({title:"Vital Rhythm",text:txt,url});return}}catch(x){if(x&&x.name==="AbortError")return}
+    openWA("",txt+"\n"+url)});
+  on("#copyLink","click",async()=>{const a=S.acts[+h.slice(4)],url=await actLink(a);try{await navigator.clipboard.writeText(actText(a)+"\n"+url);toast("Link kopyalandı")}catch(x){toast("Kopyalamaq alınmadı")}});
   on("#shareGpx","click",()=>{const a=S.acts[+h.slice(4)];shareFile(new Blob([gpx(a)],{type:"application/gpx+xml"}),`vital-rhythm-${new Date(a.start).toISOString().slice(0,10)}.gpx`,"GPX marşrut")});
 }
 $("#cartBar").onclick=()=>go("cart");
-$("#liveBar").onclick=()=>go("move");
+$("#lbGo").onclick=()=>go("move");
+$("#lbPause").onclick=()=>{TR.state==="paused"?trResume():trPause();toast(TR.state==="paused"?"Fasilə":"Davam edir")};
+let STOPARM=0;$("#lbStop").onclick=e=>{const b=e.currentTarget;if(Date.now()-STOPARM<3000){STOPARM=0;b.classList.remove("arm");b.textContent="■";stopTrack();return}
+  STOPARM=Date.now();b.classList.add("arm");b.textContent="Bitir?";setTimeout(()=>{if(Date.now()-STOPARM>=2900){b.classList.remove("arm");b.textContent="■"}},3000)};
 // Settings (numbers, server address) come from config.json; load them first, then the catalog.
 const cfgReady=Promise.race([fetch("config.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;["guide","shop"].forEach(k=>{if(j[k])Object.entries(j[k]).forEach(([a,b])=>{if(b!==""&&b!=null)CONFIG[k][a]=b})})}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
-applyTheme();guideInit();
+applyTheme();guideInit();autoResume();
 cfgReady.then(()=>{loadShop(true);regSync();loadMe();if(S.apass&&CONFIG.shop.api){adLoad(true);adPoll()}render()});
 render();
 if(!S.user&&!S.regAsked){S.regAsked=1;save();setTimeout(()=>go("reg"),400)}

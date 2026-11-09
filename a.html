@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vital Rhythm — hərəkət nəticəsi</title>
+<meta name="description" content="Marşrut xəritədə, məsafə, sürət və hündürlük. Vital Rhythm ilə izlənib.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vital Rhythm">
+<meta property="og:title" content="🏃 Hərəkət nəticəsi — Vital Rhythm">
+<meta property="og:description" content="Marşruta, məsafəyə, sürətə və hündürlüyə baxın. Siz də Vital Rhythm ilə pulsuz izləyin.">
+<meta property="og:image" content="https://vugarmammadov82-debug.github.io/vital-rhythm/og-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B5D4B">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#EFF4F1;--surface:#FFFFFF;--surface2:#E4ECE8;--ink:#13201B;--muted:#5A6B64;--line:#D5E0DA;--brand:#0B5D4B;--brand2:#12866B;--accent:#0F7A62;--coral:#E26B4E;--violet:#6E5BD0;--water:#2484C4;--sun:#E0A21C;
+  --display:"Unbounded","Manrope",system-ui,sans-serif;--body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root{--bg:#0F2621;--surface:#15322B;--surface2:#1D3F37;--ink:#E6F4EE;--muted:#9DBAAF;--line:#2A4C43;--brand:#0E4D40;--brand2:#17735E;--accent:#4FD1AE;--coral:#F08A70;--violet:#9C8CF0;--water:#5DB6EA;--sun:#F2BC45;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:14px}
+header{background:linear-gradient(150deg,var(--brand2),var(--brand));color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) 16px 64px}
+header .in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;letter-spacing:.02em}
+.brand img{width:30px;height:30px;border-radius:9px}
+h1{font-family:var(--display);font-size:22px;margin:10px 0 0;line-height:1.25}
+.sub{opacity:.9;font-size:14px}
+.hero{margin-top:-50px;background:var(--surface);border-radius:24px;padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;box-shadow:0 12px 30px -18px rgba(0,0,0,.45)}
+.hero b{display:block;font-family:var(--display);font-size:24px;line-height:1.1}
+.hero span{font-size:12px;color:var(--muted);font-weight:700}
+.card{background:var(--surface);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card h2{margin:0;font-size:16px}
+#map{height:320px;border-radius:16px;overflow:hidden;background:var(--surface2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st{background:var(--surface2);border-radius:14px;padding:10px 8px;text-align:center}
+.st small{display:block;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.st b{font-size:16px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700}
+.cta{background:linear-gradient(150deg,var(--brand2),var(--brand));color:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
+.cta img{width:64px;height:64px;border-radius:18px;box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.cta h2{margin:0;font-family:var(--display);font-size:19px}
+.cta p{margin:0;opacity:.92;font-size:14px}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;font-weight:800;font-size:16px;padding:15px;border-radius:16px;background:#fff;color:var(--brand)}
+.btn.alt{background:rgba(255,255,255,.16);color:#fff;font-size:14px;padding:12px}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;text-align:left;font-size:13px;font-weight:700}
+.feat span{background:rgba(255,255,255,.14);border-radius:12px;padding:8px 10px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:0;font-size:14px}.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:800;text-align:right}
+.btn[hidden]{display:none}.muted{color:var(--muted)}.small{font-size:13px}
+.err{text-align:center;padding:30px 10px}
+.leaflet-container{font-family:var(--body)}
+</style>
+</head>
+<body>
+<header><div class="in"><div class="brand"><img src="icon-192.png" alt="">Vital Rhythm <span style="opacity:.7;font-weight:700">by VUİM</span></div><h1 id="ttl">Hərəkət nəticəsi</h1><div class="sub" id="when"></div></div></header>
+<main class="wrap" id="app"></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const SP={walk:["Yeriş","🚶"],run:["Qaçış","🏃"],bike:["Velosiped","🚴"],steps:["Addım","👟"]};
+const AZM=["yanvar","fevral","mart","aprel","may","iyun","iyul","avqust","sentyabr","oktyabr","noyabr","dekabr"],AZW=["bazar","bazar ertəsi","çərşənbə axşamı","çərşənbə","cümə axşamı","cümə","şənbə"];
+const pad=n=>String(n).padStart(2,"0");
+const fmtT=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?h+":"+pad(m):m)+":"+pad(x)};
+const fmtPace=v=>!isFinite(v)||v<=0||v>3600?"—":Math.floor(v/60)+":"+pad(Math.round(v%60));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=(v,d=1)=>v==null||!isFinite(v)?"—":(+v).toFixed(d);
+const APP=new URL("./?src=share",location.href).href;
+function unb64(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+async function decode(h){const k=h[0],u=unb64(h.slice(1));
+  if(k==="z"){const ds=new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"));return JSON.parse(await new Response(ds).text())}
+  return JSON.parse(new TextDecoder().decode(u))}
+function polyDec(s){const out=[];let i=0,la=0,lo=0;const nx=()=>{let r=0,sh=0,b;do{b=s.charCodeAt(i++)-63;r|=(b&0x1f)<<sh;sh+=5}while(b>=0x20);return r&1?~(r>>1):r>>1};
+  while(i<s.length){la+=nx();lo+=nx();out.push([la/1e5,lo/1e5])}return out}
+function chart(vals,color,unit,area){const v=vals.filter(x=>x!=null);if(v.length<2)return "";const W=320,H=110,mn=Math.min(...v),mx=Math.max(...v),rg=mx-mn||1;
+  const xy=vals.map((y,i)=>[i/(vals.length-1)*W,H-6-((y-mn)/rg)*(H-16)]);
+  const d=xy.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${area?`<path d="${d}L${W},${H}L0,${H}Z" fill="${color}" opacity=".18"/>`:""}<path d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg><div class="lab"><span>min ${num(mn,unit==="m"?0:1)} ${unit}</span><span>maks ${num(mx,unit==="m"?0:1)} ${unit}</span></div>`}
+function cta(){return `<section class="cta"><img src="icon-512.png" alt=""><h2>Siz də başlayın</h2><p>Vital Rhythm — pulsuz sağlam həyat tətbiqi. Telefona bir toxunuşla qurulur.</p>
+  <div class="feat"><span>📍 GPS marşrut və addım</span><span>📸 Şəkildən kalori</span><span>💧 Su və gündəlik</span><span>🥗 Menyu və məsləhət</span></div>
+  <a class="btn" href="${APP}">Vital Rhythm-i pulsuz yüklə</a><a class="btn alt" id="play" href="${APP}" hidden>Google Play-də aç</a></section>`}
+(async()=>{const app=document.getElementById("app");let o=null;
+  try{const h=location.hash.slice(1);if(h)o=await decode(h)}catch(e){o=null}
+  fetch("config.json",{cache:"no-store"}).then(r=>r.json()).then(c=>{if(c.playUrl){const p=document.getElementById("play");if(p){p.href=c.playUrl;p.hidden=false}}}).catch(()=>{});
+  if(!o){app.innerHTML=`<section class="card err" style="margin-top:-40px"><h2>Link açılmadı</h2><p class="muted">Bu paylaşım linki natamamdır. Göndərəndən linki yenidən istəyin.</p></section>`+cta();return}
+  const sp=SP[o.s]||SP.walk,km=o.d/1000,d=new Date(o.t0),pace=km>0?o.t/km:0;
+  document.getElementById("ttl").textContent=`${sp[1]} ${o.n?o.n+" · ":""}${sp[0]} ${km.toFixed(2)} km`;
+  document.getElementById("when").textContent=`${AZW[d.getDay()]}, ${d.getDate()} ${AZM[d.getMonth()]} ${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  document.title=`${sp[0]} ${km.toFixed(2)} km — Vital Rhythm`;
+  const bike=o.s==="bike",pts=o.p?polyDec(o.p):[];
+  let h=`<section class="hero"><div><b>${km.toFixed(2)}</b><span>km</span></div><div><b>${fmtT(o.t)}</b><span>vaxt</span></div><div><b>${bike?num(o.av):fmtPace(pace)}</b><span>${bike?"km/saat":"temp /km"}</span></div></section>`;
+  if(pts.length>1)h+=`<section class="card" style="padding:8px"><div id="map"></div></section>`;
+  const S=[["Məsafə",km.toFixed(2)+" km"],["Vaxt",fmtT(o.t)],["Orta sürət",num(o.av)+" km/saat"],["Maks. sürət",num(o.mx)+" km/saat"],["Min. sürət",o.mn==null?"—":num(o.mn)+" km/saat"],["Temp",fmtPace(pace)+" /km"],
+    ["Maks. hündürlük",o.a1==null?"—":o.a1+" m"],["Min. hündürlük",o.a0==null?"—":o.a0+" m"],["Qalxma ↑",(o.g||0)+" m"],["Enmə ↓",(o.l||0)+" m"],["Addım",bike||!o.st?"—":(+o.st).toLocaleString("az")],["Kalori",(o.k||0)+" kkal"]];
+  h+=`<section class="card"><h2>Statistika</h2><div class="stats">${S.map(([a,b])=>`<div class="st"><small>${a}</small><b>${b}</b></div>`).join("")}</div>
+   ${o.sx?`<dl class="kv"><dt>Ən sürətli km</dt><dd>${o.sx[0]+1}-ci · ${fmtT(o.sx[1])}</dd><dt>Ən yavaş km</dt><dd>${o.sx[2]+1}-ci · ${fmtT(o.sx[3])}</dd></dl>`:""}</section>`;
+  if(o.sp&&o.sp.length>1)h+=`<section class="card chart"><h2>Sürət (km/saat)</h2>${chart(o.sp.map(x=>x/10),"var(--coral)","km/saat",false)}</section>`;
+  if(o.el&&o.el.filter(x=>x!=null).length>1)h+=`<section class="card chart"><h2>Hündürlük (m)</h2>${chart(o.el,"var(--water)","m",true)}</section>`;
+  app.innerHTML=h+cta()+`<p class="small muted" style="text-align:center;margin:0">Bu səhifə yalnız linkdəki məlumatı göstərir. Heç bir məlumat serverdə saxlanılmır.</p>`;
+  if(pts.length>1&&typeof L!=="undefined"){const m=L.map("map",{zoomControl:false,attributionControl:true,dragging:true,scrollWheelZoom:false});
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
+    const ln=L.polyline(pts,{color:"#E26B4E",weight:5,opacity:.95}).addTo(m);
+    L.circleMarker(pts[0],{radius:7,color:"#fff",weight:2,fillColor:"#15803D",fillOpacity:1}).addTo(m).bindTooltip("Start");
+    L.circleMarker(pts[pts.length-1],{radius:7,color:"#fff",weight:2,fillColor:"#C0262D",fillOpacity:1}).addTo(m).bindTooltip("Finiş");
+    m.fitBounds(ln.getBounds(),{padding:[22,22]})}
+})();
+</script>
+</body>
+</html>

@@ -1,10 +1,1 @@
-[
-  {"id":"D01","demo":true,"cat":"Bitki çayları","name":"Nümunə: Kəklikotu çayı","price":8,"old":10,"size":"20 paket","desc":"Nümunə məhsul. Admin real kataloqu yükləyəndə bu siyahı dəyişəcək.","stock":true,"top":true},
-  {"id":"D02","demo":true,"cat":"Bitki çayları","name":"Nümunə: Çobanyastığı çayı","price":7,"size":"20 paket","desc":"Nümunə məhsul.","stock":true},
-  {"id":"D03","demo":true,"cat":"Yağlar","name":"Nümunə: Qara zirə yağı","price":18,"old":22,"size":"100 ml","desc":"Nümunə məhsul.","stock":true,"top":true},
-  {"id":"D04","demo":true,"cat":"Yağlar","name":"Nümunə: Kətan yağı","price":12,"size":"250 ml","desc":"Nümunə məhsul.","stock":false},
-  {"id":"D05","demo":true,"cat":"Kosmetika","name":"Nümunə: Üz kremi","price":24,"size":"50 ml","desc":"Nümunə məhsul.","stock":true},
-  {"id":"D06","demo":true,"cat":"Kosmetika","name":"Nümunə: Bitki şampunu","price":15,"size":"250 ml","desc":"Nümunə məhsul.","stock":true,"top":true},
-  {"id":"D07","demo":true,"cat":"Vitamin və əlavələr","name":"Nümunə: Omeqa-3","price":32,"old":38,"size":"60 kapsul","desc":"Nümunə məhsul.","stock":true},
-  {"id":"D08","demo":true,"cat":"Vitamin və əlavələr","name":"Nümunə: D vitamini","price":19,"size":"60 tablet","desc":"Nümunə məhsul.","stock":true}
-]
+[]
