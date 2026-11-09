@@ -223,6 +223,9 @@ details.why p{margin:6px 0 0;font-size:13px;color:var(--muted)}
 .pc .pb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
 .pc .pn{font-weight:800;font-size:14px;line-height:1.25;overflow-wrap:anywhere;text-align:left;background:transparent;padding:0;border-radius:0}
 .pc .pv{font-size:12px;color:var(--muted)}
+.admb{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}.admb button{padding:9px 4px;font-size:12.5px;border-radius:11px}
+.admbar{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--slate,#475569) 14%,var(--surface));border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.admbar b{flex:1}body.adm #guide,body.adm #gpanel{display:none!important}.pc.off .pimg{filter:grayscale(.85);opacity:.6}
 .price{font-family:var(--display);font-weight:800;font-size:16px}
 .old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-left:4px}
 .heart{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#C0262D;font-size:17px;line-height:1}
@@ -1095,10 +1098,14 @@ const pById=id=>SHOP.items.find(p=>p.id===id);
 const cartQty=id=>(S.cart.find(c=>c.id===id)||{}).q||0;
 function cartSum(){let n=0,sum=0;S.cart.forEach(c=>{const p=pById(c.id);if(p){n+=c.q;sum+=p.price*c.q}});const fee=sum===0||sum>=CONFIG.shop.freeFrom?0:CONFIG.shop.fee;return{n,sum,fee,total:sum+fee}}
 function setQty(id,q){const c=S.cart.find(x=>x.id===id);if(q<=0){S.cart=S.cart.filter(x=>x.id!==id)}else if(c)c.q=q;else S.cart.push({id,q});save();updCart()}
-function updCart(){const {n,total}=cartSum(),e=$("#cartN");if(e){e.hidden=!n;e.textContent=n}
-  const b=$("#cartBar"),h=curHash(),show=n>0&&(h==="shop"||h.startsWith("prod-"));if(b){b.hidden=!show;$("#cartTxt").textContent=`Səbət · ${n} məhsul · ${money(total)}`}}
+function updCart(){const {n,total}=cartSum(),e=$("#cartN");if(e){e.hidden=!n||ADM();e.textContent=n}
+  const b=$("#cartBar"),h=curHash(),show=n>0&&!ADM()&&(h==="shop"||h.startsWith("prod-"));if(b){b.hidden=!show;$("#cartTxt").textContent=`Səbət · ${n} məhsul · ${money(total)}`}}
 function pimg(p,cls="pimg"){const i=SHOP.items.indexOf(p);return p.img?`<div class="${cls}" style="background-image:url('${esc(p.img)}');background-color:var(--surface2)" role="img" aria-label="${esc(p.name)}"></div>`:`<div class="${cls}" style="background:linear-gradient(150deg,${PCOL[i%PCOL.length]},var(--brand2))">${esc(p.name.charAt(0))}</div>`}
+const ADM=()=>!!S.apass;
 function pcard(p){const q=cartQty(p.id),fav=S.favs.includes(p.id);
+  if(ADM())return `<div class="pc ${p.stock?"":"off"}"><button data-prod="${esc(p.id)}" style="padding:0;border-radius:0;background:none">${pimg(p)}</button>${p.old>p.price?`<span class="badge-s">−${r0((1-p.price/p.old)*100)}%</span>`:""}
+   <div class="pb"><button class="pn" data-prod="${esc(p.id)}">${esc(p.name)}</button>${p.size?`<span class="pv">${esc(p.size)}</span>`:""}<div><span class="price">${money(p.price)}</span>${p.old>p.price?`<span class="old">${money(p.old)}</span>`:""}</div>
+   <div class="admb"><button class="ghost" data-go="ap-${esc(p.id)}">✎ Dəyiş</button><button class="ghost" data-stk="${esc(p.id)}" style="color:${p.stock?"var(--ok)":"var(--danger)"}">${p.stock?"Var ✓":"Yox ✗"}</button></div></div></div>`;
   return `<div class="pc"><button data-prod="${esc(p.id)}" style="padding:0;border-radius:0;background:none">${pimg(p)}</button>${p.old>p.price?`<span class="badge-s">−${r0((1-p.price/p.old)*100)}%</span>`:""}<button class="heart" data-fav="${esc(p.id)}" aria-label="Sevimli">${fav?"♥":"♡"}</button>
    <div class="pb"><button class="pn" data-prod="${esc(p.id)}">${esc(p.name)}</button>${p.size?`<span class="pv">${esc(p.size)}</span>`:""}<div><span class="price">${money(p.price)}</span>${p.old>p.price?`<span class="old">${money(p.old)}</span>`:""}</div>
    ${!p.stock?`<span class="small muted" style="margin-top:auto">Hazırda yoxdur</span>`:q?`<div class="stepper"><button data-q="${esc(p.id)}" data-d="-1">−</button><span>${q}</span><button data-q="${esc(p.id)}" data-d="1">+</button></div>`:`<button class="primary addc" data-q="${esc(p.id)}" data-d="1">Səbətə at</button>`}</div></div>`}
@@ -1109,18 +1116,22 @@ function vShop(){
   const top=SHOP.items.filter(p=>p.top&&p.stock).slice(0,8),demo=SHOP.items.some(p=>p.demo);
   let h=`<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="shQ" type="search" placeholder="Məhsul axtar…" value="${esc(SHOP.q)}"></div>
    <div class="chips">${cats.map(c=>`<button class="chip ${c===SHOP.cat?"on":""}" data-scat="${esc(c)}">${esc(c)}${c==="Sevimlilər"&&S.favs.length?" ("+S.favs.length+")":""}</button>`).join("")}</div>`;
+  if(ADM())h=`<div class="admbar"><b>Admin rejimi</b><button class="primary" data-go="ap-new" style="padding:10px 14px">+ Yeni məhsul</button></div>`+h;
   if(demo)h+=`<div class="alert info"><span class="dot"></span><div>Bunlar nümunə məhsullardır. Admin kataloqu yükləyəndə real məhsullar görünəcək.</div></div>`;
   if(top.length&&SHOP.cat==="Hamısı"&&!q)h+=`<section class="card" style="padding:14px"><h3>Tövsiyə olunan</h3><div style="display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:10px;overflow-x:auto;scrollbar-width:none">${top.map(pcard).join("")}</div></section>`;
   h+=list.length?`<div class="pgrid">${list.map(pcard).join("")}</div>`:`<p class="muted small">${SHOP.cat==="Sevimlilər"?"Sevimli məhsul yoxdur. Məhsulda ♡ işarəsinə toxunun.":"Heç nə tapılmadı."}</p>`;
-  h+=`<div class="grid2"><button class="ghost" data-go="orders">Sifarişlərim${S.orders.length?" ("+S.orders.length+")":""}</button><button class="ghost" data-go="cart">Səbət (${cartSum().n})</button></div>`;
+  h+=ADM()?`<div class="grid2"><button class="ghost" data-go="admin">Sifarişlər${newCount()?" ("+newCount()+" yeni)":""}</button><button class="ghost" data-go="ap-new">+ Yeni məhsul</button></div>`
+    :`<div class="grid2"><button class="ghost" data-go="orders">Sifarişlərim${S.orders.length?" ("+S.orders.length+")":""}</button><button class="ghost" data-go="cart">Səbət (${cartSum().n})</button></div>`;
   return h}
 let PQ=1;
 function vProd(id){const p=pById(id);if(!p)return vShop();const q=cartQty(p.id),fav=S.favs.includes(p.id);
   return `<section class="card" style="padding:0;overflow:hidden">${pimg(p)}<div style="padding:16px;display:flex;flex-direction:column;gap:10px">
-   <div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><div style="min-width:0"><span class="tag">${esc(p.cat)}</span><h2 style="margin-top:6px">${esc(p.name)}</h2>${p.size?`<span class="small muted">${esc(p.size)}</span>`:""}</div><button class="ghost" data-fav="${esc(p.id)}" style="padding:10px 12px;color:var(--danger)">${fav?"♥":"♡"}</button></div>
+   <div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><div style="min-width:0"><span class="tag">${esc(p.cat)}</span><h2 style="margin-top:6px">${esc(p.name)}</h2>${p.size?`<span class="small muted">${esc(p.size)}</span>`:""}</div>${ADM()?"":`<button class="ghost" data-fav="${esc(p.id)}" style="padding:10px 12px;color:var(--danger)">${fav?"♥":"♡"}</button>`}</div>
    <div><span class="price" style="font-size:24px">${money(p.price)}</span>${p.old>p.price?`<span class="old" style="font-size:15px">${money(p.old)}</span>`:""}</div>
    ${p.desc?`<p style="margin:0;white-space:pre-line">${esc(p.desc)}</p>`:""}
-   ${p.stock?`<div class="row" style="flex-wrap:nowrap"><div class="stepper" style="margin:0;width:130px"><button id="pqM">−</button><span id="pqV">${PQ}</span><button id="pqP">+</button></div><button class="primary" id="pAdd" style="flex:1">Səbətə at · ${money(p.price*PQ)}</button></div>${q?`<p class="small muted" style="margin:0">Səbətdə artıq ${q} ədəd var.</p>`:""}`:`<div class="alert warn"><span class="dot"></span><div>Hazırda stokda yoxdur.</div></div>`}
+   ${ADM()?`<div class="grid2"><button class="primary" data-go="ap-${esc(p.id)}">✎ Redaktə et</button><button class="ghost" data-stk="${esc(p.id)}" style="color:${p.stock?"var(--ok)":"var(--danger)"}">${p.stock?"Stokda var ✓":"Stokda yoxdur ✗"}</button></div>
+     <div class="grid2"><button class="ghost" id="pDup">Kopyasını yarat</button><button class="ghost" id="pDel" style="color:var(--danger)">Sil</button></div><div class="row" id="pDelC" hidden><span class="small">“${esc(p.name)}” silinsin?</span><button class="red" id="pDelY">Bəli, sil</button><button class="ghost" id="pDelN">Xeyr</button></div>`
+   :p.stock?`<div class="row" style="flex-wrap:nowrap"><div class="stepper" style="margin:0;width:130px"><button id="pqM">−</button><span id="pqV">${PQ}</span><button id="pqP">+</button></div><button class="primary" id="pAdd" style="flex:1">Səbətə at · ${money(p.price*PQ)}</button></div>${q?`<p class="small muted" style="margin:0">Səbətdə artıq ${q} ədəd var.</p>`:""}`:`<div class="alert warn"><span class="dot"></span><div>Hazırda stokda yoxdur.</div></div>`}
    <p class="small muted" style="margin:0">Qida əlavələri dərman deyil. Xroniki xəstəlik, hamiləlik və ya dərman qəbulu varsa, istifadədən əvvəl həkimlə məsləhətləşin.</p></div></section>`}
 function vCart(){const {n,sum,fee,total}=cartSum(),fr=CONFIG.shop.freeFrom;
   if(!n)return `<section class="card" style="align-items:center;text-align:center"><h2>Səbət boşdur</h2><p class="muted" style="margin:0">Mağazadan məhsul seçin.</p><button class="primary" data-tabgo="shop">Alış-verişə başla</button></section>${S.orders.length?`<button class="ghost big" data-go="orders">Sifarişlərim</button>`:""}`;
@@ -1152,7 +1163,7 @@ async function placeOrder(viaWA){
   if(CONFIG.shop.api&&!viaWA){
     ORDBUSY=true;const b=$("#coSend");if(b){b.disabled=true;b.textContent="Göndərilir…"}
     try{const j=await api("order",{customer:{name,phone},del,city,addr,pay,note,items:items.map(x=>({id:x.id,q:x.q}))});
-      S.orders.unshift({no:j.no,at:Date.now(),items:j.items,sum:j.sum,fee:j.fee,total:j.total,del,status:"Yeni",srv:1});S.cart=[];save();updCart();
+      S.orders.unshift({no:j.no,at:Date.now(),items:j.items,sum:j.sum,fee:j.fee,total:j.total,del,status:"Yeni",srv:1,phone});S.cart=[];save();updCart();
       history.replaceState({d:depth()},"","#odone-"+j.no);route();
     }catch(e){ORDBUSY=false;if(b){b.disabled=false;b.textContent="Sifarişi təsdiqlə"}
       const box=$("#coErr");if(box){box.hidden=false;box.innerHTML=`Sifariş serverə çatmadı${e?.msg?" ("+esc(e.msg)+")":""}. İnterneti yoxlayıb yenidən cəhd edin və ya WhatsApp ilə göndərin.<div class="row" style="margin-top:8px"><button class="wa" id="coWA">WhatsApp ilə göndər</button></div>`;$("#coWA").onclick=()=>placeOrder(true)}}
@@ -1178,6 +1189,7 @@ async function syncMyOrders(){const ph=S.user?.phone||S.lastShip?.phone;if(!CONF
   try{const j=await api("myorders",{phone:ph});let ch=false;
     j.orders.forEach(r=>{const o=S.orders.find(x=>x.no===r.no);if(o){if(o.status!==r.status||o.date!==r.date||o.paid!==r.paid){Object.assign(o,{status:r.status,date:r.date,paid:r.paid});ch=true}}
       else{S.orders.push({no:r.no,at:Date.parse(String(r.at).replace(" ","T"))||Date.now(),items:r.items,sum:r.total,fee:0,total:r.total,del:r.del,status:r.status,date:r.date,paid:r.paid,srv:1});ch=true}});
+    const keep=new Set(j.orders.map(r=>String(r.no))),before=S.orders.length;S.orders=S.orders.filter(o=>!o.srv||keep.has(String(o.no))||(o.phone&&o.phone!==ph)||Date.now()-o.at<60000);if(S.orders.length!==before)ch=true;
     if(ch){S.orders.sort((a,b)=>b.at-a.at);save();if(curHash()==="orders")render()}}catch(e){}}
 function vOrders(){syncMyOrders();if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
   return S.orders.map((o,i)=>`<section class="card"><div class="row between"><b>${o.no}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div><span class="small muted">${dDay(o.at)} ${new Date(o.at).getFullYear()}, ${dTime(o.at)} · ${esc(o.del||"")}</span>
@@ -1189,11 +1201,21 @@ const AD={orders:[],items:[],sheet:"",loaded:false,busy:false,err:"",tab:"orders
 const ST_ALL=["Yeni","Təsdiqləndi","Hazırlanır","Yoldadır","Çatdırıldı","Ləğv edildi","Qaytarıldı"],PAYS=["Ödənilməyib","Ödənilib","Geri qaytarıldı"];
 async function adLoad(quiet){if(!S.apass||!CONFIG.shop.api)return;AD.busy=true;if(!quiet&&isAdminView())render();
   try{const j=await api("admin",{pass:S.apass});AD.orders=j.orders;AD.items=j.items;AD.sheet=j.sheet||"";AD.loaded=true;AD.err="";
-    const n=AD.orders.filter(o=>o.status==="Yeni").length;if(AD.lastNew>=0&&n>AD.lastNew){toast(`Yeni sifariş! (${n})`);try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}AD.lastNew=n}
+    const n=AD.orders.filter(o=>o.status==="Yeni").length,nos=AD.orders.map(o=>String(o.no));
+    if(Array.isArray(S.aseen)){const fresh=AD.orders.filter(o=>o.status==="Yeni"&&!S.aseen.includes(String(o.no)));if(fresh.length)newOrderAlert(fresh)}
+    S.aseen=nos.slice(0,400);save();AD.lastNew=n}
   catch(e){AD.err=e?.msg==="auth"?"Parol səhvdir. Yenidən daxil olun.":"Serverə qoşulmaq alınmadı. İnterneti yoxlayın.";if(e?.msg==="auth"){S.apass="";save()}}
   AD.busy=false;if(isAdminView()||curHash()==="home"||curHash()==="profile")render()}
 const isAdminView=()=>{const h=curHash();return h==="admin"||h.startsWith("ao-")||h.startsWith("ap-")};
-function adPoll(){clearInterval(AD.timer);if(S.apass)AD.timer=setInterval(()=>{if(document.visibilityState==="visible")adLoad(true)},60000)}
+function adPoll(){clearInterval(AD.timer);if(S.apass)AD.timer=setInterval(()=>adLoad(true),document.visibilityState==="visible"?30000:60000)}
+let ACX=null;
+function audioUnlock(){try{if(!ACX)ACX=new (window.AudioContext||window.webkitAudioContext)();if(ACX.state==="suspended")ACX.resume()}catch(e){}}
+function ding(){try{audioUnlock();const t0=ACX.currentTime;[[0,880],[.16,1175],[.32,1568],[.9,880],[1.06,1175],[1.22,1568]].forEach(([d,f])=>{const o=ACX.createOscillator(),g=ACX.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t0+d);g.gain.exponentialRampToValueAtTime(0.5,t0+d+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+d+0.35);o.connect(g).connect(ACX.destination);o.start(t0+d);o.stop(t0+d+0.4)})}catch(e){}}
+function newOrderAlert(fresh){const o=fresh[0],txt=fresh.length>1?`${fresh.length} yeni sifariş`:`Yeni sifariş: ${o.name} · ${money(o.total)}`;
+  toast("🛒 "+txt);if(S.asnd===false)return;ding();try{navigator.vibrate&&navigator.vibrate([300,120,300,120,300])}catch(e){}
+  try{if("Notification" in window&&Notification.permission==="granted"&&navigator.serviceWorker)navigator.serviceWorker.ready.then(r=>r.showNotification("Vital Rhythm — yeni sifariş",{body:txt+(fresh.length>1?"":"\n"+o.no),icon:"icon-192.png",badge:"icon-192.png",tag:"vr-order",renotify:true,vibrate:[300,120,300],data:{url:"./#admin"}}))}catch(e){}}
+document.addEventListener("pointerdown",audioUnlock,{passive:true});
+document.addEventListener("visibilitychange",()=>{if(S.apass){adPoll();if(document.visibilityState==="visible")adLoad(true)}});
 const newCount=()=>AD.orders.filter(o=>o.status==="Yeni").length;
 const oDate=o=>new Date(String(o.at).replace(" ","T"));
 function vAdmin(){
@@ -1203,6 +1225,7 @@ function vAdmin(){
   const n=newCount();
   let h=`<div class="seg">${[["orders","Sifarişlər"+(n?` (${n})`:"")],["prods","Məhsullar"],["rep","Hesabat"]].map(([k,v])=>`<button data-adt="${k}" class="${AD.tab===k?"on":""}">${v}</button>`).join("")}</div>`;
   if(AD.err)h+=`<div class="alert warn"><span class="dot"></span><div>${AD.err}</div></div>`;
+  h+=`<label class="tgl"><span>🔔 Yeni sifarişdə səs və bildiriş</span><input type="checkbox" id="adSnd" ${S.asnd!==false?"checked":""}></label>`;
   h+=AD.tab==="orders"?adOrders():AD.tab==="prods"?adProds():adReport();
   h+=`<div class="grid2"><button class="ghost" id="adRefresh">${AD.busy?"Yenilənir…":"Yenilə"}</button><button class="ghost" id="adLogout">Çıxış</button></div>`;
   return h}
@@ -1222,19 +1245,23 @@ function vAO(no){const o=AD.orders.find(x=>x.no===no);if(!o)return `<p class="mu
    <section class="card"><h3>Məhsullar</h3><div class="list">${o.items.map(x=>`<div class="item" style="padding:7px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
     <dl class="kv"><dt>Məhsullar</dt><dd>${money(o.sum)}</dd><dt>Çatdırılma</dt><dd>${o.fee?money(o.fee):"pulsuz"}</dd><dt style="color:var(--ink);font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(o.total)}</dd>${o.cost?`<dt>Maya dəyəri</dt><dd>${money(o.cost)}</dd><dt>Mənfəət</dt><dd style="color:var(--ok)">${money(o.sum-o.cost)}</dd>`:""}</dl></section>
    <section class="card"><h3>İdarə</h3>
+    ${(()=>{const k=STEPS.indexOf(o.status);return k>=0&&k<STEPS.length-1?`<button class="primary" id="aoNext" data-st="${STEPS[k+1]}">→ ${STEPS[k+1]} et</button>`:""})()}
     <label class="f">Status<select id="aoSt">${ST_ALL.map(s=>`<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></label>
     <label class="f">Ödəniş<select id="aoPaid">${PAYS.map(s=>`<option ${s===o.paid?"selected":""}>${s}</option>`).join("")}</select></label>
     <label class="f">Çatdırılma vaxtı<input id="aoDate" value="${esc(o.date||"")}" placeholder="məs. 12 noyabr, 14:00–18:00"></label>
     <label class="f">Qaytarılan məbləğ (₼)<input id="aoRef" type="number" inputmode="decimal" value="${o.refund||""}" placeholder="0"></label>
     <label class="f">Admin qeydi<textarea id="aoNote" placeholder="kuryer, xüsusi qeyd…">${esc(o.adminNote||"")}</textarea></label>
-    <button class="primary big" id="aoSave">Yadda saxla</button><label class="tgl" style="border:0;padding:0"><span class="small">Saxlayanda müştəriyə WhatsApp ilə bildir</span><input type="checkbox" id="aoNotify" checked></label></section>`}
+    <button class="primary big" id="aoSave">Yadda saxla</button><label class="tgl" style="border:0;padding:0"><span class="small">Saxlayanda müştəriyə WhatsApp ilə bildir</span><input type="checkbox" id="aoNotify" checked></label></section>
+   <section class="card"><div class="grid2"><button class="ghost" id="aoShare">Qəbzi paylaş</button><button class="ghost" id="aoDel" style="color:var(--danger)">Sifarişi sil</button></div>
+    <div class="row" id="aoDelC" hidden><span class="small">Sifariş bazadan tam silinsin? (test sifarişləri üçün)</span><button class="red" id="aoDelY">Bəli, sil</button><button class="ghost" id="aoDelN">Xeyr</button></div></section>`}
 function adProds(){const q=AD.pq.toLowerCase(),list=AD.items.filter(p=>!q||(p.name+" "+p.cat).toLowerCase().includes(q));
   return `<button class="primary big" data-go="ap-new">+ Yeni məhsul</button>
    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="adPQ" type="search" placeholder="Məhsul axtar…" value="${esc(AD.pq)}"></div>
    <section class="card"><div class="list">${list.map(p=>`<button class="item" data-ap="${esc(p.id)}"><span class="n"><span class="av" style="background:${p.img?`url('${esc(driveImg(p.img))}') center/cover`:"var(--q5i)"}">${p.img?"":esc(p.name.charAt(0))}</span><div><b>${esc(p.name)}</b><span>${esc(p.cat)}${p.size?" · "+esc(p.size):""}${p.stock?"":" · <b style='color:var(--danger)'>stokda yox</b>"}${p.top?" · ★":""}</span></div></span><span class="k">${money(p.price)}</span></button>`).join("")||`<p class="muted small">Məhsul yoxdur.</p>`}</div></section>
    ${AD.sheet?`<a class="small" href="${AD.sheet}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Sifarişlər cədvəlini Google-da aç ›</a>`:""}`}
 let APF=null;
-function vAP(id){const p=id==="new"?{id:"",name:"",cat:"",price:"",old:"",img:"",desc:"",size:"",stock:true,top:false,cost:""}:AD.items.find(x=>x.id===id);if(!p)return `<p class="muted">Məhsul tapılmadı.</p>`;
+function vAP(id){if(!AD.loaded){if(!AD.busy)adLoad();return AD.err?`<div class="alert warn"><span class="dot"></span><div>${AD.err}</div></div>`:`<div class="row"><span class="spin"></span><span>Yüklənir…</span></div>`}
+  const p=id==="new"?{id:"",name:"",cat:"",price:"",old:"",img:"",desc:"",size:"",stock:true,top:false,cost:""}:AD.items.find(x=>x.id===id);if(!p)return `<p class="muted">Məhsul tapılmadı.</p>`;
   if(!APF||APF.id!==p.id)APF={...p};const f=APF,cats=[...new Set(AD.items.map(x=>x.cat))];
   return `<section class="card"><div class="pimgx" style="${f.img?`background-image:url('${esc(driveImg(f.img))}')`:""}">${f.img?"":"Şəkil yoxdur"}</div>
     <div class="grid2"><label class="filebtn main">Şəkil çək<input id="apCam" type="file" accept="image/*" capture="environment"></label><label class="filebtn">Qalereya<input id="apGal" type="file" accept="image/*"></label></div>
@@ -1246,7 +1273,7 @@ function vAP(id){const p=id==="new"?{id:"",name:"",cat:"",price:"",old:"",img:""
     <label class="tgl"><span>Stokda var</span><input type="checkbox" id="apStock" ${f.stock?"checked":""}></label>
     <label class="tgl"><span>Tövsiyə olunan (önə çıxar)</span><input type="checkbox" id="apTop" ${f.top?"checked":""}></label>
     <button class="primary big" id="apSave">Yadda saxla</button>
-    ${p.id?`<button class="ghost" id="apDel" style="color:var(--danger)">Məhsulu sil</button><div class="row" id="apDelC" hidden><span class="small">Silinsin?</span><button class="red" id="apDelY">Bəli, sil</button><button class="ghost" id="apDelN">Xeyr</button></div>`:""}
+    ${p.id?`<button class="ghost" id="apDup">Kopyasını yarat (oxşar məhsul üçün)</button><button class="ghost" id="apDel" style="color:var(--danger)">Məhsulu sil</button><div class="row" id="apDelC" hidden><span class="small">Silinsin?</span><button class="red" id="apDelY">Bəli, sil</button><button class="ghost" id="apDelN">Xeyr</button></div>`:""}
     <p class="small muted" style="margin:0">Maya dəyəri müştərilərə görünmür, yalnız hesabatda mənfəəti hesablamaq üçündür.</p></section>`}
 function apRead(){Object.assign(APF,{name:$("#apName").value.trim(),cat:$("#apCat").value.trim(),price:$("#apPrice").value,old:$("#apOld").value,cost:$("#apCost").value,size:$("#apSize").value.trim(),desc:$("#apDesc").value.trim(),stock:$("#apStock").checked,top:$("#apTop").checked})}
 function periodStart(k){const d=new Date();d.setHours(0,0,0,0);if(k==="today")return d;if(k==="7"){d.setDate(d.getDate()-6);return d}if(k==="30"){d.setDate(d.getDate()-29);return d}if(k==="month"){d.setDate(1);return d}return new Date(0)}
@@ -1296,7 +1323,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 
 // ================= RENDER
 function route(){if(typeof G!=="undefined"&&G.open){G.open=false;renderGuide()}render();window.scrollTo(0,0)}
-function render(){
+function render(){document.body.classList.toggle("adm",ADM());
   if(MAP){MAP.remove();MAP=null;LINE=null;ME=null}
   const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":["prod","cart","checkout","orders","admin"].includes(base)?"shop":["move","act","rest","coupon"].includes(base)?"home":"");
   const [t1,t2]=h.startsWith("odone-")?["Təşəkkürlər","Sifariş qəbul edildi"]:h.startsWith("ao-")?["Sifariş",h.slice(3)]:h.startsWith("ap-")?[h==="ap-new"?"Yeni məhsul":"Məhsulu dəyiş","Admin"]:h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
@@ -1354,6 +1381,21 @@ function bind(h){
   const aq=$("#adQ");if(aq)aq.addEventListener("input",e=>{AD.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adQ");n.focus();n.setSelectionRange(pos,pos)});
   const apq=$("#adPQ");if(apq)apq.addEventListener("input",e=>{AD.pq=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adPQ");n.focus();n.setSelectionRange(pos,pos)});
   on("[data-ao]","click",e=>go("ao-"+e.currentTarget.dataset.ao));
+  on("#adSnd","change",async e=>{S.asnd=e.target.checked;save();if(S.asnd){audioUnlock();ding();try{if("Notification" in window&&Notification.permission==="default")await Notification.requestPermission()}catch(x){}toast("Səs açıqdır. Proqram açıq olanda yeni sifarişdə zəng çalınacaq.")}});
+  on("[data-stk]","click",async e=>{const id=e.currentTarget.dataset.stk,b=e.currentTarget;b.disabled=true;
+    try{if(!AD.loaded)await adLoad(true);const p=AD.items.find(x=>x.id===id);if(!p)throw{};const np={...p,stock:!p.stock};delete np.row;
+      await api("saveProduct",{pass:S.apass,p:np});p.stock=np.stock;const sp=pById(id);if(sp)sp.stock=np.stock;toast(np.stock?"Stokda var":"Stokda yoxdur kimi işarələndi");render();loadShop(true)}
+    catch(err){b.disabled=false;toast("Dəyişmək alınmadı")}});
+  on("#pDup,#apDup","click",async()=>{const id=h.startsWith("prod-")?h.slice(5):h.slice(3);if(!AD.loaded)await adLoad(true);if(h.startsWith("ap-")&&APF)apRead();const src=h.startsWith("ap-")&&APF?APF:AD.items.find(x=>x.id===id);if(!src)return toast("Məhsul tapılmadı");APF={...src,id:"",name:src.name+" (kopya)"};delete APF.row;go("ap-new");toast("Kopya yaradıldı. Dəyişib yadda saxlayın.")});
+  on("#pDel","click",()=>{$("#pDelC").hidden=false});on("#pDelN","click",()=>{$("#pDelC").hidden=true});
+  on("#pDelY","click",async e=>{const b=e.currentTarget;b.disabled=true;try{await api("deleteProduct",{pass:S.apass,id:h.slice(5)});toast("Silindi");await adLoad(true);loadShop(true);back()}catch(err){b.disabled=false;toast("Silmək alınmadı")}});
+  on("#aoNext","click",e=>{$("#aoSt").value=e.currentTarget.dataset.st;$("#aoSave").click()});
+  on("#aoShare","click",async()=>{const o=AD.orders.find(x=>x.no===h.slice(3));const t=`🧾 Sifariş ${o.no}\n${o.at}\n\n${o.items.map((x,i)=>`${i+1}. ${x.name} × ${x.q} = ${money(x.price*x.q)}`).join("\n")}\n\nMəhsullar: ${money(o.sum)}\nÇatdırılma: ${o.fee?money(o.fee):"pulsuz"}\nCƏMİ: ${money(o.total)}\nÖdəniş: ${o.pay} · ${o.paid}\n\n👤 ${o.name}, ${fmtPhone(String(o.phone).replace(/\D/g,""))}${o.del==="Çatdırılma"?`\n🚚 ${o.city}, ${o.addr}`:"\n🏬 Özü götürəcək"}${o.date?`\n🕒 ${o.date}`:""}\n\n${CONFIG.guide.name} · Vital Rhythm`;
+    try{if(navigator.share){await navigator.share({title:"Sifariş "+o.no,text:t});return}}catch(x){return}try{await navigator.clipboard.writeText(t);toast("Qəbz kopyalandı")}catch(x){toast("Paylaşmaq alınmadı")}});
+  on("#aoDel","click",()=>{$("#aoDelC").hidden=false});on("#aoDelN","click",()=>{$("#aoDelC").hidden=true});
+  on("#aoDelY","click",async e=>{const no=h.slice(3),b=e.currentTarget;b.disabled=true;b.textContent="Silinir…";
+    try{const j=await api("deleteOrder",{pass:S.apass,no});if(!j.deleted)throw{msg:"tapılmadı"};AD.orders=AD.orders.filter(x=>x.no!==no);toast("Sifariş silindi");back()}
+    catch(err){b.disabled=false;b.textContent="Bəli, sil";toast(err?.msg==="unknown action"?"Server kodu yenilənməlidir (silmə funksiyası yoxdur)":"Silmək alınmadı")}});
   on("[data-ap]","click",e=>go("ap-"+e.currentTarget.dataset.ap));
   on("#aoWA","click",()=>{const o=AD.orders.find(x=>x.no===h.slice(3));openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz barədə yazıram.`)});
   on("#aoSave","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,ch={no:o.no,pass:S.apass,status:$("#aoSt").value,paid:$("#aoPaid").value,date:$("#aoDate").value.trim(),adminNote:$("#aoNote").value.trim(),refund:+$("#aoRef").value||0};

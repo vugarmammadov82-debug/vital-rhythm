@@ -1,5 +1,5 @@
 // Vital Rhythm offline cache
-const CACHE = "vital-rhythm-v15";
+const CACHE = "vital-rhythm-v16";
 const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"];
@@ -23,4 +23,12 @@ self.addEventListener("fetch", e => {
       return r;
     }).catch(() => caches.match(e.request).then(m => m || caches.match("index.html")))
   );
+});
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "./";
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(cs => {
+    for (const c of cs) { if ("focus" in c) { c.navigate && c.navigate(url).catch(() => {}); return c.focus(); } }
+    return self.clients.openWindow(url);
+  }));
 });
