@@ -239,6 +239,25 @@ nav.tabs .cb em{position:absolute;top:4px;left:calc(50% + 4px);min-width:18px;he
 .radio{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .radio label{display:flex;gap:8px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;font-weight:700;font-size:14px;cursor:pointer}
 .radio input{width:auto}
+/* admin */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi small{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi b{font-family:var(--display);font-size:20px;font-weight:800;overflow-wrap:anywhere}
+.kpi span{font-size:12px;color:var(--muted);font-weight:700}
+.st-Yeni{background:var(--q1);color:var(--q1i)}.st-Təsdiqləndi{background:var(--q4);color:var(--q4i)}.st-Hazırlanır{background:var(--q5);color:var(--q5i)}.st-Yoldadır{background:var(--q3);color:var(--q3i)}.st-Çatdırıldı{background:var(--q2);color:var(--q2i)}.st-Ləğv{background:var(--surface2);color:var(--muted)}.st-Qaytarıldı{background:var(--danger-bg);color:var(--danger)}
+.ocard{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;color:var(--ink);font-weight:500}
+.ocard.new{border-left:5px solid var(--coral)}
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px}
+.track div{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:10.5px;font-weight:800;color:var(--muted)}
+.track i{width:100%;height:6px;border-radius:9px;background:var(--surface2)}
+.track .on{color:var(--accent)}.track .on i{background:var(--accent)}
+.hbars{display:flex;flex-direction:column;gap:8px}
+.hbar{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px}
+.hbar .bar{grid-column:1/-1;height:7px}
+.tgl{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-weight:700}
+.tgl input{width:22px;height:22px}
+.pimgx{width:100%;max-width:220px;aspect-ratio:1/1;border-radius:16px;background:var(--surface2) center/cover;display:grid;place-items:center;color:var(--muted);font-weight:800;align-self:center}
 /* scan */
 .drop{border:2px dashed var(--line);border-radius:20px;min-height:200px;display:grid;place-items:center;text-align:center;padding:14px;background:var(--bg);overflow:hidden}
 .drop img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;display:block}
@@ -434,7 +453,7 @@ const svg=k=>`<svg viewBox="0 0 24 24">${ICON[k]}</svg>`;
 
 // ================= ROUTER (works with the phone's back button)
 const TABS=["home","diary","scan","shop","plan"];
-const TITLES={home:["Vital Rhythm","by VUİM"],shop:["Mağaza","Sağlamlıq məhsulları"],cart:["Səbət","Sifarişiniz"],checkout:["Sifariş","Məlumatlarınız"],orders:["Sifarişlərim","Tarixçə"],admin:["Mağaza admini","Kataloq"],reg:["Qeydiyyat","Ad və nömrə"],diary:["Gündəlik","Bu günün balansı"],rest:["Restoranlar","Sağlam yemək yaxınlıqda"],food:["Yemək əlavə et","Axtar və seç"],scan:["Şəkil ilə hesabla","AI analiz"],move:["Hərəkət","GPS izləmə"],plan:["Plan","Menyu və məşq"],profile:["Profil","Normalarınız"],ai:["AI açarı","Şəkil analizi üçün"]};
+const TITLES={home:["Vital Rhythm","by VUİM"],shop:["Mağaza","Sağlamlıq məhsulları"],cart:["Səbət","Sifarişiniz"],checkout:["Sifariş","Məlumatlarınız"],orders:["Sifarişlərim","Status"],admin:["Admin","Sifariş · məhsul · hesabat"],reg:["Qeydiyyat","Ad və nömrə"],diary:["Gündəlik","Bu günün balansı"],rest:["Restoranlar","Sağlam yemək yaxınlıqda"],food:["Yemək əlavə et","Axtar və seç"],scan:["Şəkil ilə hesabla","AI analiz"],move:["Hərəkət","GPS izləmə"],plan:["Plan","Menyu və məşq"],profile:["Profil","Normalarınız"],ai:["AI açarı","Şəkil analizi üçün"]};
 const curHash=()=>(location.hash||"#home").slice(1);
 // Every history entry carries its depth above "home", so Back always ends on Home and Home is one tap away.
 const depth=()=>(history.state&&history.state.d)||0;
@@ -527,6 +546,7 @@ function vHome(){
   if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
   h+=`<section class="status"><div class="ring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="var(--surface2)" stroke-width="8" fill="none"/><circle class="p" cx="38" cy="38" r="${R}" stroke="${over?"var(--danger)":"var(--accent)"}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg><div class="c"><b>${r0(Math.abs(left))}</b><span>${over?"artıq":"qalıb"}</span></div></div>
     <div class="ss"><span class="hi">${hi} · ${dDay(new Date())}</span><span class="msg">${msg}</span><div class="pills"><span>${r0(t.k)} / ${c.target} kkal</span><span>${(t.water/1000).toFixed(1)} L su</span></div></div></section>`;
+  if(S.apass&&newCount())h+=`<button class="alert danger" data-go="admin" style="width:100%;text-align:left"><span class="dot"></span><div><b>${newCount()} yeni sifariş</b> gözləyir. Baxmaq üçün toxunun.</div></button>`;
   h+=tipCard();
   const cs=cartSum();
   h+=`<div class="quads">
@@ -789,7 +809,7 @@ function vProfile(){
     <button class="item" data-go="ai"><span class="n"><span class="av" style="background:linear-gradient(150deg,var(--coral),var(--sun))">AI</span><div><b>Şəkil analizi açarı</b><span>${S.ai.key?"Öz açarınız":CONFIG.geminiKey?"Ümumi açar işləyir":"Qoşulmayıb"}</span></div></span><span class="k">›</span></button>
     <button class="item" data-go="reg"><span class="n"><span class="av" style="background:var(--q3i)">${esc((S.user?.name||"?").charAt(0))}</span><div><b>${S.user?esc(S.user.name):"Qeydiyyat"}</b><span>${S.user?fmtPhone(S.user.phone):"Ad və WhatsApp nömrəsi"}</span></div></span><span class="k">›</span></button>
     <button class="item" data-go="orders"><span class="n"><span class="av" style="background:var(--coral)">₼</span><div><b>Sifarişlərim</b><span>${S.orders.length} sifariş</span></div></span><span class="k">›</span></button>
-    <button class="item" data-go="admin"><span class="n"><span class="av" style="background:var(--slate)">A</span><div><b>Mağaza admini</b><span>Kataloq və sifarişlər</span></div></span><span class="k">›</span></button>
+    <button class="item" data-go="admin"><span class="n"><span class="av" style="background:var(--slate)">A</span><div><b>Admin</b><span>${S.apass?(newCount()?newCount()+" yeni sifariş":"Sifarişlər, məhsullar, hesabat"):"Mağaza idarəsi"}</span></div></span><span class="k">›</span></button>
     <button class="item" id="howInstall"><span class="n"><span class="av" style="background:var(--accent)">↓</span><div><b>Telefona quraşdırmaq</b><span>Ana ekrana ikon əlavə et</span></div></span><span class="k">›</span></button>
     <button class="item" id="wipe"><span class="n"><span class="av" style="background:var(--danger)">×</span><div><b>Bütün qeydləri sil</b><span>Profil qalır</span></div></span><span class="k">›</span></button>
     <div id="wipeC" hidden class="row"><span class="small">Əminsiniz?</span><button class="red" id="wipeY">Bəli, sil</button><button class="ghost" id="wipeN">Xeyr</button></div></section>
@@ -1054,17 +1074,22 @@ function fromCSV(t){const r=parseCSV(t);if(r.length<2)return[];const hd=r[0].map
   const I={};Object.keys(COLS).forEach(k=>I[k]=ix(k));
   return r.slice(1).map((x,n)=>({id:(I.id!=null&&x[I.id]?.trim())||"p"+(n+1),cat:(x[I.cat]||"Digər").trim(),name:(x[I.name]||"").trim(),price:parseFloat(String(x[I.price]||"").replace(",","."))||0,old:parseFloat(String(I.old!=null?x[I.old]:"").replace(",","."))||0,img:(I.img!=null?x[I.img]:"").trim(),desc:(I.desc!=null?x[I.desc]:"").trim(),size:(I.size!=null?x[I.size]:"").trim(),stock:I.stock==null||!/^(0|yox|no|false)$/i.test((x[I.stock]||"").trim()),top:I.top!=null&&/^(1|bəli|beli|yes|true|x)$/i.test((x[I.top]||"").trim())})).filter(p=>p.name)}
 function driveImg(u){const m=String(u||"").match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([\w-]+)/);return m?`https://lh3.googleusercontent.com/d/${m[1]}=w600`:u}
+// Server (Google Apps Script). POST as text/plain so the browser sends it without a pre-flight check.
+async function api(action,data={},get=false){const u=CONFIG.shop.api;if(!u)throw{status:"noapi"};
+  const r=get?await fetch(u+(u.includes("?")?"&":"?")+"action="+action,{cache:"no-store"}):await fetch(u,{method:"POST",body:JSON.stringify({action,...data})});
+  let j;try{j=await r.json()}catch(e){throw{status:"bad"}}if(!j.ok)throw{status:"api",msg:j.error||""};return j}
 async function loadShop(force){
   if(SHOP.status==="ok"&&!force)return;
   if(!SHOP.items.length&&S.catCache){SHOP.items=S.catCache;SHOP.status="ok"}
   try{let items;
-    if(CONFIG.shop.catalogCsv){const r=await fetch(CONFIG.shop.catalogCsv,{cache:"no-store"});if(!r.ok)throw 0;items=fromCSV(await r.text());SHOP.src="Google Sheets"}
+    let viaApi=false;if(CONFIG.shop.api){try{items=(await api("catalog",{},true)).items;SHOP.src="Server";viaApi=true}catch(e){}}
+    if(viaApi){}else if(CONFIG.shop.catalogCsv){const r=await fetch(CONFIG.shop.catalogCsv,{cache:"no-store"});if(!r.ok)throw 0;items=fromCSV(await r.text());SHOP.src="Google Sheets"}
     else{const r=await fetch(CONFIG.shop.catalogUrl,{cache:"no-store"});if(!r.ok)throw 0;items=(await r.json()).filter(p=>p&&p.name);SHOP.src="catalog.json"}
     items.forEach(p=>{p.img=driveImg(p.img);p.price=+p.price||0;p.old=+p.old||0;if(p.stock==null)p.stock=true});
     SHOP.items=items;SHOP.status="ok";S.catCache=items;save();
   }catch(e){if(!SHOP.items.length)SHOP.status="err"}
   SHOP.cats=[...new Set(SHOP.items.map(p=>p.cat))];
-  if(["home","shop","cart","admin"].includes(curHash())||curHash().startsWith("prod-"))render();updCart();
+  if(["home","shop","cart","admin"].includes(curHash())||curHash().startsWith("ap-")||curHash().startsWith("prod-"))render();updCart();
 }
 const pById=id=>SHOP.items.find(p=>p.id===id);
 const cartQty=id=>(S.cart.find(c=>c.id===id)||{}).q||0;
@@ -1114,35 +1139,144 @@ function vCheckout(){const u=S.user||{},o=S.lastShip||{};const {n,total}=cartSum
    <div class="radio"><label><input type="radio" name="coPay" value="Nağd" ${o.pay!=="Kartla (çatdırılmada)"?"checked":""}>Nağd</label><label><input type="radio" name="coPay" value="Kartla (çatdırılmada)" ${o.pay==="Kartla (çatdırılmada)"?"checked":""}>Kartla</label></div>
    <label class="f">Qeyd (istəyə bağlı)<textarea id="coNote" placeholder="məs. zəng edin, saat 18-dən sonra">${esc(o.note||"")}</textarea></label></section>
    <section class="card"><dl class="kv"><dt>Ödəniləcək</dt><dd style="font-size:18px">${money(total)}</dd></dl>
-   <button class="wa big" id="coSend">Sifarişi WhatsApp ilə göndər</button><p class="small muted" style="margin:0">WhatsApp açılacaq, hazır mesajı göndərin. Satıcı sizinlə əlaqə saxlayıb sifarişi təsdiqləyəcək.</p></section>`}
-function placeOrder(){
+   ${CONFIG.shop.api?`<button class="primary big" id="coSend">Sifarişi təsdiqlə</button><div class="alert warn" id="coErr" hidden></div><p class="small muted" style="margin:0">Sifariş birbaşa mağazaya gedir. Satıcı sizinlə əlaqə saxlayıb təsdiqləyəcək, statusu "Sifarişlərim"-də görəcəksiniz.</p>`
+     :`<button class="wa big" id="coSend">Sifarişi WhatsApp ilə göndər</button><p class="small muted" style="margin:0">WhatsApp açılacaq, hazır mesajı göndərin. Satıcı sizinlə əlaqə saxlayıb sifarişi təsdiqləyəcək.</p>`}</section>`}
+function orderText(o,name,phone,ship){return `🛒 Sifariş ${o.no}\n\n${o.items.map((x,i)=>`${i+1}. ${x.name} × ${x.q} = ${money(x.price*x.q)}`).join("\n")}\n\nMəhsullar: ${money(o.sum)}\nÇatdırılma: ${o.fee?money(o.fee):"pulsuz"}\nCƏMİ: ${money(o.total)}\n\n👤 ${name}\n📞 ${fmtPhone(phone)}\n🚚 ${ship.del}${ship.del==="Çatdırılma"?`: ${ship.city}, ${ship.addr}`:""}\n💳 ${ship.pay}${ship.note?`\n📝 ${ship.note}`:""}\n\n— Vital Rhythm`}
+let ORDBUSY=false;
+async function placeOrder(viaWA){
+  if(ORDBUSY)return;
   const name=$("#coName").value.trim(),phone=normPhone($("#coPhone").value),del=document.querySelector('[name=coDel]:checked').value,pay=document.querySelector('[name=coPay]:checked').value,city=$("#coCity").value.trim(),addr=$("#coAddr").value.trim(),note=$("#coNote").value.trim();
   if(!name)return toast("Adınızı yazın");if(phone.length<11)return toast("Nömrəni düzgün yazın: +994 50 123 45 67");if(del==="Çatdırılma"&&!addr)return toast("Ünvanı yazın");
-  if(!CONFIG.shop.whatsapp)return toast("Mağazanın WhatsApp nömrəsi hələ qoşulmayıb");
-  S.lastShip={name,phone,del,pay,city,addr,note};if(!S.user)S.user={name,phone};
-  const {sum,fee,total}=cartSum(),d=new Date(),no=`VR-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+  const ship={name,phone,del,pay,city,addr,note};S.lastShip=ship;if(!S.user)S.user={name,phone};save();
   const items=S.cart.map(c=>{const p=pById(c.id);return p?{id:p.id,name:p.name,price:p.price,q:c.q}:null}).filter(Boolean);
-  const txt=`🛒 Yeni sifariş ${no}\n\n${items.map((x,i)=>`${i+1}. ${x.name} × ${x.q} = ${money(x.price*x.q)}`).join("\n")}\n\nMəhsullar: ${money(sum)}\nÇatdırılma: ${fee?money(fee):"pulsuz"}\nCƏMİ: ${money(total)}\n\n👤 ${name}\n📞 ${fmtPhone(phone)}\n🚚 ${del}${del==="Çatdırılma"?`: ${city}, ${addr}`:""}\n💳 ${pay}${note?`\n📝 ${note}`:""}\n\n— Vital Rhythm`;
-  S.orders.unshift({no,at:Date.now(),items,sum,fee,total,del,status:"Göndərildi"});S.cart=[];save();updCart();
-  openWA(CONFIG.shop.whatsapp,txt);history.replaceState({d:depth()},"","#orders");route();toast("Sifariş hazırlandı. WhatsApp-da göndərin.");
+  if(CONFIG.shop.api&&!viaWA){
+    ORDBUSY=true;const b=$("#coSend");if(b){b.disabled=true;b.textContent="Göndərilir…"}
+    try{const j=await api("order",{customer:{name,phone},del,city,addr,pay,note,items:items.map(x=>({id:x.id,q:x.q}))});
+      S.orders.unshift({no:j.no,at:Date.now(),items:j.items,sum:j.sum,fee:j.fee,total:j.total,del,status:"Yeni",srv:1});S.cart=[];save();updCart();
+      history.replaceState({d:depth()},"","#odone-"+j.no);route();
+    }catch(e){ORDBUSY=false;if(b){b.disabled=false;b.textContent="Sifarişi təsdiqlə"}
+      const box=$("#coErr");if(box){box.hidden=false;box.innerHTML=`Sifariş serverə çatmadı${e?.msg?" ("+esc(e.msg)+")":""}. İnterneti yoxlayıb yenidən cəhd edin və ya WhatsApp ilə göndərin.<div class="row" style="margin-top:8px"><button class="wa" id="coWA">WhatsApp ilə göndər</button></div>`;$("#coWA").onclick=()=>placeOrder(true)}}
+    ORDBUSY=false;return;
+  }
+  if(!CONFIG.shop.whatsapp)return toast("Mağazanın WhatsApp nömrəsi hələ qoşulmayıb");
+  const {sum,fee,total}=cartSum(),d=new Date(),no=`VR-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+  const o={no,at:Date.now(),items,sum,fee,total,del,status:"Göndərildi"};
+  S.orders.unshift(o);S.cart=[];save();updCart();
+  openWA(CONFIG.shop.whatsapp,orderText(o,name,phone,ship));history.replaceState({d:depth()},"","#orders");route();toast("Sifariş hazırlandı. WhatsApp-da göndərin.");
 }
-function vOrders(){if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
-  return S.orders.map((o,i)=>`<section class="card"><div class="row between"><b>${o.no}</b><span class="ostat">${o.status}</span></div><span class="small muted">${dDay(o.at)} ${new Date(o.at).getFullYear()}, ${dTime(o.at)} · ${o.del}</span>
+const STEPS=["Yeni","Təsdiqləndi","Hazırlanır","Yoldadır","Çatdırıldı"],STLBL={"Yeni":"Qəbul edildi","Təsdiqləndi":"Təsdiqləndi","Hazırlanır":"Hazırlanır","Yoldadır":"Yoldadır","Çatdırıldı":"Çatdırıldı"};
+const stCls=st=>"ostat st-"+String(st||"").split(" ")[0];
+function track(o){const k=STEPS.indexOf(o.status);if(k<0)return `<p class="small" style="margin:0;font-weight:800;color:var(--danger)">${esc(o.status)}</p>`;
+  return `<div class="track">${STEPS.map((x,i)=>`<div class="${i<=k?"on":""}"><i></i>${STLBL[x]}</div>`).join("")}</div>`}
+function vDone(no){const o=S.orders.find(x=>x.no===no);if(!o)return vOrders();
+  return `<section class="card" style="align-items:center;text-align:center"><div style="width:64px;height:64px;border-radius:50%;background:var(--q2);color:var(--q2i);display:grid;place-items:center;font-size:32px;font-weight:800">✓</div>
+   <h2>Sifarişiniz qəbul edildi</h2><p class="muted" style="margin:0">Nömrə: <b>${o.no}</b><br>${CONFIG.guide.name} xanım tezliklə sizinlə əlaqə saxlayıb təsdiqləyəcək.</p></section>
+   <section class="card"><div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>${track(o)}<p class="small muted" style="margin:0">Statusu "Sifarişlərim" bölməsində izləyə bilərsiniz.</p></section>
+   <button class="primary big" data-go="orders">Sifarişlərim</button><button class="ghost" data-tabgo="shop">Alış-verişə davam et</button>`}
+let MYSYNC=0;
+async function syncMyOrders(){const ph=S.user?.phone||S.lastShip?.phone;if(!CONFIG.shop.api||!ph||Date.now()-MYSYNC<20000)return;MYSYNC=Date.now();
+  try{const j=await api("myorders",{phone:ph});let ch=false;
+    j.orders.forEach(r=>{const o=S.orders.find(x=>x.no===r.no);if(o){if(o.status!==r.status||o.date!==r.date||o.paid!==r.paid){Object.assign(o,{status:r.status,date:r.date,paid:r.paid});ch=true}}
+      else{S.orders.push({no:r.no,at:Date.parse(String(r.at).replace(" ","T"))||Date.now(),items:r.items,sum:r.total,fee:0,total:r.total,del:r.del,status:r.status,date:r.date,paid:r.paid,srv:1});ch=true}});
+    if(ch){S.orders.sort((a,b)=>b.at-a.at);save();if(curHash()==="orders")render()}}catch(e){}}
+function vOrders(){syncMyOrders();if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
+  return S.orders.map((o,i)=>`<section class="card"><div class="row between"><b>${o.no}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div><span class="small muted">${dDay(o.at)} ${new Date(o.at).getFullYear()}, ${dTime(o.at)} · ${esc(o.del||"")}</span>
+   ${o.srv?track(o):""}${o.date?`<p class="small" style="margin:0"><b>Çatdırılma:</b> ${esc(o.date)}</p>`:""}
    <div class="list">${o.items.map(x=>`<div class="item" style="padding:6px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
    <div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>
    <div class="grid2"><button class="primary" data-reorder="${i}">Yenidən sifariş</button><button class="ghost" data-ask="${i}">Status soruş</button></div></section>`).join("")}
+const AD={orders:[],items:[],sheet:"",loaded:false,busy:false,err:"",tab:"orders",filter:"Yeni",q:"",period:"30",pq:"",lastNew:-1,timer:null};
+const ST_ALL=["Yeni","Təsdiqləndi","Hazırlanır","Yoldadır","Çatdırıldı","Ləğv edildi","Qaytarıldı"],PAYS=["Ödənilməyib","Ödənilib","Geri qaytarıldı"];
+async function adLoad(quiet){if(!S.apass||!CONFIG.shop.api)return;AD.busy=true;if(!quiet&&isAdminView())render();
+  try{const j=await api("admin",{pass:S.apass});AD.orders=j.orders;AD.items=j.items;AD.sheet=j.sheet||"";AD.loaded=true;AD.err="";
+    const n=AD.orders.filter(o=>o.status==="Yeni").length;if(AD.lastNew>=0&&n>AD.lastNew){toast(`Yeni sifariş! (${n})`);try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}AD.lastNew=n}
+  catch(e){AD.err=e?.msg==="auth"?"Parol səhvdir. Yenidən daxil olun.":"Serverə qoşulmaq alınmadı. İnterneti yoxlayın.";if(e?.msg==="auth"){S.apass="";save()}}
+  AD.busy=false;if(isAdminView()||curHash()==="home"||curHash()==="profile")render()}
+const isAdminView=()=>{const h=curHash();return h==="admin"||h.startsWith("ao-")||h.startsWith("ap-")};
+function adPoll(){clearInterval(AD.timer);if(S.apass)AD.timer=setInterval(()=>{if(document.visibilityState==="visible")adLoad(true)},60000)}
+const newCount=()=>AD.orders.filter(o=>o.status==="Yeni").length;
+const oDate=o=>new Date(String(o.at).replace(" ","T"));
 function vAdmin(){
-  if(!S.adminOk)return `<section class="card"><h2>Admin girişi</h2><label class="f">PIN kod<input id="adPin" type="password" inputmode="numeric"></label><button class="primary" id="adIn">Daxil ol</button></section>`;
-  const byCat={};SHOP.items.forEach(p=>byCat[p.cat]=(byCat[p.cat]||0)+1);
-  const bad=SHOP.items.filter(p=>!p.price||!p.cat);
-  return `<section class="card"><h2>Kataloq</h2><dl class="kv"><dt>Mənbə</dt><dd>${esc(SHOP.src||"—")}</dd><dt>Məhsul sayı</dt><dd>${SHOP.items.length}</dd>${Object.entries(byCat).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
-    ${bad.length?`<div class="alert warn"><span class="dot"></span><div>${bad.length} məhsulda qiymət və ya kateqoriya yoxdur: ${bad.slice(0,5).map(p=>esc(p.name)).join(", ")}</div></div>`:""}
-    <button class="primary" id="adReload">Kataloqu yenilə</button>${CONFIG.shop.sheetEditUrl?`<a class="filebtn" href="${CONFIG.shop.sheetEditUrl}" target="_blank" rel="noopener" style="text-decoration:none">Google cədvəli aç (redaktə)</a>`:""}</section>
-   <section class="card"><h2>Məhsul necə əlavə olunur?</h2><ol class="steps"><li>Google cədvəlində hər sətir bir məhsuldur.</li><li>Sütunlar: <code>id, kateqoriya, ad, qiymət, köhnə qiymət, şəkil, təsvir, həcm, stok, tövsiyə</code></li><li><b>şəkil</b> — şəklin linki (Google Drive linki də olar, "Linki olan hər kəs" icazəsi ilə).</li><li><b>stok</b> — "yox" yazsanız "Hazırda yoxdur" görünür; <b>tövsiyə</b> — "bəli" yazsanız yuxarıda göstərilir.</li><li>Dəyişiklik 1–5 dəqiqəyə tətbiqdə görünür.</li></ol>
-    <button class="ghost" id="adTpl">Şablon sətirlərini kopyala</button></section>
-   <section class="card"><h2>Sifarişlər</h2><p class="small muted" style="margin:0">Sifarişlər mağazanın WhatsApp nömrəsinə gəlir: ${CONFIG.shop.whatsapp?esc(fmtPhone(CONFIG.shop.whatsapp)):"<b>hələ qoşulmayıb</b>"}.</p></section>
-   <button class="ghost" id="adOut">Çıxış</button>`}
-
+  if(!CONFIG.shop.api)return `<section class="card"><h2>Server hələ qoşulmayıb</h2><p class="muted" style="margin:0">Sifarişlərin proqrama düşməsi və məhsulların proqramdan idarə olunması üçün Google skripti qoşulmalıdır. Qoşulana qədər sifarişlər WhatsApp-a gedir, məhsullar Google cədvəlindən oxunur.</p>${CONFIG.shop.sheetEditUrl?`<a class="filebtn" href="${CONFIG.shop.sheetEditUrl}" target="_blank" rel="noopener" style="text-decoration:none">Kataloq cədvəlini aç</a>`:""}</section>`;
+  if(!S.apass)return `<section class="card"><h2>Admin girişi</h2><p class="small muted" style="margin:0">Mağaza idarəsi: sifarişlər, məhsullar, hesabat.</p><label class="f">Parol<input id="adPass" type="password" autocomplete="current-password"></label><button class="primary big" id="adLogin">Daxil ol</button></section>`;
+  if(!AD.loaded){if(!AD.busy)adLoad();return AD.err?`<div class="alert warn"><span class="dot"></span><div>${AD.err}<div class="row" style="margin-top:8px"><button class="primary" id="adRetry">Yenidən</button></div></div></div>`:`<div class="row"><span class="spin"></span><span>Yüklənir…</span></div>`}
+  const n=newCount();
+  let h=`<div class="seg">${[["orders","Sifarişlər"+(n?` (${n})`:"")],["prods","Məhsullar"],["rep","Hesabat"]].map(([k,v])=>`<button data-adt="${k}" class="${AD.tab===k?"on":""}">${v}</button>`).join("")}</div>`;
+  if(AD.err)h+=`<div class="alert warn"><span class="dot"></span><div>${AD.err}</div></div>`;
+  h+=AD.tab==="orders"?adOrders():AD.tab==="prods"?adProds():adReport();
+  h+=`<div class="grid2"><button class="ghost" id="adRefresh">${AD.busy?"Yenilənir…":"Yenilə"}</button><button class="ghost" id="adLogout">Çıxış</button></div>`;
+  return h}
+function adOrders(){
+  const q=AD.q.toLowerCase(),cnt=s=>AD.orders.filter(o=>o.status===s).length;
+  const list=AD.orders.filter(o=>(AD.filter==="Hamısı"||o.status===AD.filter)&&(!q||(o.no+" "+o.name+" "+o.phone+" "+o.addr).toLowerCase().includes(q)));
+  return `<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="adQ" type="search" placeholder="Nömrə, ad, telefon…" value="${esc(AD.q)}"></div>
+   <div class="chips">${["Hamısı",...ST_ALL].map(s=>`<button class="chip ${AD.filter===s?"on":""}" data-adf="${s}">${s}${s!=="Hamısı"&&cnt(s)?" ("+cnt(s)+")":s==="Hamısı"?" ("+AD.orders.length+")":""}</button>`).join("")}</div>
+   ${list.length?list.map(o=>`<button class="ocard ${o.status==="Yeni"?"new":""}" data-ao="${esc(o.no)}"><div class="row between" style="width:100%"><b>${esc(o.no)}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div>
+     <div class="row between" style="width:100%"><span>${esc(o.name)} · ${esc(fmtPhone(String(o.phone).replace(/\D/g,"")))}</span><b>${money(o.total)}</b></div>
+     <span class="small muted">${esc(o.at)} · ${esc(o.del)}${o.city?" · "+esc(o.city):""} · ${o.paid==="Ödənilib"?"✓ ödənilib":"ödənilməyib"}</span></button>`).join(""):`<p class="muted small">Bu bölmədə sifariş yoxdur.</p>`}`}
+function vAO(no){const o=AD.orders.find(x=>x.no===no);if(!o)return `<p class="muted">Sifariş tapılmadı.</p>`;
+  const ph=String(o.phone).replace(/\D/g,"");
+  return `<section class="card"><div class="row between"><h2>${esc(o.no)}</h2><span class="${stCls(o.status)}">${esc(o.status)}</span></div><span class="small muted">${esc(o.at)}${o.upd&&o.upd!==o.at?" · yenilənib "+esc(o.upd):""}</span>
+    <dl class="kv"><dt>Müştəri</dt><dd>${esc(o.name)}</dd><dt>Telefon</dt><dd>${esc(fmtPhone(ph))}</dd><dt>Çatdırılma</dt><dd>${esc(o.del)}</dd>${o.del==="Çatdırılma"?`<dt>Ünvan</dt><dd>${esc(o.city)}, ${esc(o.addr)}</dd>`:""}<dt>Ödəniş üsulu</dt><dd>${esc(o.pay)}</dd>${o.note?`<dt>Müştəri qeydi</dt><dd>${esc(o.note)}</dd>`:""}</dl>
+    <div class="grid2"><a class="filebtn" href="tel:+${ph}" style="text-decoration:none">Zəng et</a><button class="wa" id="aoWA">WhatsApp</button></div></section>
+   <section class="card"><h3>Məhsullar</h3><div class="list">${o.items.map(x=>`<div class="item" style="padding:7px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
+    <dl class="kv"><dt>Məhsullar</dt><dd>${money(o.sum)}</dd><dt>Çatdırılma</dt><dd>${o.fee?money(o.fee):"pulsuz"}</dd><dt style="color:var(--ink);font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(o.total)}</dd>${o.cost?`<dt>Maya dəyəri</dt><dd>${money(o.cost)}</dd><dt>Mənfəət</dt><dd style="color:var(--ok)">${money(o.sum-o.cost)}</dd>`:""}</dl></section>
+   <section class="card"><h3>İdarə</h3>
+    <label class="f">Status<select id="aoSt">${ST_ALL.map(s=>`<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></label>
+    <label class="f">Ödəniş<select id="aoPaid">${PAYS.map(s=>`<option ${s===o.paid?"selected":""}>${s}</option>`).join("")}</select></label>
+    <label class="f">Çatdırılma vaxtı<input id="aoDate" value="${esc(o.date||"")}" placeholder="məs. 12 noyabr, 14:00–18:00"></label>
+    <label class="f">Qaytarılan məbləğ (₼)<input id="aoRef" type="number" inputmode="decimal" value="${o.refund||""}" placeholder="0"></label>
+    <label class="f">Admin qeydi<textarea id="aoNote" placeholder="kuryer, xüsusi qeyd…">${esc(o.adminNote||"")}</textarea></label>
+    <button class="primary big" id="aoSave">Yadda saxla</button><label class="tgl" style="border:0;padding:0"><span class="small">Saxlayanda müştəriyə WhatsApp ilə bildir</span><input type="checkbox" id="aoNotify" checked></label></section>`}
+function adProds(){const q=AD.pq.toLowerCase(),list=AD.items.filter(p=>!q||(p.name+" "+p.cat).toLowerCase().includes(q));
+  return `<button class="primary big" data-go="ap-new">+ Yeni məhsul</button>
+   <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="adPQ" type="search" placeholder="Məhsul axtar…" value="${esc(AD.pq)}"></div>
+   <section class="card"><div class="list">${list.map(p=>`<button class="item" data-ap="${esc(p.id)}"><span class="n"><span class="av" style="background:${p.img?`url('${esc(driveImg(p.img))}') center/cover`:"var(--q5i)"}">${p.img?"":esc(p.name.charAt(0))}</span><div><b>${esc(p.name)}</b><span>${esc(p.cat)}${p.size?" · "+esc(p.size):""}${p.stock?"":" · <b style='color:var(--danger)'>stokda yox</b>"}${p.top?" · ★":""}</span></div></span><span class="k">${money(p.price)}</span></button>`).join("")||`<p class="muted small">Məhsul yoxdur.</p>`}</div></section>
+   ${AD.sheet?`<a class="small" href="${AD.sheet}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Sifarişlər cədvəlini Google-da aç ›</a>`:""}`}
+let APF=null;
+function vAP(id){const p=id==="new"?{id:"",name:"",cat:"",price:"",old:"",img:"",desc:"",size:"",stock:true,top:false,cost:""}:AD.items.find(x=>x.id===id);if(!p)return `<p class="muted">Məhsul tapılmadı.</p>`;
+  if(!APF||APF.id!==p.id)APF={...p};const f=APF,cats=[...new Set(AD.items.map(x=>x.cat))];
+  return `<section class="card"><div class="pimgx" style="${f.img?`background-image:url('${esc(driveImg(f.img))}')`:""}">${f.img?"":"Şəkil yoxdur"}</div>
+    <div class="grid2"><label class="filebtn main">Şəkil çək<input id="apCam" type="file" accept="image/*" capture="environment"></label><label class="filebtn">Qalereya<input id="apGal" type="file" accept="image/*"></label></div>
+    <label class="f">Ad<input id="apName" value="${esc(f.name)}"></label>
+    <label class="f">Kateqoriya<input id="apCat" list="apCats" value="${esc(f.cat)}" placeholder="məs. Bitki çayları"><datalist id="apCats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></label>
+    <div class="grid3"><label class="f">Qiymət ₼<input id="apPrice" type="number" inputmode="decimal" value="${f.price}"></label><label class="f">Köhnə qiymət<input id="apOld" type="number" inputmode="decimal" value="${f.old||""}" placeholder="endirim üçün"></label><label class="f">Maya dəyəri<input id="apCost" type="number" inputmode="decimal" value="${f.cost||""}" placeholder="gizli"></label></div>
+    <label class="f">Həcm / say<input id="apSize" value="${esc(f.size)}" placeholder="məs. 100 ml, 60 kapsul"></label>
+    <label class="f">Təsvir<textarea id="apDesc" placeholder="tərkibi, istifadə qaydası…">${esc(f.desc)}</textarea></label>
+    <label class="tgl"><span>Stokda var</span><input type="checkbox" id="apStock" ${f.stock?"checked":""}></label>
+    <label class="tgl"><span>Tövsiyə olunan (önə çıxar)</span><input type="checkbox" id="apTop" ${f.top?"checked":""}></label>
+    <button class="primary big" id="apSave">Yadda saxla</button>
+    ${p.id?`<button class="ghost" id="apDel" style="color:var(--danger)">Məhsulu sil</button><div class="row" id="apDelC" hidden><span class="small">Silinsin?</span><button class="red" id="apDelY">Bəli, sil</button><button class="ghost" id="apDelN">Xeyr</button></div>`:""}
+    <p class="small muted" style="margin:0">Maya dəyəri müştərilərə görünmür, yalnız hesabatda mənfəəti hesablamaq üçündür.</p></section>`}
+function apRead(){Object.assign(APF,{name:$("#apName").value.trim(),cat:$("#apCat").value.trim(),price:$("#apPrice").value,old:$("#apOld").value,cost:$("#apCost").value,size:$("#apSize").value.trim(),desc:$("#apDesc").value.trim(),stock:$("#apStock").checked,top:$("#apTop").checked})}
+function periodStart(k){const d=new Date();d.setHours(0,0,0,0);if(k==="today")return d;if(k==="7"){d.setDate(d.getDate()-6);return d}if(k==="30"){d.setDate(d.getDate()-29);return d}if(k==="month"){d.setDate(1);return d}return new Date(0)}
+function adReport(){
+  const from=periodStart(AD.period),os=AD.orders.filter(o=>oDate(o)>=from),valid=os.filter(o=>o.status!=="Ləğv edildi"),canc=os.length-valid.length;
+  const ret=valid.filter(o=>o.status==="Qaytarıldı"||o.refund>0),refunds=ret.reduce((s,o)=>s+(o.refund||(o.status==="Qaytarıldı"?o.total:0)),0);
+  const gross=valid.reduce((s,o)=>s+o.total,0),net=gross-refunds,paid=valid.filter(o=>o.paid==="Ödənilib").reduce((s,o)=>s+o.total,0)-refunds,unpaid=valid.filter(o=>o.paid!=="Ödənilib"&&o.status!=="Qaytarıldı").reduce((s,o)=>s+o.total,0);
+  const kept=valid.filter(o=>o.status!=="Qaytarıldı"),cost=kept.reduce((s,o)=>s+(o.cost||0),0),profit=kept.reduce((s,o)=>s+o.sum,0)-cost-ret.filter(o=>o.status!=="Qaytarıldı").reduce((s,o)=>s+o.refund,0);
+  const aov=valid.length?gross/valid.length:0,items=[];valid.forEach(o=>o.items.forEach(x=>items.push({...x,ret:o.status==="Qaytarıldı"})));
+  const byP={},byC={},byU={},byPay={};items.filter(x=>!x.ret).forEach(x=>{byP[x.name]=byP[x.name]||{q:0,v:0};byP[x.name].q+=x.q;byP[x.name].v+=x.price*x.q;const c=x.cat||(AD.items.find(p=>p.id===x.id)||{}).cat||"Digər";byC[c]=(byC[c]||0)+x.price*x.q});
+  kept.forEach(o=>{const k=o.name+" · "+fmtPhone(String(o.phone).replace(/\D/g,""));byU[k]=byU[k]||{n:0,v:0};byU[k].n++;byU[k].v+=o.total;byPay[o.pay||"—"]=(byPay[o.pay||"—"]||0)+o.total});
+  const days=[],span=AD.period==="today"?1:AD.period==="7"?7:AD.period==="month"?new Date().getDate():30;
+  for(let i=span-1;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=dk(d);days.push([d,valid.filter(o=>dk(oDate(o))===k).reduce((s,o)=>s+o.total,0)])}
+  const mx=Math.max(1,...days.map(x=>x[1])),W=340,H=150,bw=(W-10)/days.length;
+  const chart=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Günlük satış">${days.map(([d,v],i)=>`<rect x="${5+i*bw+bw*.15}" y="${H-22-(H-40)*v/mx}" width="${bw*.7}" height="${Math.max(1,(H-40)*v/mx)}" rx="3" fill="var(--accent)" opacity="${i===days.length-1?1:.75}"/>`).join("")}
+    <text x="5" y="${H-6}" font-size="10" fill="var(--muted)">${dDay(days[0][0])}</text><text x="${W-5}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">${dDay(days[days.length-1][0])}</text><text x="5" y="12" font-size="10" fill="var(--muted)">maks. ${money(mx)}</text></svg>`;
+  const top=(o,f)=>Object.entries(o).sort((a,b)=>f(b[1])-f(a[1])).slice(0,6);
+  const bars=(arr,val,lbl)=>{const m=Math.max(1,...arr.map(x=>val(x[1])));return `<div class="hbars">${arr.map(([k,v])=>`<div class="hbar"><span>${esc(k)}</span><b>${lbl(v)}</b><div class="bar"><i style="width:${val(v)/m*100}%;background:var(--accent)"></i></div></div>`).join("")||`<p class="small muted" style="margin:0">Məlumat yoxdur.</p>`}</div>`};
+  const funnel=ST_ALL.map(s=>[s,os.filter(o=>o.status===s).length]).filter(x=>x[1]);
+  return `<div class="chips">${[["today","Bu gün"],["7","7 gün"],["30","30 gün"],["month","Bu ay"],["all","Hamısı"]].map(([k,v])=>`<button class="chip ${AD.period===k?"on":""}" data-adp="${k}">${v}</button>`).join("")}</div>
+   <div class="kpis"><div class="kpi"><small>Ümumi satış</small><b>${money(gross)}</b><span>${valid.length} sifariş</span></div><div class="kpi"><small>Xalis satış</small><b>${money(net)}</b><span>qaytarmalar çıxılıb</span></div>
+    <div class="kpi"><small>Daxil olan gəlir</small><b style="color:var(--ok)">${money(paid)}</b><span>ödənilmiş</span></div><div class="kpi"><small>Gözlənilən ödəniş</small><b style="color:var(--warn)">${money(unpaid)}</b><span>hələ ödənilməyib</span></div>
+    <div class="kpi"><small>Orta çek</small><b>${money(aov)}</b><span>sifariş başına</span></div><div class="kpi"><small>Qaytarmalar</small><b style="color:var(--danger)">${money(refunds)}</b><span>${ret.length} sifariş</span></div>
+    <div class="kpi"><small>Ləğv edilən</small><b>${canc}</b><span>${os.length?r0(canc/os.length*100):0}% sifariş</span></div><div class="kpi"><small>Təxmini mənfəət</small><b>${cost?money(profit):"—"}</b><span>${cost?"maya dəyərinə görə":"maya dəyəri yazılmayıb"}</span></div></div>
+   <section class="card"><h2>Günlük satış</h2>${chart}</section>
+   <section class="card"><h2>Ən çox satılan məhsullar</h2>${bars(top(byP,v=>v.v),v=>v.v,v=>`${v.q} əd · ${money(v.v)}`)}</section>
+   <section class="card"><h2>Kateqoriyalar</h2>${bars(top(byC,v=>v),v=>v,v=>money(v))}</section>
+   <section class="card"><h2>Ən yaxşı müştərilər</h2>${bars(top(byU,v=>v.v),v=>v.v,v=>`${v.n} sifariş · ${money(v.v)}`)}</section>
+   <section class="card"><h2>Statuslar</h2>${bars(funnel,v=>v,v=>v)}</section>
+   <section class="card"><h2>Ödəniş üsulu</h2>${bars(Object.entries(byPay),v=>v,v=>money(v))}</section>`}
 // ================= INSTALL
 let DEFER=null;const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -1165,13 +1299,14 @@ function route(){if(typeof G!=="undefined"&&G.open){G.open=false;renderGuide()}r
 function render(){
   if(MAP){MAP.remove();MAP=null;LINE=null;ME=null}
   const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":["prod","cart","checkout","orders","admin"].includes(base)?"shop":["move","act","rest","coupon"].includes(base)?"home":"");
-  const [t1,t2]=h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
+  const [t1,t2]=h.startsWith("odone-")?["Təşəkkürlər","Sifariş qəbul edildi"]:h.startsWith("ao-")?["Sifariş",h.slice(3)]:h.startsWith("ap-")?[h==="ap-new"?"Yeni məhsul":"Məhsulu dəyiş","Admin"]:h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
   $("#ttl").textContent=t1;$("#sub").textContent=t2;$("#backBtn").hidden=h==="home";$("#profBtn").hidden=h==="profile";
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const v=$("#view");
-  v.innerHTML=h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
+  v.innerHTML=h.startsWith("odone-")?vDone(h.slice(6)):h.startsWith("ao-")?vAO(h.slice(3)):h.startsWith("ap-")?vAP(h.slice(3)):h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
   if(h==="move"&&TR.sport!=="steps")initMap(TR.pts,TR.state!=="idle");
   if(h==="rest")initRestMap();
+  if(!h.startsWith("ap-"))APF=null;
   updCart();liveDot();if(!h.startsWith("prod-"))PQ=1;
   if(h==="coupon")drawQR();
   if(h.startsWith("act-")&&S.acts[+h.slice(4)]&&S.acts[+h.slice(4)].pts.length>1)initMap(S.acts[+h.slice(4)].pts,false);
@@ -1207,13 +1342,31 @@ function bind(h){
   on("#pqM","click",()=>{PQ=Math.max(1,PQ-1);render()});on("#pqP","click",()=>{PQ++;render()});
   on("#pAdd","click",()=>{const id=h.slice(5);setQty(id,cartQty(id)+PQ);toast(`Səbətə əlavə edildi (${PQ})`);PQ=1;render()});
   on("#cartClear","click",()=>{S.cart=[];save();updCart();render()});
-  on("#coSend","click",placeOrder);
+  on("#coSend","click",()=>placeOrder(false));
   on("[data-reorder]","click",e=>{const o=S.orders[+e.currentTarget.dataset.reorder];o.items.forEach(x=>{if(pById(x.id))setQty(x.id,cartQty(x.id)+x.q)});toast("Məhsullar səbətə əlavə edildi");go("cart")});
   on("[data-ask]","click",e=>{const o=S.orders[+e.currentTarget.dataset.ask];if(!CONFIG.shop.whatsapp)return toast("Mağazanın nömrəsi hələ qoşulmayıb");openWA(CONFIG.shop.whatsapp,`Salam! ${o.no} nömrəli sifarişimin statusu nədir?\n${S.user?S.user.name+" ("+fmtPhone(S.user.phone)+")":""}`)});
-  on("#adIn","click",()=>{if($("#adPin").value===CONFIG.shop.adminPin){S.adminOk=1;save();render()}else toast("PIN səhvdir")});
-  on("#adOut","click",()=>{S.adminOk=0;save();back()});
-  on("#adReload","click",async()=>{toast("Yenilənir…");await loadShop(true);toast(`Kataloq: ${SHOP.items.length} məhsul`)});
-  on("#adTpl","click",async()=>{const t="id\tkateqoriya\tad\tqiymət\tköhnə qiymət\tşəkil\ttəsvir\thəcm\tstok\ttövsiyə\nP001\tBitki çayları\tNümunə çay\t12\t15\t\tQısa təsvir\t20 paket\tvar\tbəli";try{await navigator.clipboard.writeText(t);toast("Kopyalandı — Google cədvəlinə yapışdırın")}catch(e){toast("Kopyalamaq alınmadı")}});
+  on("#adLogin","click",async e=>{const p=$("#adPass").value.trim(),btn=e.currentTarget;if(!p)return;btn.disabled=true;try{const j=await api("auth",{pass:p});if(j.ok){S.apass=p;save();AD.loaded=false;adPoll();render()}}catch(err){btn.disabled=false;toast(err?.status==="api"?"Parol səhvdir":"Serverə qoşulmaq alınmadı")}});
+  on("#adLogout","click",()=>{S.apass="";save();AD.loaded=false;clearInterval(AD.timer);goTab("home")});
+  on("#adRefresh,#adRetry","click",()=>{AD.err="";adLoad()});
+  on("[data-adt]","click",e=>{AD.tab=e.currentTarget.dataset.adt;render()});
+  on("[data-adf]","click",e=>{AD.filter=e.currentTarget.dataset.adf;render()});
+  on("[data-adp]","click",e=>{AD.period=e.currentTarget.dataset.adp;render()});
+  const aq=$("#adQ");if(aq)aq.addEventListener("input",e=>{AD.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adQ");n.focus();n.setSelectionRange(pos,pos)});
+  const apq=$("#adPQ");if(apq)apq.addEventListener("input",e=>{AD.pq=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adPQ");n.focus();n.setSelectionRange(pos,pos)});
+  on("[data-ao]","click",e=>go("ao-"+e.currentTarget.dataset.ao));
+  on("[data-ap]","click",e=>go("ap-"+e.currentTarget.dataset.ap));
+  on("#aoWA","click",()=>{const o=AD.orders.find(x=>x.no===h.slice(3));openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz barədə yazıram.`)});
+  on("#aoSave","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,ch={no:o.no,pass:S.apass,status:$("#aoSt").value,paid:$("#aoPaid").value,date:$("#aoDate").value.trim(),adminNote:$("#aoNote").value.trim(),refund:+$("#aoRef").value||0};
+    b.disabled=true;b.textContent="Saxlanılır…";try{await api("updateOrder",ch);const was=o.status;Object.assign(o,ch);delete o.pass;toast("Yadda saxlanıldı");AD.lastNew=newCount();
+      if($("#aoNotify").checked&&(was!==ch.status||ch.date)){const msg={"Təsdiqləndi":"təsdiqləndi","Hazırlanır":"hazırlanır","Yoldadır":"yoldadır, tezliklə çatdırılacaq","Çatdırıldı":"çatdırıldı. Təşəkkür edirik!","Ləğv edildi":"ləğv edildi","Qaytarıldı":"üzrə qaytarma qeydə alındı"}[ch.status]||"qəbul edildi";
+        openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz ${msg}${ch.date?`\nÇatdırılma vaxtı: ${ch.date}`:""}\nCəmi: ${money(o.total)}\n\n${CONFIG.guide.name} · Vital Rhythm`)}
+      back()}catch(err){b.disabled=false;b.textContent="Yadda saxla";toast("Saxlamaq alınmadı: "+(err?.msg||"bağlantı"))}});
+  on("#apCam,#apGal","change",async e=>{const f=e.target.files[0];if(!f)return;apRead();toast("Şəkil yüklənir…");try{const data=await shrink(f);const j=await api("uploadImage",{pass:S.apass,data,mime:"image/jpeg",name:(APF.name||"mehsul").slice(0,40)});APF.img=j.url;render();toast("Şəkil yükləndi")}catch(err){toast("Şəkil yüklənmədi")}});
+  on("#apSave","click",async e=>{apRead();if(!APF.name)return toast("Adı yazın");if(!(+APF.price>0))return toast("Qiyməti yazın");const b=e.currentTarget;b.disabled=true;b.textContent="Saxlanılır…";
+    try{await api("saveProduct",{pass:S.apass,p:APF});toast("Məhsul yadda saxlanıldı");APF=null;await adLoad(true);loadShop(true);back()}catch(err){b.disabled=false;b.textContent="Yadda saxla";toast("Saxlamaq alınmadı: "+(err?.msg||"bağlantı"))}});
+  on("#apDel","click",()=>{$("#apDelC").hidden=false});on("#apDelN","click",()=>{$("#apDelC").hidden=true});
+  on("#apDelY","click",async()=>{try{await api("deleteProduct",{pass:S.apass,id:h.slice(3)});toast("Silindi");APF=null;await adLoad(true);loadShop(true);back()}catch(err){toast("Silmək alınmadı")}});
+  on("#adTplX","click",async()=>{const t="id\tkateqoriya\tad\tqiymət\tköhnə qiymət\tşəkil\ttəsvir\thəcm\tstok\ttövsiyə\nP001\tBitki çayları\tNümunə çay\t12\t15\t\tQısa təsvir\t20 paket\tvar\tbəli";try{await navigator.clipboard.writeText(t);toast("Kopyalandı — Google cədvəlinə yapışdırın")}catch(e){toast("Kopyalamaq alınmadı")}});
   on("[data-rf]","click",e=>{REST.filter=e.currentTarget.dataset.rf;render()});
   on("[data-coupon]","click",e=>{CPN=e.currentTarget.dataset.coupon;S.coupons.push({p:CPN,t:Date.now()});save();go("coupon")});
   // food
@@ -1271,8 +1424,10 @@ function bind(h){
 }
 $("#cartBar").onclick=()=>go("cart");
 $("#liveBar").onclick=()=>go("move");
-fetch("config.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;["guide","shop"].forEach(k=>{if(j[k])Object.entries(j[k]).forEach(([a,b])=>{if(b!==""&&b!=null)CONFIG[k][a]=b})})}).catch(()=>{});
-guideInit();loadShop();
+// Settings (numbers, server address) come from config.json; load them first, then the catalog.
+const cfgReady=Promise.race([fetch("config.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;["guide","shop"].forEach(k=>{if(j[k])Object.entries(j[k]).forEach(([a,b])=>{if(b!==""&&b!=null)CONFIG[k][a]=b})})}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
+guideInit();
+cfgReady.then(()=>{loadShop(true);if(S.apass&&CONFIG.shop.api){adLoad(true);adPoll()}render()});
 render();
 if(!S.user&&!S.regAsked){S.regAsked=1;save();setTimeout(()=>go("reg"),400)}
 </script>
