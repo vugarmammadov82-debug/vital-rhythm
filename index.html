@@ -225,7 +225,22 @@ details.why p{margin:6px 0 0;font-size:13px;color:var(--muted)}
 .pc .pv{font-size:12px;color:var(--muted)}
 .admb{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}.admb button{padding:9px 4px;font-size:12.5px;border-radius:11px}
 .admbar{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--slate,#475569) 14%,var(--surface));border:1px solid var(--line);border-radius:18px;padding:12px 14px}
-.admbar b{flex:1}body.adm #guide,body.adm #gpanel{display:none!important}.pc.off .pimg{filter:grayscale(.85);opacity:.6}
+.admbar b{flex:1}body.adm #guide,body.adm #gpanel{display:none!important}
+.seg.s5{grid-template-columns:repeat(5,1fr)}.seg.s5 button{font-size:12px;padding:10px 2px}
+.radio.r1{grid-template-columns:1fr}
+.lcard{border-radius:22px;padding:18px;color:#fff;background:linear-gradient(140deg,#0F7A62,#13456B);display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+.lcard.t1{background:linear-gradient(140deg,#6B7A8F,#3A4656)}.lcard.t2{background:linear-gradient(140deg,#C9971C,#7A4E06)}.lcard.t3{background:linear-gradient(140deg,#5B2A86,#1E1B4B)}
+.lcard small{opacity:.85;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:11px}.lcard .big{font-size:34px;font-weight:800;line-height:1.1}
+.lcard .lbar{height:8px;border-radius:9px;background:rgba(255,255,255,.25);overflow:hidden}.lcard .lbar i{display:block;height:100%;background:#fff;border-radius:9px}
+.cmp{background:linear-gradient(135deg,var(--q6),var(--q5));color:var(--ink);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;position:relative}
+.cmp b{font-size:16px}.cmp .x{position:absolute;top:8px;right:8px}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.08em;background:var(--surface);border:1px dashed var(--accent);color:var(--accent);padding:6px 10px;border-radius:10px}
+.cardnum{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);border-radius:14px;padding:12px 14px}
+.cardnum b{font-family:ui-monospace,Menlo,monospace;font-size:19px;letter-spacing:.06em;overflow-wrap:anywhere}
+.qsum{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px;margin:0}.qsum dd{margin:0;text-align:right;font-weight:800}.qsum .neg{color:var(--ok)}
+.tierb{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--q5);color:var(--q5i);margin-left:6px;vertical-align:middle}
+.debt{color:var(--danger);font-weight:800}.item .code{width:fit-content}.howl{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.paylog{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}.pc.off .pimg{filter:grayscale(.85);opacity:.6}
 .price{font-family:var(--display);font-weight:800;font-size:16px}
 .old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-left:4px}
 .heart{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#C0262D;font-size:17px;line-height:1}
@@ -549,7 +564,9 @@ function vHome(){
   if(S.first)h+=`<div class="alert info"><span class="dot"></span><div>Xoş gəldiniz! Boy, çəki və məqsədinizi yazın, normalarınız hesablansın.<div class="row" style="margin-top:8px"><button class="primary" data-go="profile">Profili doldur</button></div></div></div>`;
   h+=`<section class="status"><div class="ring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="var(--surface2)" stroke-width="8" fill="none"/><circle class="p" cx="38" cy="38" r="${R}" stroke="${over?"var(--danger)":"var(--accent)"}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}"/></svg><div class="c"><b>${r0(Math.abs(left))}</b><span>${over?"artıq":"qalıb"}</span></div></div>
     <div class="ss"><span class="hi">${hi} · ${dDay(new Date())}</span><span class="msg">${msg}</span><div class="pills"><span>${r0(t.k)} / ${c.target} kkal</span><span>${(t.water/1000).toFixed(1)} L su</span></div></div></section>`;
+  if(S.apass&&claimCount())h+=`<button class="alert warn" data-go="admin" data-adf2="💳 Yoxla" style="width:100%;text-align:left"><span class="dot"></span><div><b>${claimCount()} ödəniş bildirişi</b> təsdiq gözləyir.</div></button>`;
   if(S.apass&&newCount())h+=`<button class="alert danger" data-go="admin" style="width:100%;text-align:left"><span class="dot"></span><div><b>${newCount()} yeni sifariş</b> gözləyir. Baxmaq üçün toxunun.</div></button>`;
+  if(!S.apass){loadMe();const k=(MYC?.campaigns||[]).find(x=>!(S.cmpX||[]).includes(x.id));if(k)h+=cmpCard(k,true)}
   h+=tipCard();
   const cs=cartSum();
   h+=`<div class="quads">
@@ -811,6 +828,7 @@ function vProfile(){
   <section class="card"><h2>Tənzimləmələr</h2>
     <button class="item" data-go="ai"><span class="n"><span class="av" style="background:linear-gradient(150deg,var(--coral),var(--sun))">AI</span><div><b>Şəkil analizi açarı</b><span>${S.ai.key?"Öz açarınız":CONFIG.geminiKey?"Ümumi açar işləyir":"Qoşulmayıb"}</span></div></span><span class="k">›</span></button>
     <button class="item" data-go="reg"><span class="n"><span class="av" style="background:var(--q3i)">${esc((S.user?.name||"?").charAt(0))}</span><div><b>${S.user?esc(S.user.name):"Qeydiyyat"}</b><span>${S.user?fmtPhone(S.user.phone):"Ad və WhatsApp nömrəsi"}</span></div></span><span class="k">›</span></button>
+    <button class="item" data-go="loyal"><span class="n"><span class="av" style="background:linear-gradient(150deg,#C9971C,#7A4E06)">★</span><div><b>Bonus kartım</b><span>${MYC?`${money(MYC.bonus||0)} bonus${MYC.tier?" · "+esc(MYC.tier):""}${MYC.debt>0?" · borc "+money(MYC.debt):""}`:"Bonus, endirim, kampaniyalar"}</span></div></span><span class="k">›</span></button>
     <button class="item" data-go="orders"><span class="n"><span class="av" style="background:var(--coral)">₼</span><div><b>Sifarişlərim</b><span>${S.orders.length} sifariş</span></div></span><span class="k">›</span></button>
     <button class="item" data-go="admin"><span class="n"><span class="av" style="background:var(--slate)">A</span><div><b>Admin</b><span>${S.apass?(newCount()?newCount()+" yeni sifariş":"Sifarişlər, məhsullar, hesabat"):"Mağaza idarəsi"}</span></div></span><span class="k">›</span></button>
     <button class="item" id="howInstall"><span class="n"><span class="av" style="background:var(--accent)">↓</span><div><b>Telefona quraşdırmaq</b><span>Ana ekrana ikon əlavə et</span></div></span><span class="k">›</span></button>
@@ -1022,6 +1040,7 @@ function vReg(){const u=S.user||{};
     <h2>Salam! Mən ${CONFIG.guide.name}yəm</h2><p class="muted" style="margin:0">Bu gündən sizin şəxsi fitnes bələdçinizəm. Tanış olaq: adınızı və mobil nömrənizi yazın. Mənə və mağazaya yazdığınız mesajlar bu ad və nömrə ilə gələcək.</p></section>
    <section class="card"><label class="f">Adınız<input id="rgName" value="${esc(u.name||"")}" placeholder="məs. Vüqar" autocomplete="name"></label>
     <label class="f">Mobil nömrə (WhatsApp)<input id="rgPhone" type="tel" inputmode="tel" value="${esc(u.phone?fmtPhone(u.phone):"+994 ")}" placeholder="+994 50 123 45 67" autocomplete="tel"></label>
+    <label class="tgl"><span class="small" style="font-weight:700">Endirim, bonus və kampaniya xəbərlərini SMS/WhatsApp ilə almaq istəyirəm</span><input type="checkbox" id="rgCons" ${u.consent?"checked":""}></label>
     <button class="primary big" id="rgSave">${S.user?"Yadda saxla":"Tanış olaq"}</button>
     <p class="small muted" style="margin:0">Məlumatlar yalnız bu telefonda saxlanılır və yalnız siz mesaj və ya sifariş göndərəndə istifadə olunur.</p></section>`}
 
@@ -1096,6 +1115,51 @@ async function loadShop(force){
 }
 const pById=id=>SHOP.items.find(p=>p.id===id);
 const cartQty=id=>(S.cart.find(c=>c.id===id)||{}).q||0;
+const rr2=x=>Math.round(x*100)/100;
+const debtOf=o=>["Ləğv edildi","Qaytarıldı"].includes(o.status)?0:o.debt!=null&&o.paidAmt==null?o.debt:Math.max(0,rr2((o.total||0)-(o.refund||0)-(o.paidAmt||0)));
+const smsLink=(nums,text)=>`sms:${nums.join(",")}${isIOS?"&":"?"}body=${encodeURIComponent(text)}`;
+let MYC=S.me||null,MET=0;
+async function loadMe(force){const p=S.user?.phone||S.lastShip?.phone;if(!CONFIG.shop.api||!p)return;if(!force&&Date.now()-MET<60000)return;MET=Date.now();
+  try{const j=await api("me",{phone:p});MYC=j;S.me=j;save();const hh=curHash();if(["home","loyal","checkout","orders","profile"].includes(hh)||hh.startsWith("odone-")||hh.startsWith("pay-")){if(hh==="checkout")updCoPay();else render()}}catch(e){}}
+function regSync(){if(!CONFIG.shop.api||!S.user||S.userSync)return;api("register",{name:S.user.name,phone:S.user.phone,consent:!!S.user.consent}).then(()=>{S.userSync=1;save()}).catch(()=>{})}
+function payBox(o){const c=MYC?.card;if(!c)return "";const due=debtOf(o);if(due<=0&&!o.claim)return "";
+  return `<section class="card"><h3>Kartla ödəniş</h3><p class="small muted" style="margin:0">Bu karta <b>${money(due)}</b> köçürün, sonra “Ödədim” düyməsinə basın. ${esc(CONFIG.guide.name)} xanım bank tətbiqində yoxlayıb təsdiqləyəcək.</p>
+   <div class="cardnum"><b>${esc(c.num)}</b><button class="ghost" data-copy="${esc(String(c.num).replace(/\s/g,""))}" style="padding:9px 12px">Kopyala</button></div>
+   <dl class="kv"><dt>Alıcı</dt><dd>${esc(c.holder||"")}</dd>${c.bank?`<dt>Bank</dt><dd>${esc(c.bank)}</dd>`:""}<dt>Məbləğ</dt><dd>${money(due)}</dd><dt>Təyinat</dt><dd>${esc(o.no)}</dd></dl>${c.note?`<p class="small" style="margin:0">${esc(c.note)}</p>`:""}
+   ${o.claim?`<div class="alert info"><span class="dot"></span><div>Ödənişiniz yoxlanılır. Təsdiqlənəndə “Ödənilib” görünəcək.</div></div>`:`<label class="f">Kartınızın son 4 rəqəmi (istəyə bağlı)<input id="pcRef" inputmode="numeric" maxlength="20" placeholder="məs. 1234"></label><button class="primary big" data-claim="${esc(o.no)}" data-amt="${due}">Ödədim</button>`}
+   <button class="wa" data-rcpt="${esc(o.no)}" data-amt="${due}">Qəbzi WhatsApp ilə göndər</button></section>`}
+function vPay(no){const o=S.orders.find(x=>x.no===no);if(!o)return vOrders();loadMe();
+  return `<section class="card"><div class="row between"><b>${esc(o.no)}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div><dl class="kv"><dt>Cəmi</dt><dd>${money(o.total)}</dd><dt>Ödənilib</dt><dd>${money(o.paidAmt||0)}</dd><dt>Qalıq</dt><dd class="debt">${money(debtOf(o))}</dd></dl></section>
+   ${MYC?.card?payBox(o):`<div class="alert info"><span class="dot"></span><div>Ödəniş üçün satıcı ilə əlaqə saxlayın.</div></div><button class="wa big" data-ask2="${esc(o.no)}">WhatsApp ilə yaz</button>`}`}
+function tierCls(n){const t=MYC?.tiers||[],i=t.findIndex(x=>x.n===n);return i<0?"":"t"+Math.min(3,i+1)}
+function vLoyal(){loadMe();
+  if(!S.user)return `<section class="card" style="align-items:center;text-align:center"><h2>Bonus kartı</h2><p class="muted" style="margin:0">Bonus toplamaq və endirimlərdən istifadə etmək üçün qeydiyyatdan keçin.</p><button class="primary" data-go="reg">Qeydiyyat</button></section>`;
+  if(!MYC)return `<div class="row"><span class="spin"></span><span>Yüklənir…</span></div>`;
+  const nx=MYC.next,prog=nx?Math.min(100,MYC.spend/nx.min*100):100,best=Math.max(MYC.tierPct||0,MYC.pct||0);
+  let h=`<div class="lcard ${tierCls(MYC.tier)}"><small>Vital Rhythm · bonus kartı</small><div class="row between" style="align-items:flex-end"><div><div class="big">${money(MYC.bonus||0)}</div><span style="opacity:.9">bonus balansı · 1 bonus = 1 ₼</span></div><div style="text-align:right"><b style="font-size:18px">${esc(MYC.tier||"Standart")}</b><br><span style="opacity:.9">${best?best+"% endirim":"endirim yoxdur"}</span></div></div>
+    ${nx?`<div class="lbar"><i style="width:${prog}%"></i></div><span style="font-size:13px;opacity:.95">“${esc(nx.n)}” səviyyəsinə ${money(Math.max(0,nx.min-MYC.spend))} qalıb (${nx.p}% endirim)</span>`:`<span style="font-size:13px">Ən yüksək səviyyədəsiniz 🎉</span>`}
+    <span style="font-size:13px;opacity:.9">${esc(S.user.name)} · ${fmtPhone(S.user.phone)}</span></div>`;
+  if(MYC.debt>0)h+=`<div class="alert danger"><span class="dot"></span><div>Qalıq borcunuz: <b>${money(MYC.debt)}</b><div class="row" style="margin-top:8px"><button class="primary" data-go="orders">Sifarişlərə bax</button></div></div></div>`;
+  h+=(MYC.campaigns||[]).map(cmpCard).join("");
+  if(MYC.loyalty)h+=`<section class="card"><h2>Necə işləyir?</h2><ul class="howl"><li><b>Bonus:</b> hər sifarişin ${MYC.bonusPct}%-i bonus kimi qayıdır (sifariş çatdırılıb ödəniləndən sonra).</li><li><b>İstifadə:</b> sifarişin ${MYC.bonusMax}%-nə qədərini bonusla ödəyə bilərsiniz.</li>
+    ${(MYC.tiers||[]).map(t=>`<li><b>${esc(t.n)}:</b> ümumi alış ${money(t.min)}-dan çox olanda hər sifarişə ${t.p}% endirim.</li>`).join("")}${MYC.pct?`<li><b>Fərdi:</b> sizə xüsusi ${MYC.pct}% endirim.</li>`:""}</ul><p class="small muted" style="margin:0">Ümumi alış: ${money(MYC.spend||0)} · ${MYC.orders||0} sifariş</p></section>`;
+  h+=`<section class="card"><label class="tgl" style="border:0;padding:0"><span>Endirim və kampaniya xəbərlərini SMS/WhatsApp ilə almaq</span><input type="checkbox" id="lyCons" ${S.user.consent?"checked":""}></label><p class="small muted" style="margin:0">İstədiyiniz vaxt söndürə bilərsiniz.</p></section>
+   <button class="primary big" data-tabgo="shop">Alış-verişə keç</button>`;
+  return h}
+function cmpCard(k,dis){return `<div class="cmp">${dis?`<button class="x" data-cmpx="${esc(k.id)}" aria-label="Bağla">×</button>`:""}<span class="small" style="font-weight:800;color:var(--q6i)">🎁 KAMPANİYA${k.until?" · "+esc(k.until)+"-dək":""}</span><b>${esc(k.title)}</b>${k.text?`<span style="white-space:pre-line">${esc(k.text.replace(/\{ad\}/g,S.user?.name||""))}</span>`:""}
+  <div class="row" style="gap:8px">${k.promo?`<span class="code">${esc(k.promo)}</span><button class="ghost" data-copy="${esc(k.promo)}" style="padding:8px 12px">Kopyala</button>`:""}<button class="primary" data-tabgo="shop" style="padding:8px 14px">Mağazaya</button></div></div>`}
+const CO={promo:"",useBonus:false,q:null,busy:false,msg:"",t:null};
+async function getQuote(){if(!CONFIG.shop.api||!S.cart.length)return;const ph=normPhone($("#coPhone")?.value||"")||S.user?.phone||"",del=document.querySelector('[name=coDel]:checked')?.value;CO.busy=true;updCoSum();
+  try{CO.q=await api("quote",{phone:ph,items:S.cart.map(c=>({id:c.id,q:c.q})),promo:CO.promo,useBonus:CO.useBonus,del});CO.msg=CO.promo&&CO.q.promoMsg!=="ok"?CO.q.promoMsg:""}catch(e){CO.q=null}
+  CO.busy=false;updCoSum();updCoPay()}
+function coSumHtml(){const q=CO.q,{sum,fee,total}=cartSum();
+  if(!q)return `<dl class="qsum"><dt>Məhsullar</dt><dd>${money(sum)}</dd><dt>Çatdırılma</dt><dd>${fee?money(fee):"Pulsuz"}</dd><dt style="font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(total)}</dd></dl>${CO.busy?`<span class="small muted">Endirimlər hesablanır…</span>`:""}`;
+  return `<dl class="qsum"><dt>Məhsullar</dt><dd>${money(q.sum)}</dd>${q.pctDisc?`<dt>${esc(q.pctSrc||"Endirim")} (${q.pct}%)</dt><dd class="neg">−${money(q.pctDisc)}</dd>`:""}${q.promoDisc?`<dt>Promo kod ${esc(q.promo)}</dt><dd class="neg">−${money(q.promoDisc)}</dd>`:""}${q.disc<q.pctDisc+q.promoDisc-0.001?`<dt>Endirim limiti (50%)</dt><dd>${money(q.disc)}</dd>`:""}${q.bonus?`<dt>Bonusla</dt><dd class="neg">−${money(q.bonus)}</dd>`:""}
+    <dt>Çatdırılma</dt><dd>${q.fee?money(q.fee):"Pulsuz"}</dd><dt style="font-weight:800;color:var(--ink)">Ödəniləcək</dt><dd style="font-size:20px">${money(q.total)}</dd></dl>${q.earn?`<span class="small" style="color:var(--ok);font-weight:800">Bu sifarişdən +${money(q.earn)} bonus qazanacaqsınız</span>`:""}`}
+function updCoSum(){const e=$("#coSum");if(e)e.innerHTML=coSumHtml();const m=$("#coPMsg");if(m){m.hidden=!CO.msg&&!(CO.q&&CO.q.promo);m.textContent=CO.msg||(CO.q&&CO.q.promo?`✓ ${CO.q.promo} tətbiq olundu`:"");m.style.color=CO.msg?"var(--danger)":"var(--ok)"}}
+function updCoPay(){const b=$("#coBon");if(b){const av=MYC?.loyalty&&MYC?.bonus>0;b.hidden=!av;const t=$("#coBonT");if(t)t.textContent=`Bonusla ödə (${money(MYC?.bonus||0)} var${CO.q?.maxBonus!=null?", bu sifarişə maks. "+money(CO.q.maxBonus):""})`}
+  const r=$("#coPayR");if(r){const cur=document.querySelector('[name=coPay]:checked')?.value||S.lastShip?.pay;r.innerHTML=payOpts().map(([v,l])=>`<label><input type="radio" name="coPay" value="${v}" ${v===cur?"checked":""}>${l}</label>`).join("");if(!document.querySelector('[name=coPay]:checked'))r.querySelector("input").checked=true}}
+function payOpts(){return [["Nağd","Nağd"],["Kartla (çatdırılmada)","Kartla (çatdırılmada)"],...(MYC?.card?[["Kartdan karta","Kartdan karta köçürmə"]]:[]),...(MYC?.credit?[["Nisyə","Nisyə (sonra ödəyəcəm)"]]:[])]}
 function cartSum(){let n=0,sum=0;S.cart.forEach(c=>{const p=pById(c.id);if(p){n+=c.q;sum+=p.price*c.q}});const fee=sum===0||sum>=CONFIG.shop.freeFrom?0:CONFIG.shop.fee;return{n,sum,fee,total:sum+fee}}
 function setQty(id,q){const c=S.cart.find(x=>x.id===id);if(q<=0){S.cart=S.cart.filter(x=>x.id!==id)}else if(c)c.q=q;else S.cart.push({id,q});save();updCart()}
 function updCart(){const {n,total}=cartSum(),e=$("#cartN");if(e){e.hidden=!n||ADM();e.textContent=n}
@@ -1147,9 +1211,12 @@ function vCheckout(){const u=S.user||{},o=S.lastShip||{};const {n,total}=cartSum
    <div class="radio"><label><input type="radio" name="coDel" value="Çatdırılma" ${o.del!=="Özüm götürəcəm"?"checked":""}>Çatdırılma</label><label><input type="radio" name="coDel" value="Özüm götürəcəm" ${o.del==="Özüm götürəcəm"?"checked":""}>Özüm götürəcəm</label></div>
    <label class="f">Şəhər / rayon<input id="coCity" value="${esc(o.city||"Bakı")}"></label>
    <label class="f">Ünvan<input id="coAddr" value="${esc(o.addr||"")}" placeholder="küçə, ev, mənzil" autocomplete="street-address"></label>
-   <div class="radio"><label><input type="radio" name="coPay" value="Nağd" ${o.pay!=="Kartla (çatdırılmada)"?"checked":""}>Nağd</label><label><input type="radio" name="coPay" value="Kartla (çatdırılmada)" ${o.pay==="Kartla (çatdırılmada)"?"checked":""}>Kartla</label></div>
+   <b class="small">Ödəniş üsulu</b><div class="radio r1" id="coPayR">${payOpts().map(([v,l],i)=>`<label><input type="radio" name="coPay" value="${v}" ${(o.pay===v||(!payOpts().some(x=>x[0]===o.pay)&&!i))?"checked":""}>${l}</label>`).join("")}</div>
    <label class="f">Qeyd (istəyə bağlı)<textarea id="coNote" placeholder="məs. zəng edin, saat 18-dən sonra">${esc(o.note||"")}</textarea></label></section>
-   <section class="card"><dl class="kv"><dt>Ödəniləcək</dt><dd style="font-size:18px">${money(total)}</dd></dl>
+   ${CONFIG.shop.api?`<section class="card"><h3>Endirim və bonus</h3><div class="row" style="flex-wrap:nowrap"><input id="coPromo" placeholder="Promo kod" value="${esc(CO.promo)}" style="flex:1;text-transform:uppercase" autocomplete="off"><button class="ghost" id="coPromoA">Tətbiq et</button></div><span class="small" id="coPMsg" hidden></span>
+     <label class="tgl" id="coBon" ${MYC?.loyalty&&MYC?.bonus>0?"":"hidden"}><span id="coBonT">Bonusla ödə</span><input type="checkbox" id="coBonC" ${CO.useBonus?"checked":""}></label>
+     ${S.user?.consent?"":`<label class="tgl"><span class="small" style="font-weight:700">Endirim və kampaniya xəbərlərini almaq istəyirəm</span><input type="checkbox" id="coCons"></label>`}</section>`:""}
+   <section class="card"><div id="coSum">${coSumHtml()}</div>
    ${CONFIG.shop.api?`<button class="primary big" id="coSend">Sifarişi təsdiqlə</button><div class="alert warn" id="coErr" hidden></div><p class="small muted" style="margin:0">Sifariş birbaşa mağazaya gedir. Satıcı sizinlə əlaqə saxlayıb təsdiqləyəcək, statusu "Sifarişlərim"-də görəcəksiniz.</p>`
      :`<button class="wa big" id="coSend">Sifarişi WhatsApp ilə göndər</button><p class="small muted" style="margin:0">WhatsApp açılacaq, hazır mesajı göndərin. Satıcı sizinlə əlaqə saxlayıb sifarişi təsdiqləyəcək.</p>`}</section>`}
 function orderText(o,name,phone,ship){return `🛒 Sifariş ${o.no}\n\n${o.items.map((x,i)=>`${i+1}. ${x.name} × ${x.q} = ${money(x.price*x.q)}`).join("\n")}\n\nMəhsullar: ${money(o.sum)}\nÇatdırılma: ${o.fee?money(o.fee):"pulsuz"}\nCƏMİ: ${money(o.total)}\n\n👤 ${name}\n📞 ${fmtPhone(phone)}\n🚚 ${ship.del}${ship.del==="Çatdırılma"?`: ${ship.city}, ${ship.addr}`:""}\n💳 ${ship.pay}${ship.note?`\n📝 ${ship.note}`:""}\n\n— Vital Rhythm`}
@@ -1162,8 +1229,9 @@ async function placeOrder(viaWA){
   const items=S.cart.map(c=>{const p=pById(c.id);return p?{id:p.id,name:p.name,price:p.price,q:c.q}:null}).filter(Boolean);
   if(CONFIG.shop.api&&!viaWA){
     ORDBUSY=true;const b=$("#coSend");if(b){b.disabled=true;b.textContent="Göndərilir…"}
-    try{const j=await api("order",{customer:{name,phone},del,city,addr,pay,note,items:items.map(x=>({id:x.id,q:x.q}))});
-      S.orders.unshift({no:j.no,at:Date.now(),items:j.items,sum:j.sum,fee:j.fee,total:j.total,del,status:"Yeni",srv:1,phone});S.cart=[];save();updCart();
+    const cons=$("#coCons")?.checked;if(cons&&S.user){S.user.consent=true;S.userSync=0}
+    try{const j=await api("order",{customer:{name,phone},del,city,addr,pay,note,items:items.map(x=>({id:x.id,q:x.q})),promo:CO.q?.promo||"",useBonus:CO.useBonus,...(cons?{consent:true}:{})});
+      S.orders.unshift({no:j.no,at:Date.now(),items:j.items,sum:j.sum,fee:j.fee,disc:j.disc||0,bonus:j.bonus||0,promo:j.promo||"",earn:j.earn||0,total:j.total,del,pay,paidAmt:0,status:"Yeni",srv:1,phone});S.cart=[];Object.assign(CO,{promo:"",useBonus:false,q:null,msg:""});save();updCart();MET=0;loadMe(true);
       history.replaceState({d:depth()},"","#odone-"+j.no);route();
     }catch(e){ORDBUSY=false;if(b){b.disabled=false;b.textContent="Sifarişi təsdiqlə"}
       const box=$("#coErr");if(box){box.hidden=false;box.innerHTML=`Sifariş serverə çatmadı${e?.msg?" ("+esc(e.msg)+")":""}. İnterneti yoxlayıb yenidən cəhd edin və ya WhatsApp ilə göndərin.<div class="row" style="margin-top:8px"><button class="wa" id="coWA">WhatsApp ilə göndər</button></div>`;$("#coWA").onclick=()=>placeOrder(true)}}
@@ -1182,20 +1250,23 @@ function track(o){const k=STEPS.indexOf(o.status);if(k<0)return `<p class="small
 function vDone(no){const o=S.orders.find(x=>x.no===no);if(!o)return vOrders();
   return `<section class="card" style="align-items:center;text-align:center"><div style="width:64px;height:64px;border-radius:50%;background:var(--q2);color:var(--q2i);display:grid;place-items:center;font-size:32px;font-weight:800">✓</div>
    <h2>Sifarişiniz qəbul edildi</h2><p class="muted" style="margin:0">Nömrə: <b>${o.no}</b><br>${CONFIG.guide.name} xanım tezliklə sizinlə əlaqə saxlayıb təsdiqləyəcək.</p></section>
-   <section class="card"><div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>${track(o)}<p class="small muted" style="margin:0">Statusu "Sifarişlərim" bölməsində izləyə bilərsiniz.</p></section>
+   <section class="card">${o.disc||o.bonus?`<dl class="qsum">${o.disc?`<dt>Endirim${o.promo?" ("+esc(o.promo)+")":""}</dt><dd class="neg">−${money(o.disc)}</dd>`:""}${o.bonus?`<dt>Bonusla</dt><dd class="neg">−${money(o.bonus)}</dd>`:""}</dl>`:""}<div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>${o.earn?`<span class="small" style="color:var(--ok);font-weight:800">+${money(o.earn)} bonus çatdırılıb ödəniləndən sonra hesabınıza yazılacaq</span>`:""}${track(o)}<p class="small muted" style="margin:0">Statusu "Sifarişlərim" bölməsində izləyə bilərsiniz.</p></section>
+   ${o.pay==="Kartdan karta"?payBox(o):""}
    <button class="primary big" data-go="orders">Sifarişlərim</button><button class="ghost" data-tabgo="shop">Alış-verişə davam et</button>`}
 let MYSYNC=0;
 async function syncMyOrders(){const ph=S.user?.phone||S.lastShip?.phone;if(!CONFIG.shop.api||!ph||Date.now()-MYSYNC<20000)return;MYSYNC=Date.now();
   try{const j=await api("myorders",{phone:ph});let ch=false;
-    j.orders.forEach(r=>{const o=S.orders.find(x=>x.no===r.no);if(o){if(o.status!==r.status||o.date!==r.date||o.paid!==r.paid){Object.assign(o,{status:r.status,date:r.date,paid:r.paid});ch=true}}
-      else{S.orders.push({no:r.no,at:Date.parse(String(r.at).replace(" ","T"))||Date.now(),items:r.items,sum:r.total,fee:0,total:r.total,del:r.del,status:r.status,date:r.date,paid:r.paid,srv:1});ch=true}});
+    j.orders.forEach(r=>{const o=S.orders.find(x=>x.no===r.no);const F=["status","date","paid","paidAmt","debt","claim","disc","bonus","earn","total","pay"];if(o){if(F.some(k=>r[k]!==undefined&&o[k]!==r[k])){F.forEach(k=>{if(r[k]!==undefined)o[k]=r[k]});ch=true}}
+      else{S.orders.push({no:r.no,at:Date.parse(String(r.at).replace(" ","T"))||Date.now(),items:r.items,sum:r.total,fee:0,total:r.total,del:r.del,status:r.status,date:r.date,paid:r.paid,paidAmt:r.paidAmt,debt:r.debt,claim:r.claim,disc:r.disc,bonus:r.bonus,earn:r.earn,pay:r.pay,srv:1,phone:ph});ch=true}});
     const keep=new Set(j.orders.map(r=>String(r.no))),before=S.orders.length;S.orders=S.orders.filter(o=>!o.srv||keep.has(String(o.no))||(o.phone&&o.phone!==ph)||Date.now()-o.at<60000);if(S.orders.length!==before)ch=true;
-    if(ch){S.orders.sort((a,b)=>b.at-a.at);save();if(curHash()==="orders")render()}}catch(e){}}
-function vOrders(){syncMyOrders();if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
+    if(ch){S.orders.sort((a,b)=>b.at-a.at);save();if(curHash()==="orders"||curHash().startsWith("pay-"))render()}}catch(e){}}
+function vOrders(){syncMyOrders();loadMe();if(!S.orders.length)return `<section class="card" style="align-items:center;text-align:center"><h2>Hələ sifariş yoxdur</h2><button class="primary" data-tabgo="shop">Mağazaya keç</button></section>`;
   return S.orders.map((o,i)=>`<section class="card"><div class="row between"><b>${o.no}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div><span class="small muted">${dDay(o.at)} ${new Date(o.at).getFullYear()}, ${dTime(o.at)} · ${esc(o.del||"")}</span>
    ${o.srv?track(o):""}${o.date?`<p class="small" style="margin:0"><b>Çatdırılma:</b> ${esc(o.date)}</p>`:""}
    <div class="list">${o.items.map(x=>`<div class="item" style="padding:6px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
+   ${o.disc?`<div class="row between small"><span>Endirim${o.promo?" ("+esc(o.promo)+")":""}</span><span style="color:var(--ok)">−${money(o.disc)}</span></div>`:""}${o.bonus?`<div class="row between small"><span>Bonusla</span><span style="color:var(--ok)">−${money(o.bonus)}</span></div>`:""}
    <div class="row between"><b>Cəmi</b><b>${money(o.total)}</b></div>
+   ${o.srv&&o.status!=="Ləğv edildi"?(o.paid==="Ödənilib"?`<span class="small" style="color:var(--ok);font-weight:800">✓ Ödənilib</span>`:o.claim?`<span class="small" style="font-weight:800">💳 Ödəniş yoxlanılır</span>`:debtOf(o)>0&&o.status!=="Yeni"||o.pay==="Kartdan karta"?`<div class="row between"><span class="debt">Qalıq: ${money(debtOf(o))}</span>${MYC?.card?`<button class="primary" data-go="pay-${esc(o.no)}" style="padding:9px 14px">Kartla ödə</button>`:""}</div>`:""):""}
    <div class="grid2"><button class="primary" data-reorder="${i}">Yenidən sifariş</button><button class="ghost" data-ask="${i}">Status soruş</button></div></section>`).join("")}
 const AD={orders:[],items:[],sheet:"",loaded:false,busy:false,err:"",tab:"orders",filter:"Yeni",q:"",period:"30",pq:"",lastNew:-1,timer:null};
 const ST_ALL=["Yeni","Təsdiqləndi","Hazırlanır","Yoldadır","Çatdırıldı","Ləğv edildi","Qaytarıldı"],PAYS=["Ödənilməyib","Ödənilib","Geri qaytarıldı"];
@@ -1203,10 +1274,12 @@ async function adLoad(quiet){if(!S.apass||!CONFIG.shop.api)return;AD.busy=true;i
   try{const j=await api("admin",{pass:S.apass});AD.orders=j.orders;AD.items=j.items;AD.sheet=j.sheet||"";AD.loaded=true;AD.err="";
     const n=AD.orders.filter(o=>o.status==="Yeni").length,nos=AD.orders.map(o=>String(o.no));
     if(Array.isArray(S.aseen)){const fresh=AD.orders.filter(o=>o.status==="Yeni"&&!S.aseen.includes(String(o.no)));if(fresh.length)newOrderAlert(fresh)}
-    S.aseen=nos.slice(0,400);save();AD.lastNew=n}
+    const ck=[];AD.orders.forEach(o=>(o.log||[]).forEach((e,i)=>{if(e.c)ck.push(o.no+"#"+i)}));
+    if(Array.isArray(S.aclm)){const fr=ck.filter(k=>!S.aclm.includes(k));if(fr.length){toast("💳 Ödəniş bildirişi: "+fr[0].split("#")[0]);if(S.asnd!==false){ding();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}}}
+    S.aclm=ck;S.aseen=nos.slice(0,400);save();AD.lastNew=n}
   catch(e){AD.err=e?.msg==="auth"?"Parol səhvdir. Yenidən daxil olun.":"Serverə qoşulmaq alınmadı. İnterneti yoxlayın.";if(e?.msg==="auth"){S.apass="";save()}}
   AD.busy=false;if(isAdminView()||curHash()==="home"||curHash()==="profile")render()}
-const isAdminView=()=>{const h=curHash();return h==="admin"||h.startsWith("ao-")||h.startsWith("ap-")};
+const isAdminView=()=>{const h=curHash();return h==="admin"||h.startsWith("ao-")||h.startsWith("ap-")||h.startsWith("cu-")};
 function adPoll(){clearInterval(AD.timer);if(S.apass)AD.timer=setInterval(()=>adLoad(true),document.visibilityState==="visible"?30000:60000)}
 let ACX=null;
 function audioUnlock(){try{if(!ACX)ACX=new (window.AudioContext||window.webkitAudioContext)();if(ACX.state==="suspended")ACX.resume()}catch(e){}}
@@ -1217,37 +1290,128 @@ function newOrderAlert(fresh){const o=fresh[0],txt=fresh.length>1?`${fresh.lengt
 document.addEventListener("pointerdown",audioUnlock,{passive:true});
 document.addEventListener("visibilitychange",()=>{if(S.apass){adPoll();if(document.visibilityState==="visible")adLoad(true)}});
 const newCount=()=>AD.orders.filter(o=>o.status==="Yeni").length;
+const hasClaim=o=>(o.log||[]).some(e=>e.c);
+const claimCount=()=>AD.orders.filter(hasClaim).length;
+const payState=o=>{const due=rr2(o.total-(o.refund||0));return o.paidAmt>=due-0.009&&due>0?"Ödənilib":o.paidAmt>0?"Qismən ödənilib":"Ödənilməyib"};
+const PMETH=["Nağd","Kart (terminal)","Kartdan karta","Bank köçürməsi"];
+function aoPay(o){const d=debtOf(o),cl=(o.log||[]).map((e,i)=>({...e,i})).filter(e=>e.c),lg=(o.log||[]).filter(e=>!e.c&&!e.x);
+  return `<section class="card"><h3>Ödəniş</h3><dl class="kv"><dt>Üsul</dt><dd>${esc(o.pay||"—")}</dd><dt>Ödənilib</dt><dd style="color:var(--ok)">${money(o.paidAmt||0)}</dd><dt>Qalıq</dt><dd class="${d>0?"debt":""}">${money(d)}</dd></dl>
+   ${cl.map(e=>`<div class="alert warn"><span class="dot"></span><div><b>Müştəri ${money(e.a)} köçürdüyünü bildirib</b><br><span class="small">${esc(e.d)}${e.n?" · "+esc(e.n):""}. Bank tətbiqinizdə yoxlayın.</span><div class="row" style="margin-top:8px"><button class="primary" data-pcok="${e.i}">Təsdiqlə</button><button class="ghost" data-pcno="${e.i}">Gəlməyib</button></div></div></div>`).join("")}
+   ${d>0?`<div class="grid2"><label class="f">Məbləğ ₼<input id="apyA" type="number" inputmode="decimal" value="${d}"></label><label class="f">Üsul<select id="apyM">${PMETH.map(m=>`<option ${o.pay&&o.pay.startsWith(m.split(" ")[0])?"selected":""}>${m}</option>`).join("")}</select></label></div>
+     <button class="primary" id="apyAdd">Ödəniş qəbul et</button><button class="ghost" id="aoRemind">Borcu xatırlat (WhatsApp)</button>`:`<span class="small" style="color:var(--ok);font-weight:800">✓ Tam ödənilib</span>`}
+   ${lg.length?`<div>${lg.map(e=>`<div class="paylog"><span>${esc(e.d)} · ${esc(e.m)}${e.n?" · "+esc(e.n):""}</span><b>${money(e.a)}</b></div>`).join("")}</div>`:""}</section>`}
+const CR={loaded:false,busy:false,err:"",customers:[],promos:[],campaigns:[],settings:null,q:"",seg:"all"};
+async function crLoad(){if(!S.apass||CR.busy)return;CR.busy=true;
+  try{const j=await api("crm",{pass:S.apass});Object.assign(CR,{customers:j.customers,promos:j.promos,campaigns:j.campaigns,settings:j.settings,loaded:true,err:""})}
+  catch(e){CR.err=e?.msg==="unknown action"?"Bu bölmə üçün server kodu yenilənməlidir.":"Müştəri bazası yüklənmədi. İnterneti yoxlayın."}
+  CR.busy=false;if(isAdminView())render()}
+function crWait(){if(CR.loaded)return "";if(!CR.busy&&!CR.err)crLoad();return CR.err?`<div class="alert warn"><span class="dot"></span><div>${CR.err}<div class="row" style="margin-top:8px"><button class="primary" id="crRetry">Yenidən</button></div></div></div>`:`<div class="row"><span class="spin"></span><span>Müştəri bazası yüklənir…</span></div>`}
+function segList(){const t=(CR.settings?.tiers||[]).map(x=>["tier:"+x.n,x.n]),tags=[...new Set(CR.customers.flatMap(c=>c.segs.filter(x=>x.startsWith("tag:"))))].map(x=>[x,"#"+x.slice(4)]);
+  return [["all","Hamısı"],["debt","Borclu"],["regular","Daimi (3+ sifariş)"],["new","Yeni (1 sifariş)"],["sleeping","Yatmış (60+ gün)"],["noorder","Sifarişsiz"],...t,...tags]}
+const segCnt=k=>CR.customers.filter(c=>c.segs.includes(k)).length;
+const cuDig=c=>String(c.phone).replace(/\D/g,"");
+function adCrm(){const w=crWait();if(w)return w;const L=CR.customers,buyers=L.filter(c=>c.orders>0);
+  const m0=new Date();m0.setDate(1);m0.setHours(0,0,0,0);
+  const newM=L.filter(c=>{const f=c.first||c.reg;return f&&new Date(String(f).replace(" ","T"))>=m0}).length;
+  const rep=buyers.length?buyers.filter(c=>c.orders>=2).length/buyers.length*100:0,ltv=buyers.length?buyers.reduce((s,c)=>s+c.spend,0)/buyers.length:0;
+  const debt=L.reduce((s,c)=>s+c.debt,0),debtN=L.filter(c=>c.debt>0).length,bon=L.reduce((s,c)=>s+(c.bonus||0),0),cons=L.filter(c=>c.consent).length;
+  const q=CR.q.toLowerCase(),list=L.filter(c=>c.segs.includes(CR.seg)&&(!q||(c.name+" "+c.phone+" "+c.tags).toLowerCase().includes(q))).sort((a,b)=>CR.seg==="debt"?b.debt-a.debt:(b.spend-a.spend)||String(b.last||b.reg).localeCompare(String(a.last||a.reg)));
+  return `<div class="kpis"><div class="kpi"><small>Müştərilər</small><b>${L.length}</b><span>${buyers.length} alış edib · ${cons} razılıq</span></div><div class="kpi"><small>Bu ay yeni</small><b>${newM}</b><span>müştəri</span></div>
+    <div class="kpi"><small>Təkrar alış</small><b>${r0(rep)}%</b><span>2+ sifariş verənlər</span></div><div class="kpi"><small>Orta xərc</small><b>${money(ltv)}</b><span>müştəri başına</span></div>
+    <div class="kpi"><small>Qalıq borc</small><b class="debt">${money(debt)}</b><span>${debtN} müştəri</span></div><div class="kpi"><small>Bonus öhdəliyi</small><b>${money(bon)}</b><span>müştərilərin balansı</span></div></div>
+   <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="crQ" type="search" placeholder="Ad, telefon, teq…" value="${esc(CR.q)}"></div>
+   <div class="chips">${segList().map(([k,v])=>`<button class="chip ${CR.seg===k?"on":""}" data-crs="${esc(k)}">${esc(v)} (${segCnt(k)})</button>`).join("")}</div>
+   ${list.length?`<div class="grid2"><button class="ghost" data-mkseg="${esc(CR.seg)}">Bu qrupa kampaniya</button>${CR.seg==="debt"?`<button class="ghost" id="crDebtSms">Borclulara SMS</button>`:`<button class="ghost" id="crCopy">Nömrələri kopyala</button>`}</div>`:""}
+   <section class="card"><div class="list">${list.slice(0,300).map(c=>`<button class="item" data-cu="${cuDig(c)}"><span class="n"><span class="av" style="background:${c.debt>0?"var(--danger)":c.tier?"#C9971C":"var(--q3i)"}">${esc((c.name||"?").charAt(0))}</span><div><b>${esc(c.name||"—")}${c.tier?`<span class="tierb">${esc(c.tier)}</span>`:""}</b><span>${fmtPhone(cuDig(c))} · ${c.orders} sifariş · ${money(c.spend)}${c.consent?"":" · razılıq yox"}</span></div></span><span class="k">${c.debt>0?`<span class="debt">−${money(c.debt)}</span>`:c.bonus?`★ ${money(c.bonus)}`:""}</span></button>`).join("")||`<p class="muted small">Bu qrupda müştəri yoxdur.</p>`}</div></section>`}
+function remindText(c,orders){const card=CR.settings?.card?.num;return `Salam ${c.name||""}! Vital Rhythm mağazasından ${orders.map(o=>o.no).join(", ")} sifariş(lər)i üzrə qalıq borcunuz ${money(orders.reduce((s,o)=>s+debtOf(o),0))}-dir.${card?`\nKart: ${card}${CR.settings.card.holder?" ("+CR.settings.card.holder+")":""}`:""}\nÖdəniş edəndə bildirin. Təşəkkür edirik!\n${CONFIG.guide.name} · Vital Rhythm`}
+function vCu(d){const w=crWait();if(w)return w;const c=CR.customers.find(x=>cuDig(x)===d);if(!c)return `<p class="muted">Müştəri tapılmadı.</p>`;
+  const os=AD.orders.filter(o=>String(o.phone).replace(/\D/g,"")===d),deb=os.filter(o=>debtOf(o)>0&&o.status!=="Yeni");
+  return `<section class="card"><div class="row between"><h2>${esc(c.name||"—")}${c.tier?`<span class="tierb">${esc(c.tier)}</span>`:""}</h2>${c.consent?`<span class="tag">razılıq ✓</span>`:`<span class="tag">razılıq yox</span>`}</div><span class="small muted">${fmtPhone(d)}${c.reg?" · qeydiyyat "+esc(String(c.reg).slice(0,10)):""}</span>
+    <div class="grid3"><a class="filebtn" href="tel:+${d}" style="text-decoration:none">Zəng</a><button class="wa" data-cuwa="${d}">WhatsApp</button><a class="filebtn" href="${smsLink(["+"+d],"")}" style="text-decoration:none">SMS</a></div></section>
+   <div class="kpis"><div class="kpi"><small>Sifarişlər</small><b>${c.orders}</b><span>${c.last?"son: "+esc(String(c.last).slice(0,10)):"hələ yoxdur"}</span></div><div class="kpi"><small>Ümumi alış</small><b>${money(c.spend)}</b><span>çatdırılmış</span></div>
+    <div class="kpi"><small>Qalıq borc</small><b class="${c.debt>0?"debt":""}">${money(c.debt)}</b><span>${deb.length} sifariş</span></div><div class="kpi"><small>Bonus</small><b>${money(c.bonus||0)}</b><span>${c.pct?"fərdi endirim "+c.pct+"%":c.tierPct?c.tier+" · "+c.tierPct+"%":"endirim yoxdur"}</span></div></div>
+   ${deb.length?`<div class="grid2"><button class="red" data-curem="${d}">Borcu xatırlat (WhatsApp)</button><a class="filebtn" href="${smsLink(["+"+d],remindText(c,deb))}" style="text-decoration:none">SMS ilə xatırlat</a></div>`:""}
+   <section class="card"><h3>Müştəri kartı</h3>
+    <label class="f">Ad<input id="cuName" value="${esc(c.name||"")}"></label>
+    <div class="grid2"><label class="f">Fərdi endirim %<input id="cuPct" type="number" inputmode="decimal" value="${c.pct||""}" placeholder="0"></label><label class="f">Bonus əlavə et (±)<input id="cuBon" type="number" inputmode="decimal" placeholder="məs. 5 və ya -5"></label></div>
+    <label class="f">Teqlər (vergüllə)<input id="cuTags" value="${esc(c.tags||"")}" placeholder="məs. VIP, qohum, topdan"></label>
+    <label class="f">Qeyd<textarea id="cuNote" placeholder="üstünlük verdiyi məhsullar, xüsusi qeydlər…">${esc(c.note||"")}</textarea></label>
+    <label class="tgl"><span>Kampaniya mesajlarına razılıq</span><input type="checkbox" id="cuCons" ${c.consent?"checked":""}></label>
+    <button class="primary big" id="cuSave">Yadda saxla</button><p class="small muted" style="margin:0">Fərdi endirim səviyyə endirimindən böyükdürsə, ona əvəzinə tətbiq olunur. Bonus düzəlişi balansa əlavə olunur və ya çıxılır.</p></section>
+   <section class="card"><h3>Sifariş tarixçəsi</h3>${os.length?os.map(o=>`<button class="ocard" data-ao="${esc(o.no)}"><div class="row between" style="width:100%"><b>${esc(o.no)}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div><div class="row between" style="width:100%"><span class="small muted">${esc(o.at)}</span><b>${money(o.total)}${debtOf(o)>0&&o.status!=="Yeni"?` · <span class="debt">qalıq ${money(debtOf(o))}</span>`:""}</b></div></button>`).join(""):`<p class="small muted" style="margin:0">Sifariş yoxdur.</p>`}</section>`}
+const MK={title:"",text:"",seg:"all",promo:"",until:"",inapp:true,send:null,sent:[],pf:{code:"",type:"%",value:"",min:"",until:"",limit:""}};
+function mkRead(){const g=id=>$(id)?.value;if(!$("#mkText"))return;Object.assign(MK,{title:g("#mkTitle").trim(),text:g("#mkText").trim(),seg:g("#mkSeg"),promo:g("#mkPromo"),until:g("#mkUntil"),inapp:$("#mkIn").checked})}
+function mkMsg(c){return `${MK.title?MK.title+"\n":""}${MK.text.replace(/\{ad\}/g,c?.name||"")}${MK.promo?`\nPromo kod: ${MK.promo}`:""}${MK.until?`\nKampaniya ${MK.until} tarixinədək`:""}\n— ${CONFIG.guide.name} · Vital Rhythm`}
+function adMkt(){const w=crWait();if(w)return w;const S2=CR.settings||{},segs=segList(),tgt=CR.customers.filter(c=>c.segs.includes(MK.seg)),ok=tgt.filter(c=>c.consent);
+  let h=`<section class="card"><h2>Kampaniya / göndəriş</h2>
+    <label class="f">Başlıq<input id="mkTitle" value="${esc(MK.title)}" placeholder="məs. Yaz endirimi −15%"></label>
+    <label class="f">Mətn<textarea id="mkText" placeholder="Hörmətli {ad}, bu həftə bütün bitki çaylarına 15% endirim!">${esc(MK.text)}</textarea></label><span class="small muted">{ad} yazsanız, WhatsApp mesajında müştərinin adı ilə əvəz olunacaq.</span>
+    <div class="grid2"><label class="f">Kimə<select id="mkSeg">${segs.map(([k,v])=>`<option value="${esc(k)}" ${MK.seg===k?"selected":""}>${esc(v)} (${segCnt(k)})</option>`).join("")}</select></label>
+     <label class="f">Promo kod<select id="mkPromo"><option value="">—</option>${CR.promos.filter(p=>p.active).map(p=>`<option ${MK.promo===p.code?"selected":""}>${esc(p.code)}</option>`).join("")}</select></label></div>
+    <label class="f">Bitmə tarixi (istəyə bağlı)<input id="mkUntil" type="date" value="${esc(MK.until)}"></label>
+    <label class="tgl"><span>Proqramda müştərilərə göstər</span><input type="checkbox" id="mkIn" ${MK.inapp?"checked":""}></label>
+    <p class="small" style="margin:0"><b>${tgt.length}</b> müştəri seçilib, onlardan <b>${ok.length}</b> nəfər SMS/WhatsApp üçün razılıq verib.</p>
+    <button class="primary big" id="mkGo">Hazırla və göndər</button></section>`;
+  if(MK.send){const L=MK.send,groups=[];for(let i=0;i<L.length;i+=20)groups.push(L.slice(i,i+20));
+    h+=`<section class="card" id="mkSend"><h2>Göndəriş</h2>${MK.saved?`<div class="alert info"><span class="dot"></span><div>✓ Kampaniya proqramda göstərilir: seçilmiş müştərilər tətbiqi açanda görəcək.</div></div>`:""}
+     ${L.length?`<b class="small">SMS (sizin nömrənizdən, operator tarifi ilə)</b><div class="grid2">${groups.map((g,i)=>`<a class="filebtn" href="${smsLink(g.map(c=>"+"+cuDig(c)),mkMsg())}" style="text-decoration:none">SMS · ${i*20+1}–${i*20+g.length}</a>`).join("")}</div>
+      <b class="small">WhatsApp (hər müştəriyə ayrıca, adı ilə)</b><div class="list">${L.map((c,i)=>`<div class="item"><span class="n"><span class="av" style="background:var(--q2i)">${esc((c.name||"?").charAt(0))}</span><div><b>${esc(c.name||"—")}</b><span>${fmtPhone(cuDig(c))}</span></div></span><button class="${MK.sent.includes(cuDig(c))?"ghost":"wa"}" data-mkwa="${i}" style="padding:8px 12px">${MK.sent.includes(cuDig(c))?"✓ Göndərildi":"Göndər"}</button></div>`).join("")}</div>
+      <button class="ghost" id="mkCopy">Nömrələri kopyala</button>`:`<p class="small muted" style="margin:0">Bu qrupda razılıq verən müştəri yoxdur. Müştərilər qeydiyyatda və ya sifarişdə razılıq verəndə burada görünəcəklər.</p>`}</section>`}
+  const act=CR.campaigns;
+  h+=`<section class="card"><h2>Kampaniyalar</h2>${act.length?`<div class="list">${act.map(k=>`<div class="item"><span class="n"><div><b>${esc(k.title||k.text.slice(0,30))}</b><span>${esc((segList().find(x=>x[0]===k.seg)||[0,k.seg])[1])}${k.promo?" · "+esc(k.promo):""}${k.until?" · "+esc(k.until)+"-dək":""} · ${esc(String(k.at).slice(0,10))}</span></div></span><button class="x" data-cmdel="${esc(k.id)}" aria-label="Sil">×</button></div>`).join("")}</div>`:`<p class="small muted" style="margin:0">Hələ kampaniya yoxdur.</p>`}</section>`;
+  const pf=MK.pf;
+  h+=`<section class="card"><h2>Promo kodlar</h2>${CR.promos.length?`<div class="list">${CR.promos.map(p=>`<div class="item"><span class="n"><div><b class="code" style="padding:2px 8px">${esc(p.code)}</b><span>${p.type==="₼"?money(p.value):p.value+"%"} endirim${p.min?" · min. "+money(p.min):""} · ${p.used}${p.limit?"/"+p.limit:""} istifadə${p.until?" · "+esc(p.until)+"-dək":""}${p.active?"":" · deaktiv"}</span></div></span><button class="x" data-prdel="${esc(p.code)}" aria-label="Sil">×</button></div>`).join("")}</div>`:""}
+    <div class="grid2"><label class="f">Kod<input id="pfCode" value="${esc(pf.code)}" placeholder="YAZ15" style="text-transform:uppercase"></label><label class="f">Növ<select id="pfType"><option value="%" ${pf.type==="%"?"selected":""}>Faiz %</option><option value="₼" ${pf.type==="₼"?"selected":""}>Məbləğ ₼</option></select></label>
+     <label class="f">Dəyər<input id="pfVal" type="number" inputmode="decimal" value="${esc(pf.value)}" placeholder="15"></label><label class="f">Min. sifariş ₼<input id="pfMin" type="number" inputmode="decimal" value="${esc(pf.min)}" placeholder="0"></label>
+     <label class="f">Bitmə tarixi<input id="pfUntil" type="date" value="${esc(pf.until)}"></label><label class="f">Limit (dəfə)<input id="pfLim" type="number" inputmode="numeric" value="${esc(pf.limit)}" placeholder="limitsiz"></label></div>
+    <button class="primary" id="pfSave">Promo kod yarat</button></section>`;
+  const t=S2.tiers||[],c=S2.card||{};
+  h+=`<section class="card"><h2>Bonus və səviyyələr</h2><label class="tgl"><span>Bonus proqramı aktivdir</span><input type="checkbox" id="stLoy" ${S2.loyalty?"checked":""}></label>
+    <div class="grid2"><label class="f">Bonus qazancı %<input id="stBp" type="number" inputmode="decimal" value="${S2.bonusPct}"></label><label class="f">Bonusla ödəmə maks. %<input id="stBm" type="number" inputmode="decimal" value="${S2.bonusMax}"></label></div>
+    <b class="small">Səviyyələr (ümumi alışa görə)</b>${[0,1,2].map(i=>`<div class="grid3"><label class="f">Ad<input id="stTn${i}" value="${esc(t[i]?.n||"")}"></label><label class="f">Alış ₼-dan<input id="stTm${i}" type="number" inputmode="decimal" value="${t[i]?.min??""}"></label><label class="f">Endirim %<input id="stTp${i}" type="number" inputmode="decimal" value="${t[i]?.p??""}"></label></div>`).join("")}
+    <h2 style="margin-top:8px">Kartla ödəniş</h2><p class="small muted" style="margin:0">Müştəri “Kartdan karta” seçəndə bu kart göstərilir. Müştəri “Ödədim” basanda sizə bildiriş və e-poçt gəlir, siz bank tətbiqində yoxlayıb təsdiqləyirsiniz.</p>
+    <label class="f">Kart nömrəsi<input id="stCn" inputmode="numeric" value="${esc(c.num||"")}" placeholder="4169 •••• •••• ••••"></label>
+    <div class="grid2"><label class="f">Kart sahibi<input id="stCh" value="${esc(c.holder||"")}"></label><label class="f">Bank<input id="stCb" value="${esc(c.bank||"")}" placeholder="məs. Kapital Bank"></label></div>
+    <label class="f">Əlavə qeyd<input id="stCx" value="${esc(c.note||"")}" placeholder="məs. Təyinata sifariş nömrəsini yazın"></label>
+    <label class="tgl"><span>Nisyə (sonra ödəmə) seçimi açıqdır</span><input type="checkbox" id="stCr" ${S2.credit?"checked":""}></label>
+    <button class="primary big" id="stSave">Ayarları yadda saxla</button></section>`;
+  return h}
+function debtAging(){const now=Date.now(),by={},bk=[["0–7 gün",0],["8–30 gün",0],["30+ gün",0]];
+  AD.orders.filter(o=>debtOf(o)>0&&o.status!=="Yeni").forEach(o=>{const d=debtOf(o),age=(now-oDate(o))/864e5;bk[age<=7?0:age<=30?1:2][1]+=d;const k=String(o.phone);by[k]=by[k]||{name:o.name,d:0,n:0,old:0,ph:k};by[k].d+=d;by[k].n++;by[k].old=Math.max(by[k].old,age)});
+  const L=Object.values(by).sort((a,b)=>b.d-a.d),tot=L.reduce((s,x)=>s+x.d,0),mx=Math.max(1,...bk.map(x=>x[1]));
+  return `<section class="card"><h2>Debitor borclar · ${money(tot)}</h2><div class="hbars">${bk.map(([k,v])=>`<div class="hbar"><span>${k}</span><b>${money(v)}</b><div class="bar"><i style="width:${v/mx*100}%;background:var(--danger)"></i></div></div>`).join("")}</div>
+   ${L.length?`<div class="list">${L.slice(0,15).map(x=>`<button class="item" data-cu="${x.ph.replace(/\D/g,"")}"><span class="n"><div><b>${esc(x.name)}</b><span>${x.n} sifariş · ən köhnəsi ${r0(x.old)} gün</span></div></span><span class="k debt">${money(x.d)}</span></button>`).join("")}</div>`:`<p class="small muted" style="margin:0">Borc yoxdur ✓</p>`}</section>`}
 const oDate=o=>new Date(String(o.at).replace(" ","T"));
 function vAdmin(){
   if(!CONFIG.shop.api)return `<section class="card"><h2>Server hələ qoşulmayıb</h2><p class="muted" style="margin:0">Sifarişlərin proqrama düşməsi və məhsulların proqramdan idarə olunması üçün Google skripti qoşulmalıdır. Qoşulana qədər sifarişlər WhatsApp-a gedir, məhsullar Google cədvəlindən oxunur.</p>${CONFIG.shop.sheetEditUrl?`<a class="filebtn" href="${CONFIG.shop.sheetEditUrl}" target="_blank" rel="noopener" style="text-decoration:none">Kataloq cədvəlini aç</a>`:""}</section>`;
   if(!S.apass)return `<section class="card"><h2>Admin girişi</h2><p class="small muted" style="margin:0">Mağaza idarəsi: sifarişlər, məhsullar, hesabat.</p><label class="f">Parol<input id="adPass" type="password" autocomplete="current-password"></label><button class="primary big" id="adLogin">Daxil ol</button></section>`;
   if(!AD.loaded){if(!AD.busy)adLoad();return AD.err?`<div class="alert warn"><span class="dot"></span><div>${AD.err}<div class="row" style="margin-top:8px"><button class="primary" id="adRetry">Yenidən</button></div></div></div>`:`<div class="row"><span class="spin"></span><span>Yüklənir…</span></div>`}
   const n=newCount();
-  let h=`<div class="seg">${[["orders","Sifarişlər"+(n?` (${n})`:"")],["prods","Məhsullar"],["rep","Hesabat"]].map(([k,v])=>`<button data-adt="${k}" class="${AD.tab===k?"on":""}">${v}</button>`).join("")}</div>`;
+  let h=`<div class="seg s5">${[["orders","Sifariş"+(n?` (${n})`:"")],["prods","Məhsul"],["crm","Müştəri"],["mkt","Marketinq"],["rep","Hesabat"]].map(([k,v])=>`<button data-adt="${k}" class="${AD.tab===k?"on":""}">${v}</button>`).join("")}</div>`;
   if(AD.err)h+=`<div class="alert warn"><span class="dot"></span><div>${AD.err}</div></div>`;
   h+=`<label class="tgl"><span>🔔 Yeni sifarişdə səs və bildiriş</span><input type="checkbox" id="adSnd" ${S.asnd!==false?"checked":""}></label>`;
-  h+=AD.tab==="orders"?adOrders():AD.tab==="prods"?adProds():adReport();
+  h+=AD.tab==="orders"?adOrders():AD.tab==="prods"?adProds():AD.tab==="crm"?adCrm():AD.tab==="mkt"?adMkt():adReport();
   h+=`<div class="grid2"><button class="ghost" id="adRefresh">${AD.busy?"Yenilənir…":"Yenilə"}</button><button class="ghost" id="adLogout">Çıxış</button></div>`;
   return h}
 function adOrders(){
   const q=AD.q.toLowerCase(),cnt=s=>AD.orders.filter(o=>o.status===s).length;
-  const list=AD.orders.filter(o=>(AD.filter==="Hamısı"||o.status===AD.filter)&&(!q||(o.no+" "+o.name+" "+o.phone+" "+o.addr).toLowerCase().includes(q)));
+  const list=AD.orders.filter(o=>(AD.filter==="Hamısı"||o.status===AD.filter||(AD.filter==="Borclu"&&debtOf(o)>0&&o.status!=="Yeni")||(AD.filter==="💳 Yoxla"&&hasClaim(o)))&&(!q||(o.no+" "+o.name+" "+o.phone+" "+o.addr).toLowerCase().includes(q)));
   return `<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="adQ" type="search" placeholder="Nömrə, ad, telefon…" value="${esc(AD.q)}"></div>
-   <div class="chips">${["Hamısı",...ST_ALL].map(s=>`<button class="chip ${AD.filter===s?"on":""}" data-adf="${s}">${s}${s!=="Hamısı"&&cnt(s)?" ("+cnt(s)+")":s==="Hamısı"?" ("+AD.orders.length+")":""}</button>`).join("")}</div>
+   <div class="chips">${["Hamısı",...ST_ALL].map(s=>`<button class="chip ${AD.filter===s?"on":""}" data-adf="${s}">${s}${s!=="Hamısı"&&cnt(s)?" ("+cnt(s)+")":s==="Hamısı"?" ("+AD.orders.length+")":""}</button>`).join("")}<button class="chip ${AD.filter==="Borclu"?"on":""}" data-adf="Borclu">Borclu (${AD.orders.filter(o=>debtOf(o)>0&&o.status!=="Yeni").length})</button>${claimCount()?`<button class="chip ${AD.filter==="💳 Yoxla"?"on":""}" data-adf="💳 Yoxla">💳 Yoxla (${claimCount()})</button>`:""}</div>
    ${list.length?list.map(o=>`<button class="ocard ${o.status==="Yeni"?"new":""}" data-ao="${esc(o.no)}"><div class="row between" style="width:100%"><b>${esc(o.no)}</b><span class="${stCls(o.status)}">${esc(o.status)}</span></div>
      <div class="row between" style="width:100%"><span>${esc(o.name)} · ${esc(fmtPhone(String(o.phone).replace(/\D/g,"")))}</span><b>${money(o.total)}</b></div>
-     <span class="small muted">${esc(o.at)} · ${esc(o.del)}${o.city?" · "+esc(o.city):""} · ${o.paid==="Ödənilib"?"✓ ödənilib":"ödənilməyib"}</span></button>`).join(""):`<p class="muted small">Bu bölmədə sifariş yoxdur.</p>`}`}
+     <span class="small muted">${esc(o.at)} · ${esc(o.del)}${o.city?" · "+esc(o.city):""} · ${hasClaim(o)?"<b>💳 ödəniş yoxla</b>":o.paid==="Ödənilib"?"✓ ödənilib":debtOf(o)>0&&o.paidAmt>0?`<b class='debt'>qalıq ${money(debtOf(o))}</b>`:esc(o.pay||"")+" · ödənilməyib"}</span></button>`).join(""):`<p class="muted small">Bu bölmədə sifariş yoxdur.</p>`}`}
 function vAO(no){const o=AD.orders.find(x=>x.no===no);if(!o)return `<p class="muted">Sifariş tapılmadı.</p>`;
   const ph=String(o.phone).replace(/\D/g,"");
   return `<section class="card"><div class="row between"><h2>${esc(o.no)}</h2><span class="${stCls(o.status)}">${esc(o.status)}</span></div><span class="small muted">${esc(o.at)}${o.upd&&o.upd!==o.at?" · yenilənib "+esc(o.upd):""}</span>
     <dl class="kv"><dt>Müştəri</dt><dd>${esc(o.name)}</dd><dt>Telefon</dt><dd>${esc(fmtPhone(ph))}</dd><dt>Çatdırılma</dt><dd>${esc(o.del)}</dd>${o.del==="Çatdırılma"?`<dt>Ünvan</dt><dd>${esc(o.city)}, ${esc(o.addr)}</dd>`:""}<dt>Ödəniş üsulu</dt><dd>${esc(o.pay)}</dd>${o.note?`<dt>Müştəri qeydi</dt><dd>${esc(o.note)}</dd>`:""}</dl>
     <div class="grid2"><a class="filebtn" href="tel:+${ph}" style="text-decoration:none">Zəng et</a><button class="wa" id="aoWA">WhatsApp</button></div></section>
    <section class="card"><h3>Məhsullar</h3><div class="list">${o.items.map(x=>`<div class="item" style="padding:7px 0"><span>${esc(x.name)} × ${x.q}</span><span class="k">${money(x.price*x.q)}</span></div>`).join("")}</div>
-    <dl class="kv"><dt>Məhsullar</dt><dd>${money(o.sum)}</dd><dt>Çatdırılma</dt><dd>${o.fee?money(o.fee):"pulsuz"}</dd><dt style="color:var(--ink);font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(o.total)}</dd>${o.cost?`<dt>Maya dəyəri</dt><dd>${money(o.cost)}</dd><dt>Mənfəət</dt><dd style="color:var(--ok)">${money(o.sum-o.cost)}</dd>`:""}</dl></section>
+    <dl class="kv"><dt>Məhsullar</dt><dd>${money(o.sum)}</dd><dt>Çatdırılma</dt><dd>${o.fee?money(o.fee):"pulsuz"}</dd>${o.disc?`<dt>Endirim${o.promo?" ("+esc(o.promo)+")":""}</dt><dd style="color:var(--ok)">−${money(o.disc)}</dd>`:""}${o.bonus?`<dt>Bonusla</dt><dd style="color:var(--ok)">−${money(o.bonus)}</dd>`:""}<dt style="color:var(--ink);font-weight:800">Cəmi</dt><dd style="font-size:18px">${money(o.total)}</dd>${o.cost?`<dt>Maya dəyəri</dt><dd>${money(o.cost)}</dd><dt>Mənfəət</dt><dd style="color:var(--ok)">${money(o.sum-(o.disc||0)-(o.bonus||0)-o.cost)}</dd>`:""}</dl></section>
+   ${aoPay(o)}
    <section class="card"><h3>İdarə</h3>
     ${(()=>{const k=STEPS.indexOf(o.status);return k>=0&&k<STEPS.length-1?`<button class="primary" id="aoNext" data-st="${STEPS[k+1]}">→ ${STEPS[k+1]} et</button>`:""})()}
     <label class="f">Status<select id="aoSt">${ST_ALL.map(s=>`<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></label>
-    <label class="f">Ödəniş<select id="aoPaid">${PAYS.map(s=>`<option ${s===o.paid?"selected":""}>${s}</option>`).join("")}</select></label>
     <label class="f">Çatdırılma vaxtı<input id="aoDate" value="${esc(o.date||"")}" placeholder="məs. 12 noyabr, 14:00–18:00"></label>
     <label class="f">Qaytarılan məbləğ (₼)<input id="aoRef" type="number" inputmode="decimal" value="${o.refund||""}" placeholder="0"></label>
     <label class="f">Admin qeydi<textarea id="aoNote" placeholder="kuryer, xüsusi qeyd…">${esc(o.adminNote||"")}</textarea></label>
@@ -1280,8 +1444,10 @@ function periodStart(k){const d=new Date();d.setHours(0,0,0,0);if(k==="today")re
 function adReport(){
   const from=periodStart(AD.period),os=AD.orders.filter(o=>oDate(o)>=from),valid=os.filter(o=>o.status!=="Ləğv edildi"),canc=os.length-valid.length;
   const ret=valid.filter(o=>o.status==="Qaytarıldı"||o.refund>0),refunds=ret.reduce((s,o)=>s+(o.refund||(o.status==="Qaytarıldı"?o.total:0)),0);
-  const gross=valid.reduce((s,o)=>s+o.total,0),net=gross-refunds,paid=valid.filter(o=>o.paid==="Ödənilib").reduce((s,o)=>s+o.total,0)-refunds,unpaid=valid.filter(o=>o.paid!=="Ödənilib"&&o.status!=="Qaytarıldı").reduce((s,o)=>s+o.total,0);
-  const kept=valid.filter(o=>o.status!=="Qaytarıldı"),cost=kept.reduce((s,o)=>s+(o.cost||0),0),profit=kept.reduce((s,o)=>s+o.sum,0)-cost-ret.filter(o=>o.status!=="Qaytarıldı").reduce((s,o)=>s+o.refund,0);
+  const gross=valid.reduce((s,o)=>s+o.total,0),net=gross-refunds,paid=valid.reduce((s,o)=>s+(o.paidAmt||0),0)-refunds,unpaid=valid.reduce((s,o)=>s+debtOf(o),0);
+  const discT=valid.reduce((s,o)=>s+(o.disc||0),0),bonT=valid.reduce((s,o)=>s+(o.bonus||0),0),firstBy={};AD.orders.filter(o=>o.status!=="Ləğv edildi").forEach(o=>{const k=String(o.phone),d=oDate(o);if(!firstBy[k]||d<firstBy[k])firstBy[k]=d});
+  const custs=[...new Set(valid.map(o=>String(o.phone)))],newC=custs.filter(k=>firstBy[k]>=from).length,retC=custs.length-newC;
+  const kept=valid.filter(o=>o.status!=="Qaytarıldı"),cost=kept.reduce((s,o)=>s+(o.cost||0),0),profit=kept.reduce((s,o)=>s+o.sum-(o.disc||0)-(o.bonus||0),0)-cost-ret.filter(o=>o.status!=="Qaytarıldı").reduce((s,o)=>s+o.refund,0);
   const aov=valid.length?gross/valid.length:0,items=[];valid.forEach(o=>o.items.forEach(x=>items.push({...x,ret:o.status==="Qaytarıldı"})));
   const byP={},byC={},byU={},byPay={};items.filter(x=>!x.ret).forEach(x=>{byP[x.name]=byP[x.name]||{q:0,v:0};byP[x.name].q+=x.q;byP[x.name].v+=x.price*x.q;const c=x.cat||(AD.items.find(p=>p.id===x.id)||{}).cat||"Digər";byC[c]=(byC[c]||0)+x.price*x.q});
   kept.forEach(o=>{const k=o.name+" · "+fmtPhone(String(o.phone).replace(/\D/g,""));byU[k]=byU[k]||{n:0,v:0};byU[k].n++;byU[k].v+=o.total;byPay[o.pay||"—"]=(byPay[o.pay||"—"]||0)+o.total});
@@ -1297,8 +1463,11 @@ function adReport(){
    <div class="kpis"><div class="kpi"><small>Ümumi satış</small><b>${money(gross)}</b><span>${valid.length} sifariş</span></div><div class="kpi"><small>Xalis satış</small><b>${money(net)}</b><span>qaytarmalar çıxılıb</span></div>
     <div class="kpi"><small>Daxil olan gəlir</small><b style="color:var(--ok)">${money(paid)}</b><span>ödənilmiş</span></div><div class="kpi"><small>Gözlənilən ödəniş</small><b style="color:var(--warn)">${money(unpaid)}</b><span>hələ ödənilməyib</span></div>
     <div class="kpi"><small>Orta çek</small><b>${money(aov)}</b><span>sifariş başına</span></div><div class="kpi"><small>Qaytarmalar</small><b style="color:var(--danger)">${money(refunds)}</b><span>${ret.length} sifariş</span></div>
-    <div class="kpi"><small>Ləğv edilən</small><b>${canc}</b><span>${os.length?r0(canc/os.length*100):0}% sifariş</span></div><div class="kpi"><small>Təxmini mənfəət</small><b>${cost?money(profit):"—"}</b><span>${cost?"maya dəyərinə görə":"maya dəyəri yazılmayıb"}</span></div></div>
+    <div class="kpi"><small>Ləğv edilən</small><b>${canc}</b><span>${os.length?r0(canc/os.length*100):0}% sifariş</span></div><div class="kpi"><small>Təxmini mənfəət</small><b>${cost?money(profit):"—"}</b><span>${cost?"maya dəyərinə görə":"maya dəyəri yazılmayıb"}</span></div>
+    <div class="kpi"><small>Endirimlər</small><b>${money(discT)}</b><span>səviyyə, fərdi, promo</span></div><div class="kpi"><small>Bonusla ödənilib</small><b>${money(bonT)}</b><span>${valid.filter(o=>o.bonus).length} sifariş</span></div>
+    <div class="kpi"><small>Yeni müştəri</small><b>${newC}</b><span>ilk sifariş bu dövrdə</span></div><div class="kpi"><small>Qayıdan müştəri</small><b>${retC}</b><span>${custs.length?r0(retC/custs.length*100):0}% müştəri</span></div></div>
    <section class="card"><h2>Günlük satış</h2>${chart}</section>
+   ${debtAging()}
    <section class="card"><h2>Ən çox satılan məhsullar</h2>${bars(top(byP,v=>v.v),v=>v.v,v=>`${v.q} əd · ${money(v.v)}`)}</section>
    <section class="card"><h2>Kateqoriyalar</h2>${bars(top(byC,v=>v),v=>v,v=>money(v))}</section>
    <section class="card"><h2>Ən yaxşı müştərilər</h2>${bars(top(byU,v=>v.v),v=>v.v,v=>`${v.n} sifariş · ${money(v.v)}`)}</section>
@@ -1325,12 +1494,12 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 function route(){if(typeof G!=="undefined"&&G.open){G.open=false;renderGuide()}render();window.scrollTo(0,0)}
 function render(){document.body.classList.toggle("adm",ADM());
   if(MAP){MAP.remove();MAP=null;LINE=null;ME=null}
-  const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":["prod","cart","checkout","orders","admin"].includes(base)?"shop":["move","act","rest","coupon"].includes(base)?"home":"");
-  const [t1,t2]=h.startsWith("odone-")?["Təşəkkürlər","Sifariş qəbul edildi"]:h.startsWith("ao-")?["Sifariş",h.slice(3)]:h.startsWith("ap-")?[h==="ap-new"?"Yeni məhsul":"Məhsulu dəyiş","Admin"]:h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
+  const h=curHash(),base=h.split("-")[0],tab=TABS.includes(base)?base:(["food","fi"].includes(base)?"diary":["prod","cart","checkout","orders","admin","cu","pay"].includes(base)?"shop":["move","act","rest","coupon"].includes(base)?"home":"");
+  const [t1,t2]=h.startsWith("cu-")?["Müştəri","CRM"]:h.startsWith("pay-")?["Ödəniş",h.slice(4)]:h==="loyal"?["Bonus kartım","Endirim və kampaniyalar"]:h.startsWith("odone-")?["Təşəkkürlər","Sifariş qəbul edildi"]:h.startsWith("ao-")?["Sifariş",h.slice(3)]:h.startsWith("ap-")?[h==="ap-new"?"Yeni məhsul":"Məhsulu dəyiş","Admin"]:h.startsWith("prod-")?["Məhsul",pById(h.slice(5))?.cat||""]:h==="coupon"?["Endirim kuponu","Kassada göstərin"]:h.startsWith("act")?["Hərəkət","Nəticə"]:h.startsWith("fi-")?["Miqdar seçin",FMAP[decodeURIComponent(h.slice(3))]?.[6]||""]:(TITLES[h]||TITLES[tab]||TITLES.home);
   $("#ttl").textContent=t1;$("#sub").textContent=t2;$("#backBtn").hidden=h==="home";$("#profBtn").hidden=h==="profile";
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const v=$("#view");
-  v.innerHTML=h.startsWith("odone-")?vDone(h.slice(6)):h.startsWith("ao-")?vAO(h.slice(3)):h.startsWith("ap-")?vAP(h.slice(3)):h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
+  v.innerHTML=h.startsWith("cu-")?vCu(h.slice(3)):h.startsWith("pay-")?vPay(h.slice(4)):h==="loyal"?vLoyal():h.startsWith("odone-")?vDone(h.slice(6)):h.startsWith("ao-")?vAO(h.slice(3)):h.startsWith("ap-")?vAP(h.slice(3)):h==="shop"?vShop():h.startsWith("prod-")?vProd(h.slice(5)):h==="cart"?vCart():h==="checkout"?vCheckout():h==="orders"?vOrders():h==="admin"?vAdmin():h==="reg"?vReg():h==="home"?vHome():h==="diary"?vDiary():h==="rest"?vRest():h==="coupon"?vCoupon():h==="food"?vFood():h.startsWith("fi-")?vFoodItem(decodeURIComponent(h.slice(3))):h==="scan"?vScan():h==="ai"?vAI():h==="move"?vMove():h.startsWith("act-")?vActivity(+h.slice(4)):h==="plan"?vPlan():h==="profile"?vProfile():vHome();
   if(h==="move"&&TR.sport!=="steps")initMap(TR.pts,TR.state!=="idle");
   if(h==="rest")initRestMap();
   if(!h.startsWith("ap-"))APF=null;
@@ -1358,7 +1527,7 @@ function bind(h){
   on("#trRes","click",resumeLive);on("#trDrop","click",()=>{delete S.trLive;save();render()});
   on("#wSave","click",()=>{const w=+$("#wIn").value;if(!(w>20&&w<400))return toast("Çəkini düzgün yazın");const e=S.weights.find(x=>x.d===TODAY);if(e)e.w=w;else S.weights.push({d:TODAY,w});S.profile.w=w;save();toast("Çəki yadda saxlanıldı, normalar yeniləndi");render()});
   on("#shareDay","click",shareDay);
-  on("#rgSave","click",()=>{const name=$("#rgName").value.trim(),phone=normPhone($("#rgPhone").value);if(!name)return toast("Adınızı yazın");if(phone.length!==12)return toast("Nömrəni düzgün yazın: +994 50 123 45 67");S.user={name,phone};save();toast(`Xoş gəldiniz, ${name}!`);S.first?go("profile"):back()});
+  on("#rgSave","click",()=>{const name=$("#rgName").value.trim(),phone=normPhone($("#rgPhone").value);if(!name)return toast("Adınızı yazın");if(phone.length!==12)return toast("Nömrəni düzgün yazın: +994 50 123 45 67");S.user={name,phone,consent:$("#rgCons").checked};S.userSync=0;save();regSync();MET=0;loadMe(true);toast(`Xoş gəldiniz, ${name}!`);S.first?go("profile"):back()});
   on("[data-scat]","click",e=>{SHOP.cat=e.currentTarget.dataset.scat;render()});
   const sq=$("#shQ");if(sq)sq.addEventListener("input",e=>{SHOP.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#shQ");n.focus();n.setSelectionRange(pos,pos)});
   on("#shRetry","click",()=>{SHOP.status="idle";render()});
@@ -1374,13 +1543,61 @@ function bind(h){
   on("[data-ask]","click",e=>{const o=S.orders[+e.currentTarget.dataset.ask];if(!CONFIG.shop.whatsapp)return toast("Mağazanın nömrəsi hələ qoşulmayıb");openWA(CONFIG.shop.whatsapp,`Salam! ${o.no} nömrəli sifarişimin statusu nədir?\n${S.user?S.user.name+" ("+fmtPhone(S.user.phone)+")":""}`)});
   on("#adLogin","click",async e=>{const p=$("#adPass").value.trim(),btn=e.currentTarget;if(!p)return;btn.disabled=true;try{const j=await api("auth",{pass:p});if(j.ok){S.apass=p;save();AD.loaded=false;adPoll();render()}}catch(err){btn.disabled=false;toast(err?.status==="api"?"Parol səhvdir":"Serverə qoşulmaq alınmadı")}});
   on("#adLogout","click",()=>{S.apass="";save();AD.loaded=false;clearInterval(AD.timer);goTab("home")});
-  on("#adRefresh,#adRetry","click",()=>{AD.err="";adLoad()});
+  on("#adRefresh,#adRetry","click",()=>{AD.err="";CR.loaded=false;CR.err="";adLoad()});
   on("[data-adt]","click",e=>{AD.tab=e.currentTarget.dataset.adt;render()});
   on("[data-adf]","click",e=>{AD.filter=e.currentTarget.dataset.adf;render()});
   on("[data-adp]","click",e=>{AD.period=e.currentTarget.dataset.adp;render()});
   const aq=$("#adQ");if(aq)aq.addEventListener("input",e=>{AD.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adQ");n.focus();n.setSelectionRange(pos,pos)});
   const apq=$("#adPQ");if(apq)apq.addEventListener("input",e=>{AD.pq=e.target.value;const pos=e.target.selectionStart;render();const n=$("#adPQ");n.focus();n.setSelectionRange(pos,pos)});
   on("[data-ao]","click",e=>go("ao-"+e.currentTarget.dataset.ao));
+  on("[data-adf2]","click",e=>{AD.filter=e.currentTarget.dataset.adf2;AD.tab="orders";render()});
+  on("[data-copy]","click",async e=>{try{await navigator.clipboard.writeText(e.currentTarget.dataset.copy);toast("Kopyalandı")}catch(x){toast(e.currentTarget.dataset.copy)}});
+  on("[data-cmpx]","click",e=>{S.cmpX=[...(S.cmpX||[]),e.currentTarget.dataset.cmpx].slice(-50);save();render()});
+  on("#lyCons","change",e=>{if(S.user){S.user.consent=e.target.checked;S.userSync=0;save();regSync();toast(e.target.checked?"Kampaniya xəbərləri açıldı":"Kampaniya xəbərləri söndürüldü")}});
+  on("[data-claim]","click",async e=>{const b=e.currentTarget,no=b.dataset.claim,amt=+b.dataset.amt,ph=S.user?.phone||S.lastShip?.phone;b.disabled=true;b.textContent="Göndərilir…";
+    try{await api("payClaim",{no,phone:ph,amount:amt,ref:$("#pcRef")?.value.trim()||""});const o=S.orders.find(x=>x.no===no);if(o)o.claim=true;save();toast("Təşəkkürlər! Ödəniş yoxlanılır.");render()}
+    catch(err){b.disabled=false;b.textContent="Ödədim";toast(err?.msg||"Göndərmək alınmadı")}});
+  on("[data-rcpt]","click",e=>{const d=e.currentTarget.dataset;openWA(CONFIG.shop.whatsapp,`Salam! ${d.rcpt} nömrəli sifariş üçün kartınıza ${money(+d.amt)} köçürdüm. Qəbzin şəklini əlavə edirəm.\n${S.user?S.user.name:""}`)});
+  on("[data-ask2]","click",e=>openWA(CONFIG.shop.whatsapp,`Salam! ${e.currentTarget.dataset.ask2} nömrəli sifarişim üçün ödənişi necə edim?`));
+  on("#coPromoA","click",()=>{CO.promo=$("#coPromo").value.trim().toUpperCase();getQuote()});
+  const cp=$("#coPromo");if(cp)cp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();CO.promo=cp.value.trim().toUpperCase();getQuote()}});
+  on("#coBonC","change",e=>{CO.useBonus=e.target.checked;getQuote()});
+  document.querySelectorAll('[name=coDel]').forEach(x=>x.addEventListener("change",()=>getQuote()));
+  if(h==="checkout"){loadMe();clearTimeout(CO.t);CO.t=setTimeout(getQuote,50)}
+  on("[data-pcok],[data-pcno]","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,i=+(b.dataset.pcok??b.dataset.pcno),rej=b.dataset.pcno!=null;b.disabled=true;
+    try{const j=await api("addPayment",{pass:S.apass,no:o.no,confirm:i,reject:rej});o.paidAmt=j.paidAmt;o.log=j.log;o.paid=payState(o);S.aclm=(S.aclm||[]).filter(k=>k!==o.no+"#"+i);save();toast(rej?"Qeyd olundu":"Ödəniş təsdiqləndi ✓");
+      if(!rej&&o.paid==="Ödənilib")openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz üçün ${money(o.log[i].a)} ödənişiniz qəbul edildi. Təşəkkür edirik!\n${CONFIG.guide.name} · Vital Rhythm`);render()}
+    catch(err){b.disabled=false;toast("Alınmadı: "+(err?.msg||"bağlantı"))}});
+  on("#apyAdd","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,a=+$("#apyA").value;if(!(a>0))return toast("Məbləği yazın");b.disabled=true;
+    try{const j=await api("addPayment",{pass:S.apass,no:o.no,amount:a,method:$("#apyM").value});o.paidAmt=j.paidAmt;o.log=j.log;o.paid=payState(o);toast("Ödəniş qeydə alındı");CR.loaded=false;render()}
+    catch(err){b.disabled=false;toast(err?.msg==="unknown action"?"Server kodu yenilənməlidir":"Alınmadı: "+(err?.msg||"bağlantı"))}});
+  on("#aoRemind","click",()=>{const o=AD.orders.find(x=>x.no===h.slice(3));openWA(String(o.phone).replace(/\D/g,""),remindText({name:o.name},[o]))});
+  on("#crRetry","click",()=>{CR.err="";crLoad();render()});
+  on("[data-crs]","click",e=>{CR.seg=e.currentTarget.dataset.crs;render()});
+  const crq=$("#crQ");if(crq)crq.addEventListener("input",e=>{CR.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#crQ");n.focus();n.setSelectionRange(pos,pos)});
+  on("[data-cu]","click",e=>go("cu-"+e.currentTarget.dataset.cu));
+  on("[data-mkseg]","click",e=>{MK.seg=e.currentTarget.dataset.mkseg;MK.send=null;AD.tab="mkt";render();window.scrollTo(0,0)});
+  on("#crCopy","click",async()=>{const L=CR.customers.filter(c=>c.segs.includes(CR.seg));try{await navigator.clipboard.writeText(L.map(c=>c.phone).join("\n"));toast(L.length+" nömrə kopyalandı")}catch(x){toast("Kopyalamaq alınmadı")}});
+  on("#crDebtSms","click",()=>{const L=CR.customers.filter(c=>c.debt>0);location.href=smsLink(L.map(c=>c.phone),`Salam! Vital Rhythm mağazasında qalıq borcunuz var. Zəhmət olmasa ödəniş edin və ya bizimlə əlaqə saxlayın.\n${CONFIG.guide.name}`)});
+  on("[data-cuwa]","click",e=>openWA(e.currentTarget.dataset.cuwa,"Salam! "));
+  on("[data-curem]","click",e=>{const d=e.currentTarget.dataset.curem,c=CR.customers.find(x=>cuDig(x)===d),os=AD.orders.filter(o=>String(o.phone).replace(/\D/g,"")===d&&debtOf(o)>0&&o.status!=="Yeni");openWA(d,remindText(c,os))});
+  on("#cuSave","click",async e=>{const d=h.slice(3),b=e.currentTarget;b.disabled=true;
+    try{await api("saveCustomer",{pass:S.apass,c:{phone:"+"+d,name:$("#cuName").value.trim(),pct:+$("#cuPct").value||0,addBonus:+$("#cuBon").value||0,tags:$("#cuTags").value.trim(),note:$("#cuNote").value.trim(),consent:$("#cuCons").checked}});toast("Yadda saxlanıldı");CR.loaded=false;await crLoad();render()}
+    catch(err){b.disabled=false;toast(err?.msg==="unknown action"?"Server kodu yenilənməlidir":"Alınmadı")}});
+  on("#mkSeg","change",()=>{mkRead();MK.send=null;render()});
+  on("#mkGo","click",async e=>{mkRead();if(!MK.text&&!MK.title)return toast("Mətni yazın");const b=e.currentTarget;b.disabled=true;MK.saved=false;
+    if(MK.inapp){try{await api("saveCampaign",{pass:S.apass,c:{title:MK.title,text:MK.text,seg:MK.seg,promo:MK.promo,until:MK.until}});MK.saved=true;CR.loaded=false;await crLoad()}catch(err){toast("Proqramda saxlamaq alınmadı")}}
+    MK.send=CR.customers.filter(c=>c.segs.includes(MK.seg)&&c.consent);MK.sent=[];render();setTimeout(()=>$("#mkSend")?.scrollIntoView({behavior:"smooth"}),50)});
+  on("[data-mkwa]","click",e=>{const c=MK.send[+e.currentTarget.dataset.mkwa];openWA(cuDig(c),mkMsg(c));MK.sent.push(cuDig(c));setTimeout(render,400)});
+  on("#mkCopy","click",async()=>{try{await navigator.clipboard.writeText(MK.send.map(c=>c.phone).join("\n"));toast("Nömrələr kopyalandı")}catch(x){toast("Kopyalamaq alınmadı")}});
+  on("[data-cmdel]","click",async e=>{const id=e.currentTarget.dataset.cmdel;try{await api("deleteCampaign",{pass:S.apass,id});CR.campaigns=CR.campaigns.filter(k=>k.id!==id);toast("Kampaniya silindi");render()}catch(x){toast("Alınmadı")}});
+  on("#pfSave","click",async e=>{const pf={code:$("#pfCode").value.trim().toUpperCase(),type:$("#pfType").value,value:$("#pfVal").value,min:$("#pfMin").value,until:$("#pfUntil").value,limit:$("#pfLim").value};MK.pf=pf;
+    if(!pf.code||!(+pf.value>0))return toast("Kod və dəyəri yazın");const b=e.currentTarget;b.disabled=true;
+    try{await api("savePromo",{pass:S.apass,p:pf});MK.pf={code:"",type:"%",value:"",min:"",until:"",limit:""};toast("Promo kod yaradıldı");CR.loaded=false;await crLoad()}catch(x){b.disabled=false;toast(x?.msg==="unknown action"?"Server kodu yenilənməlidir":"Alınmadı")}});
+  on("[data-prdel]","click",async e=>{const code=e.currentTarget.dataset.prdel;try{await api("deletePromo",{pass:S.apass,code});CR.promos=CR.promos.filter(p=>p.code!==code);toast("Silindi");render()}catch(x){toast("Alınmadı")}});
+  on("#stSave","click",async e=>{const g=id=>$(id).value.trim(),b=e.currentTarget;
+    const st={loyalty:$("#stLoy").checked,bonusPct:+g("#stBp")||0,bonusMax:+g("#stBm")||0,tiers:[0,1,2].map(i=>({n:g("#stTn"+i),min:+g("#stTm"+i)||0,p:+g("#stTp"+i)||0})).filter(t=>t.n),card:{num:g("#stCn"),holder:g("#stCh"),bank:g("#stCb"),note:g("#stCx")},credit:$("#stCr").checked};
+    b.disabled=true;try{const j=await api("saveSettings",{pass:S.apass,s:st});CR.settings=j.settings;toast("Ayarlar yadda saxlanıldı");render()}catch(x){b.disabled=false;toast(x?.msg==="unknown action"?"Server kodu yenilənməlidir":"Alınmadı")}});
   on("#adSnd","change",async e=>{S.asnd=e.target.checked;save();if(S.asnd){audioUnlock();ding();try{if("Notification" in window&&Notification.permission==="default")await Notification.requestPermission()}catch(x){}toast("Səs açıqdır. Proqram açıq olanda yeni sifarişdə zəng çalınacaq.")}});
   on("[data-stk]","click",async e=>{const id=e.currentTarget.dataset.stk,b=e.currentTarget;b.disabled=true;
     try{if(!AD.loaded)await adLoad(true);const p=AD.items.find(x=>x.id===id);if(!p)throw{};const np={...p,stock:!p.stock};delete np.row;
@@ -1398,7 +1615,7 @@ function bind(h){
     catch(err){b.disabled=false;b.textContent="Bəli, sil";toast(err?.msg==="unknown action"?"Server kodu yenilənməlidir (silmə funksiyası yoxdur)":"Silmək alınmadı")}});
   on("[data-ap]","click",e=>go("ap-"+e.currentTarget.dataset.ap));
   on("#aoWA","click",()=>{const o=AD.orders.find(x=>x.no===h.slice(3));openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz barədə yazıram.`)});
-  on("#aoSave","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,ch={no:o.no,pass:S.apass,status:$("#aoSt").value,paid:$("#aoPaid").value,date:$("#aoDate").value.trim(),adminNote:$("#aoNote").value.trim(),refund:+$("#aoRef").value||0};
+  on("#aoSave","click",async e=>{const o=AD.orders.find(x=>x.no===h.slice(3)),b=e.currentTarget,ch={no:o.no,pass:S.apass,status:$("#aoSt").value,date:$("#aoDate").value.trim(),adminNote:$("#aoNote").value.trim(),refund:+$("#aoRef").value||0};
     b.disabled=true;b.textContent="Saxlanılır…";try{await api("updateOrder",ch);const was=o.status;Object.assign(o,ch);delete o.pass;toast("Yadda saxlanıldı");AD.lastNew=newCount();
       if($("#aoNotify").checked&&(was!==ch.status||ch.date)){const msg={"Təsdiqləndi":"təsdiqləndi","Hazırlanır":"hazırlanır","Yoldadır":"yoldadır, tezliklə çatdırılacaq","Çatdırıldı":"çatdırıldı. Təşəkkür edirik!","Ləğv edildi":"ləğv edildi","Qaytarıldı":"üzrə qaytarma qeydə alındı"}[ch.status]||"qəbul edildi";
         openWA(String(o.phone).replace(/\D/g,""),`Salam ${o.name}! ${o.no} nömrəli sifarişiniz ${msg}${ch.date?`\nÇatdırılma vaxtı: ${ch.date}`:""}\nCəmi: ${money(o.total)}\n\n${CONFIG.guide.name} · Vital Rhythm`)}
@@ -1469,7 +1686,7 @@ $("#liveBar").onclick=()=>go("move");
 // Settings (numbers, server address) come from config.json; load them first, then the catalog.
 const cfgReady=Promise.race([fetch("config.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;["guide","shop"].forEach(k=>{if(j[k])Object.entries(j[k]).forEach(([a,b])=>{if(b!==""&&b!=null)CONFIG[k][a]=b})})}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
 guideInit();
-cfgReady.then(()=>{loadShop(true);if(S.apass&&CONFIG.shop.api){adLoad(true);adPoll()}render()});
+cfgReady.then(()=>{loadShop(true);regSync();loadMe();if(S.apass&&CONFIG.shop.api){adLoad(true);adPoll()}render()});
 render();
 if(!S.user&&!S.regAsked){S.regAsked=1;save();setTimeout(()=>go("reg"),400)}
 </script>
